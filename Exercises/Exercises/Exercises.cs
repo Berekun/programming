@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 
 namespace Exercises
 {
@@ -41,6 +42,8 @@ namespace Exercises
 
         public static double GetDistance2points(double x1,double x2, double y1, double y2)
         {
+            double firstparent =
+
 
             return 
 
