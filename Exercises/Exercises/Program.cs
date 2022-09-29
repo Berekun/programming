@@ -5,7 +5,7 @@
         static void Main(string[] args)
         {
             int number;
-            number = 29;
+            number = 33;
             bool solution;
 
             solution = Exercises.IsPrime(number);
@@ -31,6 +31,28 @@
                 x = Exercises.GetRectangleArea(height,weight);
                 Console.WriteLine(x);
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                double x1, x2, y1, y2, x;
+                x1 = 1;
+                x2 = 4;
+                y1 = 8;
+                y2 = 15;
+
+                x = Exercises.GetDistance2points(x1, x2, y1, y2);
+                Console.WriteLine(x);
+            }
+
+            {
+                int a;
+                string x;
+                a = 34;
+
+                x = Exercises.Getsequecyofprime(a);
+                Console.WriteLine(x);
+            }
         }
     }
-}
+}   

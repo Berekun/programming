@@ -16,7 +16,7 @@ namespace Exercises
 
             for (int i = 2; i < number; i++)
             {
-                solution += number % i;
+                solution = number % i;
 
                 if (solution == 0)
                 {
@@ -42,13 +42,24 @@ namespace Exercises
 
         public static double GetDistance2points(double x1,double x2, double y1, double y2)
         {
-            double firstparent =
+            double firstparent = (x2 - x1) * (x2 - x1);
+            double secondparent = (y2 - y1) * (y2 - y1);
+            double sume = firstparent + secondparent;
+            double sqrt = Math.Sqrt(sume);
 
-
-            return 
-
-
+            return sqrt;
         }
 
+        public static string Getsequecyofprime(int number)
+        {
+            string result = "";
+            for (int i=1; i < number; i++)
+            {
+                if (IsPrime(i))
+                    result += i + ",";
+            }
+
+            return result;
+        }
     }
 }
