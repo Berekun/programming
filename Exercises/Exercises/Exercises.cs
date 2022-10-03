@@ -1,4 +1,6 @@
 ﻿using System;
+using System.CodeDom.Compiler;
+using System.Net.Mail;
 using System.Runtime.ExceptionServices;
 
 namespace Exercises
@@ -60,6 +62,60 @@ namespace Exercises
             }
 
             return result;
+        }
+
+        public static string GenerateFibonacci(int n)
+        {
+            if (n <= 0)
+                return "Nan";
+            string result = "0,1";
+            int r1 = 0, r2 = 1; int alter = 0;
+            for (int i = 0; r1<n && r2 <n;i++)
+            {
+
+              if (alter == 0)
+              {
+                    r1 = r1 + r2;
+                    result += "," + r1;
+                    alter = 1;
+              }
+              else
+              {
+                    r2 = r2 + r1;
+                    result += "," + r2;
+                    alter = 0;
+              }
+            }
+
+            return result;
+        }
+
+        public static string Getscript(string word)
+        {
+            string result = "";
+
+            for(int i = 0; i < word.Length; i++)
+            {
+                char c = word[i];
+                if (i == word.Length - 1)
+                    result += c;
+                else
+                    result += c + "-";
+            }
+
+            return result;
+        }
+
+        public static bool Getlether(char mychar,char start,char finish)
+        {
+
+
+
+
+
+
+
+
         }
     }
 }

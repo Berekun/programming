@@ -45,12 +45,36 @@
                 Console.WriteLine(x);
             }
 
+            Console.WriteLine("---------------");
+
             {
                 int a;
                 string x;
                 a = 34;
 
                 x = Exercises.Getsequecyofprime(a);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                int n;
+                string x;
+                n = 344;
+
+                x = Exercises.GenerateFibonacci(n);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                string n;
+                string x;
+                n = "Hola";
+
+                x = Exercises.Getscript(n);
                 Console.WriteLine(x);
             }
         }
