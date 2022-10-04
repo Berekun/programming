@@ -108,14 +108,74 @@ namespace Exercises
 
         public static bool Getlether(char mychar,char start,char finish)
         {
+            if ((start <= mychar) && (mychar <= finish))
+            {
+                return true;
+            }
 
-
-
-
-
-
-
-
+            return false;
         }
+
+        public static bool IsEmail(string word)
+        {
+            int length = word.Length;
+            int length2 = word.Length;
+            string result1 = "";
+            string result2= "";
+
+            for(int z = 0; z < length2; z++)
+            {
+                char error = word[length2 - 1];
+                length2--;
+
+                if ((error == '@') || (error == '.'))
+                {
+                    for (int x = 0; x < length2; x++)
+                    {
+                        error = word[length2 - 1];
+                        length2--;
+
+                        if (error == '.')
+
+                            return false;
+
+                        if (error == '@')
+                        {
+                            for (int y = 0; y < length2; y++)
+                            {
+                                error = word[length2 - 1];
+                                length2--;
+
+                                if (error == '@')
+
+                                    return false;
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < word.Length;i++)
+            {
+                char c = word[length - 1];
+                length--;
+                result1 += c;
+                if ((c == '.') && (result1.Length > 1))
+                {
+                    for (int a = 0; a < word.Length; a++)
+                    {
+                        c = word[length - 1];
+                        length--;
+                        result2 += c;
+                        if ((c == '@') && (result2.Length > 1))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static 
     }
 }

@@ -3,6 +3,7 @@
     internal class Program
     {
         static void Main(string[] args)
+        
         {
             int number;
             number = 33;
@@ -75,6 +76,34 @@
                 n = "Hola";
 
                 x = Exercises.Getscript(n);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                char mylether;
+                char start;
+                char finish;
+                bool x;
+
+                mylether = 'f';
+                start = 'a';
+                finish = 'p';
+
+                x = Exercises.Getlether(mylether,start,finish);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                string word;
+                bool x;
+
+                word = "holaaa@gmail.es";
+
+                x = Exercises.IsEmail(word);
                 Console.WriteLine(x);
             }
         }
