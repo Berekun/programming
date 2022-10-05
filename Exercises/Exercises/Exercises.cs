@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Net.Mail;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ExceptionServices;
 
 namespace Exercises
@@ -42,7 +43,7 @@ namespace Exercises
             return weight * height;
         }
 
-        public static double GetDistance2points(double x1,double x2, double y1, double y2)
+        public static double GetDistance2points(double x1, double x2, double y1, double y2)
         {
             double firstparent = (x2 - x1) * (x2 - x1);
             double secondparent = (y2 - y1) * (y2 - y1);
@@ -55,7 +56,7 @@ namespace Exercises
         public static string Getsequecyofprime(int number)
         {
             string result = "";
-            for (int i=1; i < number; i++)
+            for (int i = 1; i < number; i++)
             {
                 if (IsPrime(i))
                     result += i + ",";
@@ -70,21 +71,21 @@ namespace Exercises
                 return "Nan";
             string result = "0,1";
             int r1 = 0, r2 = 1; int alter = 0;
-            for (int i = 0; r1<n && r2 <n;i++)
+            for (int i = 0; r1 < n && r2 < n; i++)
             {
 
-              if (alter == 0)
-              {
+                if (alter == 0)
+                {
                     r1 = r1 + r2;
                     result += "," + r1;
                     alter = 1;
-              }
-              else
-              {
+                }
+                else
+                {
                     r2 = r2 + r1;
                     result += "," + r2;
                     alter = 0;
-              }
+                }
             }
 
             return result;
@@ -94,7 +95,7 @@ namespace Exercises
         {
             string result = "";
 
-            for(int i = 0; i < word.Length; i++)
+            for (int i = 0; i < word.Length; i++)
             {
                 char c = word[i];
                 if (i == word.Length - 1)
@@ -106,7 +107,7 @@ namespace Exercises
             return result;
         }
 
-        public static bool Getlether(char mychar,char start,char finish)
+        public static bool Getlether(char mychar, char start, char finish)
         {
             if ((start <= mychar) && (mychar <= finish))
             {
@@ -121,9 +122,9 @@ namespace Exercises
             int length = word.Length;
             int length2 = word.Length;
             string result1 = "";
-            string result2= "";
+            string result2 = "";
 
-            for(int z = 0; z < length2; z++)
+            for (int z = 0; z < length2; z++)
             {
                 char error = word[length2 - 1];
                 length2--;
@@ -154,7 +155,7 @@ namespace Exercises
                     }
                 }
             }
-            for (int i = 0; i < word.Length;i++)
+            for (int i = 0; i < word.Length; i++)
             {
                 char c = word[length - 1];
                 length--;
@@ -176,6 +177,80 @@ namespace Exercises
             return false;
         }
 
-        public static 
+        public static int GetNumberOf(string word,char character)
+        {
+            int numerof = 0;
+            int length = word.Length;
+            char c;
+
+            for (int i = 0; i < word.Length; i++)
+            {
+                c = word[length - 1];
+                length--;
+
+                if (c == character)
+                    numerof++;
+
+            }
+
+            return numerof;
+        }
+
+        public static int ContaintwoDots(string word)
+        {
+            int numerofdots = 0;
+            int length = word.Length;
+            char c;
+
+            for (int i = 0; i < word.Length; i++)
+            {
+                c = word[length - 1];
+                length--;
+
+                if (c == '.')
+                numerofdots++;
+
+                if (((c == '@') && (numerofdots != 1)) || ((c == '@') && (numerofdots == 1)))
+
+                    return numerofdots;
+            }
+
+
+            return numerofdots;
+
+        }
+
+        public static int ContainsNotValidCharacters(string word)
+        {
+            int numerofinvalid = 0;
+            int length = word.Length;
+            char c;
+
+            for(int i = 0; i < word.Length; i++)
+            {
+                c = word[length - 1];
+                length--;
+
+                if ((c != '.') || (c != '@'))
+                if ((c <= 'A') && ('Z' <= c))
+                if ((c <= 'a') || ('z' <= c))
+                    numerofinvalid++;  
+            }
+            return numerofinvalid;
+        }
+
+        public static bool IsEmail2(string mail)
+        {
+            if(GetNumberOf(mail,'@') != 1)
+                return false;
+            if (ContaintwoDots(mail) != 1)
+                return false;
+            if (ContainsNotValidCharacters(mail) != 0)
+                return false;
+            if (mail[0] == '@' || mail[0] == '.')
+                return false;
+
+                return true;
+        }
     }
 }

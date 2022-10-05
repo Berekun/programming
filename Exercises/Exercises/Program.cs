@@ -106,6 +106,19 @@
                 x = Exercises.IsEmail(word);
                 Console.WriteLine(x);
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                string word;
+                bool x;
+
+                word = "se!xo@gmail.com";
+
+                x = Exercises.IsEmail2(word);
+                Console.WriteLine(x);
+
+            }
         }
     }
 }   
