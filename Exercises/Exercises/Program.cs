@@ -113,12 +113,52 @@
                 string word;
                 bool x;
 
-                word = "se!xo@gmail.com";
+                word = "sexo@gmail.com";
 
                 x = Exercises.IsEmail2(word);
                 Console.WriteLine(x);
 
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                Vector3D a = new Vector3D();
+                Vector3D b = new Vector3D();
+
+                a.x = 4;
+                b.x = 7;
+
+                a.y = 6;
+                b.y = 9;
+
+                a.z = 10;
+                b.z = 11;
+
+                double x;
+
+                x = Exercises.GetDistance(a, b);
+                Console.WriteLine(x);
+
+            }
+
+            Console.WriteLine("---------------"); 
+
+            {
+                Vector3D a = new Vector3D();
+
+                a.x = 8;
+                a.y= 9;
+                a.z = 10;
+
+                double x;
+
+                x = Exercises.GetModule(a);
+                Console.WriteLine(x);
+            }
+
+
+
         }
     }
 }   

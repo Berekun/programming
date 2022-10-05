@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.ComponentModel.Design;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ExceptionServices;
@@ -231,10 +232,21 @@ namespace Exercises
                 c = word[length - 1];
                 length--;
 
-                if ((c != '.') || (c != '@'))
-                if ((c <= 'A') && ('Z' <= c))
-                if ((c <= 'a') || ('z' <= c))
-                    numerofinvalid++;  
+                if ((c != '.') && (c != '@'))
+                {
+                    if ((c < '0') || ('9' < c))
+                    {
+                        if ((c < 'A') || ('z' < c))
+                        {
+                            numerofinvalid++;
+                        }
+
+                        if ((c < 'a') && ('A' < c))
+                        {
+                            numerofinvalid++;
+                        }
+                    }
+                }
             }
             return numerofinvalid;
         }
@@ -251,6 +263,28 @@ namespace Exercises
                 return false;
 
                 return true;
+        }
+
+        public static double GetDistance(Vector3D a,Vector3D b)
+        {
+            double solution;
+            double x = b.x - a.x;
+            double y = b.y - a.y;
+            double z = b.z - a.z;
+            solution = Math.Sqrt((x * x) + (y * y) + (z * z));
+
+            return solution;
+        }
+
+        public static double GetModule(Vector3D a)
+        {
+            double x = a.x;
+            double z = a.z;
+            double y = a.y;
+
+            double solution = Math.Sqrt(x*x+y*y+z*z);
+
+            return solution;
         }
     }
 }
