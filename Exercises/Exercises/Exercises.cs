@@ -194,30 +194,38 @@ namespace Exercises
 
             }
 
+            // si word es algo que tiene algo parecido a length
+            // y puedo hacer word[i]
+
+            // foreach (char c in word)
+            // {
+            //      if (c == character)
+            //              count++;
+            // {
+
+
             return numerof;
         }
 
         public static int ContaintwoDots(string word)
         {
-            int numerofdots = 0;
             int length = word.Length;
             char c;
+
+            // si el && dentro de un if la primera condicion deja de leer la siguiente
 
             for (int i = 0; i < word.Length; i++)
             {
                 c = word[length - 1];
                 length--;
 
-                if (c == '.')
-                numerofdots++;
+                if (c == '.' && word[length + 1] == '.')
 
-                if (((c == '@') && (numerofdots != 1)) || ((c == '@') && (numerofdots == 1)))
-
-                    return numerofdots;
+                    return 2;
             }
 
 
-            return numerofdots;
+            return 1;
 
         }
 
@@ -262,6 +270,8 @@ namespace Exercises
             if (mail[0] == '@' || mail[0] == '.')
                 return false;
 
+            // return posDot > posArroba; esto devolveria true o false
+
                 return true;
         }
 
@@ -282,9 +292,7 @@ namespace Exercises
             double z = a.z;
             double y = a.y;
 
-            double solution = Math.Sqrt(x*x+y*y+z*z);
-
-            return solution;
+            return  Math.Sqrt(x*x+y*y+z*z);
         }
     }
 }

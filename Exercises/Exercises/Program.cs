@@ -1,4 +1,6 @@
-﻿namespace Exercises
+﻿using System.Transactions;
+
+namespace Exercises
 {
     internal class Program
     {
@@ -157,8 +159,19 @@
                 Console.WriteLine(x);
             }
 
+            Console.WriteLine("---------------");
 
+            {
+                Vector3D v = new Vector3D();
+                v.x = 4;
+                v.y = 7;
+                v.z = 6;
 
+                double dis;
+
+                dis = v.GetModule2();
+                Console.WriteLine(dis);
+            }
         }
     }
 }   
