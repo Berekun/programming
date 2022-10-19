@@ -294,5 +294,35 @@ namespace Exercises
 
             return  Math.Sqrt(x*x+y*y+z*z);
         }
+
+        public static int CalculateProductory(int number)
+        {
+            int result = 1;
+
+            if(number <= 0)
+            {
+                return 0;
+            }
+
+            for(int i = 2; i <= number; i++)
+            {
+                result = result * i;
+            }
+
+            return result;
+        }
+
+        public static int GetMCD(int min, int max)
+        {
+            for (int i = min; i >= 1; i--)
+            {
+                if ((min % i == 0) && (max % i == 0))
+                {
+                    return i;
+                }
+            }
+
+            return 1;
+        }
     }
 }

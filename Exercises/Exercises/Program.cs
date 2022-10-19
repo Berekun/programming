@@ -172,6 +172,26 @@ namespace Exercises
                 dis = v.GetModule2();
                 Console.WriteLine(dis);
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                int productory = 7;
+                int x = 0;
+                x = Exercises.CalculateProductory(productory);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                int min = 30;
+                int max = -9;
+                int x;
+
+                x = Exercises.GetMCD(min, max);
+                Console.WriteLine(x);
+            }
         }
     }
 }   
