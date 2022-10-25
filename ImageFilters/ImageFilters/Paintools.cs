@@ -1,11 +1,5 @@
 ﻿using DAM;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup;
 
 namespace ImageFilters
 {
@@ -58,6 +52,87 @@ namespace ImageFilters
             }
         }
 
+        public static void InvertImage(Image img)
+        {
+            int max_height = img.Height;
 
+            for (int h = 0; h <= img.Height/2; h++, max_height--)
+            {
+                for (int w = 0; w <= img.Width; w++)
+                {
+                    RGBA firstpixel = img.GetPixelAt(w, h);
+                    RGBA lastpixel = img.GetPixelAt(w, max_height);
+
+                    img.SetPixel(w, max_height, firstpixel);
+
+                    img.SetPixel(w, h, lastpixel);
+                }
+            }
+        }
+
+        public static double GetCircular(double value, double min, double max)
+        {
+            double dist = (max - min);
+
+            while (value > max)
+            {
+                value -= dist;
+
+            }
+
+            while (value < min)
+            {
+                value += dist;
+            }
+
+            return value;
+        }
+
+        public static void RotateHue(Image img,Image img2, double hueIncrement)
+        {
+            for(int h = 0; h < img.Height; h++)
+            {
+                for(int w = 0; w < img.Width; w++)
+                {
+                    RGBA rgba = img.GetPixelAt(w, h);
+                    HSLA hsla = rgba.ToHSL();
+                    hsla.h = Paintools.GetCircular(hueIncrement,0,1);
+                    rgba = hsla.ToRGBA();
+                    img2.SetPixel(w, h,rgba);
+
+                }
+            }
+        }
+
+        public static void ChageEspecificHue(Image img,Image img2, double hueIncrement, double min,double max)
+        {
+            int red = 0;
+            for (int h= 0; h < img.Height; h++)
+            {
+                for(int w= 0; w < img.Width; w++)
+                {
+                    RGBA rgba = img.GetPixelAt(w, h);
+                    HSLA hsla = rgba.ToHSL();
+                    if ((hsla.h < min) || (max < hsla.h))
+                    {
+                        hsla.h = GetCircular(hueIncrement, 0, 1);
+                        rgba = hsla.ToRGBA();
+                        img2.SetPixel(w, h, rgba);
+                        red++;
+                    }
+                    else if((hsla.h > min)&&(max > hsla.h)&&(red == 0))
+                    {
+                        hsla.h = GetCircular(hueIncrement, 0, 1);
+                        rgba = hsla.ToRGBA();
+                        img2.SetPixel(w, h, rgba);
+                    }
+                    else
+                    {
+                        img2.SetPixel(w, h, rgba);
+                    }
+
+                }
+            }
+        }
     }
 }

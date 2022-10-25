@@ -192,6 +192,32 @@ namespace Exercises
                 x = Exercises.GetMCD(min, max);
                 Console.WriteLine(x);
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                double valor, min, max;
+                valor = 7;
+                min = 3;
+                max = 10;
+
+                double x = Exercises.GetSaturate(valor, min, max);
+                Console.WriteLine(x);
+
+
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                double valor, min, max, x;
+                valor = -10;
+                min = 2;
+                max = 8;
+
+                x = Exercises.GetCircular(valor, min, max);
+                Console.WriteLine(x);
+            }
         }
     }
 }   

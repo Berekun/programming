@@ -51,11 +51,52 @@ namespace ImageFilters
             Paintools.MultiplyPixel(img,0,0,1,1);
             img.Save(out_path);
         }
+
+        static void Test4()
+        {
+            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
+            string in_path = path + "foto_asta.jpg";
+            string out_path = path + "invert3.jpg";
+            Image img = new Image();
+            img.Load(in_path);
+            Paintools.InvertImage(img);
+            img.Save(out_path);
+        }
+
+        static void Test5()
+        {
+            double hueIncrement = 0.9;
+            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
+            string in_path = path + "foto_asta.jpg";
+            string out_path = path + "changed.jpg";
+            Image img = new Image();
+            Image img2 = new Image();
+            img.Load(in_path);
+            img2.Config(img.Width, img.Height);
+            Paintools.RotateHue(img, img2, hueIncrement);
+            img2.Save(out_path);
+        }
+        static void Test6()
+        {
+            double hueIncrement = 0.75;
+            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
+            string in_path = path + "arcoiris.jpg";
+            string out_path = path + "changed2.jpg";
+            Image img = new Image();
+            Image img2 = new Image();
+            img.Load(in_path);
+            img2.Config(img.Width, img.Height);
+            Paintools.ChageEspecificHue(img, img2, hueIncrement,0.1,0.9);
+            img2.Save(out_path);
+        }
         static void Main(string[] args)
         {
             Test1();
             Test2();
             Test3();
+            Test4();
+            Test5();
+            Test6();
         }
     }
 }

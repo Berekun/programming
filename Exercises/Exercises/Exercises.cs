@@ -324,5 +324,33 @@ namespace Exercises
 
             return 1;
         }
+
+        public static double GetSaturate(double valor,double min,double max)
+        {
+            if (valor <= min)
+                return min;
+            if (valor >= max)
+                return max;
+            return valor;
+        }
+
+        public static double GetCircular(double value, double min, double max)
+        {
+            double dist = (max - min);
+
+            while (value > max)
+            {
+                value -= dist;
+
+            }
+
+            while (value < min)
+            {
+                value += dist;
+            }
+
+            return value;
+        }
+
     }
 }
