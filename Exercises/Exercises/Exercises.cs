@@ -352,5 +352,20 @@ namespace Exercises
             return value;
         }
 
+        public static double Interpolate(double value,double max,double min)
+        {
+            if ((value < 0) || (1 < value))
+                return double.NaN;
+            double result = min + (max - min) * value;
+            return result;
+        }
+
+        public static double Ulerp(double value,double max,double min)
+        {
+            double dist = max - min;
+            double result = (value - min) / dist;
+            return result;
+        }
+
     }
 }

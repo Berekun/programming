@@ -106,21 +106,14 @@ namespace ImageFilters
 
         public static void ChageEspecificHue(Image img,Image img2, double hueIncrement, double min,double max)
         {
-            int red = 0;
+            if(max < min)
             for (int h= 0; h < img.Height; h++)
             {
                 for(int w= 0; w < img.Width; w++)
                 {
                     RGBA rgba = img.GetPixelAt(w, h);
                     HSLA hsla = rgba.ToHSL();
-                    if ((hsla.h < min) || (max < hsla.h))
-                    {
-                        hsla.h = GetCircular(hueIncrement, 0, 1);
-                        rgba = hsla.ToRGBA();
-                        img2.SetPixel(w, h, rgba);
-                        red++;
-                    }
-                    else if((hsla.h > min)&&(max > hsla.h)&&(red == 0))
+                    if((hsla.h < max) || (min < hsla.h))
                     {
                         hsla.h = GetCircular(hueIncrement, 0, 1);
                         rgba = hsla.ToRGBA();
@@ -130,9 +123,112 @@ namespace ImageFilters
                     {
                         img2.SetPixel(w, h, rgba);
                     }
+                }
+            }
 
+            if (max > min)
+            {
+                for (int h = 0; h < img.Height; h++)
+                {
+                    for (int w = 0; w < img.Width; w++)
+                    {
+                        RGBA rgba = img.GetPixelAt(w, h);
+                        HSLA hsla = rgba.ToHSL();
+                        if ((hsla.h < max) && (min < hsla.h))
+                        {
+                            hsla.h = GetCircular(hueIncrement, 0, 1);
+                            rgba = hsla.ToRGBA();
+                            img2.SetPixel(w, h, rgba);
+                        }
+                        else
+                        {
+                            img2.SetPixel(w, h, rgba);
+                        }
+
+                    }
                 }
             }
         }
+
+        public static void Discretize(Image img,Image img2,double min,double max)
+        {
+            RGBA color = new RGBA();
+            HSLA hsla = new HSLA();
+
+            if(max < min)
+            for(int h = 0; h < img.Height; h++)
+            {
+                for(int w = 0; w < img.Width; w++)
+                {
+                    color = img.GetPixelAt(w, h);
+                    hsla = color.ToHSL();
+                    if ((hsla.h < max) || (min < hsla.h))
+                    {
+                            hsla.l = 1;
+                            color = hsla.ToRGBA();
+                            img2.SetPixel(w, h, color);
+                    }
+                    else
+                    {
+                            hsla.l = 0;
+                            color = hsla.ToRGBA();
+                            img2.SetPixel(w, h, color);
+                    }
+                }
+            }
+
+            if(max > min)
+            for (int h = 0; h < img.Height; h++)
+            {
+               for (int w = 0; w < img.Width; w++)
+               {
+                  color = img.GetPixelAt(w, h);
+                  hsla = color.ToHSL();
+                  if ((hsla.h < max) && (min < hsla.h))
+                  {
+                     hsla.l = 1;
+                     color = hsla.ToRGBA();
+                     img2.SetPixel(w, h, color);
+                  }
+                  else
+                  {
+                     hsla.l = 0;
+                     color = hsla.ToRGBA();
+                     img2.SetPixel(w, h, color);
+                  }
+               }
+            }
+        }
+
+        public static RGBA AverageColor(Image img,int x,int y)
+        {
+            RGBA color = new RGBA();
+            for (int h = x -1; h <= x +1; h++)
+            {
+                for (int w = y -1; w <= y + 1; w++)
+                {
+                    color += img.GetPixelAt(w, h);
+                }
+            }
+            color.r /= 9;
+            color.g /= 9;
+            color.b /= 9;
+            color.a /= 9;
+
+            return color;
+        }
+
+        public static void Blur(Image img,Image img2)
+        {
+            for (int h = 0; h < img.Height; h++)
+            {
+                for (int w = 0; w < img.Width; w++)
+                {
+                   RGBA color =  Paintools.AverageColor(img, h, w);
+                   img2.SetPixel(w, h, color);
+                }
+            }
+        }
+
     }
 }

@@ -218,6 +218,28 @@ namespace Exercises
                 x = Exercises.GetCircular(valor, min, max);
                 Console.WriteLine(x);
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                double value, max, min, result;
+                value = 0.5;
+                max = 10;
+                min = 2;
+                result = Exercises.Interpolate(value, max, min);
+                Console.WriteLine(result);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                double value, max, min, result;
+                value = 10;
+                min = 2;
+                max = 10;
+                result = Exercises.Ulerp(value, max, min);
+                Console.WriteLine(result);
+            }
         }
     }
 }   
