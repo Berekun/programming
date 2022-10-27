@@ -240,6 +240,67 @@ namespace Exercises
                 result = Exercises.Ulerp(value, max, min);
                 Console.WriteLine(result);
             }
+
+            Console.WriteLine("---------------");
+
+            {
+                int a;
+                string x;
+                a = 38;
+
+                x = Exercises.GetNumberofBinary(a);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                int a;
+                string x;
+                a = 4;
+
+                x = Exercises.GetNnumbersOfThisSequency(a);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                int a;
+                string x;
+                a = 60;
+
+                x = Exercises.GetDescomprimed(a);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                int a;
+                string x;
+                a = 60;
+
+                x = Exercises.GetSecuencyofCollatz(a);
+                Console.WriteLine(x);
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+
+                Console.WriteLine(Exercises.GetSimplificedDivision(8,16));
+            }
+
+            Console.WriteLine("---------------");
+
+            {
+                int a, b;
+                a = 72;
+                b = 2;
+                var simp = Exercises.GetSimplificedDivision(a, b);
+                Console.WriteLine(simp.num + " " + simp.denom);
+            }
         }
     }
 }   

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel.Design;
+using System.Globalization;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Exercises
 {
@@ -367,5 +370,174 @@ namespace Exercises
             return result;
         }
 
+        public static (double, double) GetMaxandMind(double a,double b)
+        {
+            if (a > b)
+                return (a, b);
+            else
+                return (b,a);
+        }
+
+        public static double Funtion1(double a,double b)
+        {
+            if (a > b)
+                return -1;
+            else if (b > a)
+                return 1;
+            return 0;
+        }
+
+        public static string GetNumberofBinary(int a)
+        {
+            string result = "";
+            while (a > 0)
+            {
+                result += a % 2;
+                a = a / 2;
+            }
+
+            return result;
+        }
+
+        public static char GetMayusc(char a)
+        {
+            if ('a' < a && 'z' < a)
+            return (char)(a - 'a' + 'A');
+
+            return a;
+        }
+
+        public static double GetMediaofTemperature(double a,double b)
+        {
+            double result = a + b;
+            return result / 2;
+        }
+
+        public static string GetMorse(string a)
+        {
+            string result = "";
+            for(int i = 0; i < a.Length; i++)
+            {
+                char upper = GetMayusc(a[i]);
+                char c = a[i];
+                if (c == 'a')
+                    result += ".-";
+                if (c == 'b')
+                    result += "-...";
+                if (c == 'c')
+                    result += " -.-.";
+            }
+
+            return result;
+        }
+
+        public static void GetTableOfMultiply(int a)
+        {
+            for(int i= 0; i <= 12; i++)
+            {
+                string result = "";
+                Console.Write(result += a * i + ",");
+            }
+        }
+
+        public static string GetNnumbersOfThisSequency(int a)
+        {
+            string result = "-1,";
+            int number = -1;
+            for (int i = 0; i < a - 1;i++)
+            {  
+                if (number > 0)
+                {
+                    number = (number * (-1)) * 2;
+                    result += number + ",";
+                }
+                else if (number < 0)
+                {
+                    number = (number * (-1)) * 2;
+                    result += number + ",";
+                }
+            }
+
+            return result;
+
+        }
+
+        public static int GetSumeOfPrimary(int num1,int num2)
+        {
+            for(int i = 0; i < num1; i++)
+            {
+
+            }
+
+            return num1;
+        }
+
+        public static int MinorDivisible(int a)
+        {
+            for(int i = 2; i <= a; i++)
+            {
+                int result = a % i;
+                if (result == 0)
+                    return i;
+            }
+
+            return a;
+        }
+
+        public static string GetDescomprimed(int a)
+        {
+            string result = "";
+
+            while (a > 1)
+            {
+                result += MinorDivisible(a) + "-";
+                a = a / MinorDivisible(a);
+            }
+            return result;
+        }
+
+        public static string GetSecuencyofCollatz(int a)
+        {
+            string result = "" + a;
+            while (a != 1)
+            {
+                if (a % a == 0)
+                {
+                    a = a / 2;
+                    result += "," + a;
+                }
+                    
+                if (a % a != 0)
+                {
+                    a = a * 3 + 1;
+                    result += "," + a;
+                }
+            }
+
+            return result;
+        }   
+
+        public static (int num,int denom) GetSimplificedDivision(int num,int denom)
+        {
+            int max = GetMinor(num,denom) / 2;
+            for(int i = 2; i < max; i++)
+            {
+                if (num % i == 0 && denom % i == 0)
+                {
+                    num = num / i;
+                    denom = denom / i;
+                    i = 1;
+                }
+            }
+
+            return (num,denom);
+        }
+
+        public static int GetMinor(int a,int b)
+        {
+            if (a < b)
+                return a;
+            return b;
+        }
     }
 }
