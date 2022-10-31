@@ -520,7 +520,7 @@ namespace Exercises
         public static (int num,int denom) GetSimplificedDivision(int num,int denom)
         {
             int max = GetMinor(num,denom) / 2;
-            for(int i = 2; i < max; i++)
+            for(int i = 2; i <= max; i++)
             {
                 if (num % i == 0 && denom % i == 0)
                 {
@@ -531,6 +531,15 @@ namespace Exercises
             }
 
             return (num,denom);
+
+            //while(true)
+            //{
+              //int mcm = GetMinCM(num,denom)
+            //if (mcm == 1)
+            // break;
+            // denom /= mcm;
+            // num /= mcm;
+            //}
         }
 
         public static int GetMinor(int a,int b)
