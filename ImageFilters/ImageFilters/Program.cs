@@ -65,10 +65,10 @@ namespace ImageFilters
 
         static void Test5()
         {
-            double hueIncrement = 0.9;
-            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
-            string in_path = path + "foto_asta.jpg";
-            string out_path = path + "changed.jpg";
+            double hueIncrement = 0.3;
+            string path = "D:\\Documentos\\Deberes de Dani\\Programacion\\programming\\Images\\";
+            string in_path = path + "Joseph.png";
+            string out_path = path + "changed.png";
             Image img = new Image();
             Image img2 = new Image();
             img.Load(in_path);
@@ -79,14 +79,14 @@ namespace ImageFilters
         static void Test6()
         {
             double hueIncrement = 0.75;
-            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
-            string in_path = path + "arcoiris.jpg";
-            string out_path = path + "changed2.jpg";
+            string path = "D:\\Documentos\\Deberes de Dani\\Programacion\\programming\\Images\\";
+            string in_path = path + "Joseph.png";
+            string out_path = path + "changed2.png";
             Image img = new Image();
             Image img2 = new Image();
             img.Load(in_path);
             img2.Config(img.Width, img.Height);
-            Paintools.ChageEspecificHue(img, img2, hueIncrement,0.9,0.1);
+            Paintools.ChageEspecificHue(img, img2, hueIncrement,0.4,0.6);
             img2.Save(out_path);
         }
 
@@ -120,7 +120,10 @@ namespace ImageFilters
 
         static void Main(string[] args)
         {
-            Test7();
+            Test6();
         }
+
+
+
     }
 }
