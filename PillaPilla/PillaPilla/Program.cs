@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            CatchandCatch p = new CatchandCatch();
+            DAM.Game.Launch(p);
         }
     }
 }

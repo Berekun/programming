@@ -12,7 +12,7 @@ namespace DAM
     {
         public int Handle;
 
-        private Dictionary<string, int> _uniformLocations;
+        private Dictionary<string, int> _uniformLocations = new Dictionary<string, int>();
 
         private Shader()
         {
