@@ -122,14 +122,14 @@ namespace DAM
             }
         }
 
-        public void FillRectangle2(float x, float y, float w, float h, Image? image, float ix, float iy, float iw, float ih, float r, float g, float b, float a)
+        public void FillRectangle(float x, float y, float w, float h, Image? image, float ix, float iy, float iw, float ih, float r, float g, float b, float a)
         {
             if (mTextureEffect != null)
             {
                 Texture? t = null;
                 if (image != null && image.IsValid)
                 {
-                    t = mTextureList[image.Hash];
+                    t = mTextureList[image.InternalCode];
                 }
                 if (t != null)
                 {
@@ -224,24 +224,24 @@ namespace DAM
         {
             var text = Texture.LoadFromFile(path);
             if (text == null)
-                return new Image(-1);
+                return new Image(-1, 0, 0, false);
             for (int i = 0; i < mTextureList.Count; i++)
             {
                 if (mTextureList[i] == null)
                 {
                     mTextureList[i] = text;
-                    return new Image(i);
+                    return new Image(i, text.Width, text.Height, text.ContainsBlend);
                 }
             }
             mTextureList.Add(text);
-            return new Image(mTextureList.Count - 1);
+            return new Image(mTextureList.Count - 1, text.Width, text.Height, text.ContainsBlend);
         }
 
         public void RemoveImage(Image image)
         {
             if (image.IsValid)
             {
-                int index = image.Hash;
+                int index = image.InternalCode;
                 mTextureList[index] = null;
             }
         }

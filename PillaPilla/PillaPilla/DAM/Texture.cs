@@ -11,6 +11,9 @@ namespace DAM
     public class Texture
     {
         public readonly int Handle;
+        public readonly int Width;
+        public readonly int Height;
+        public readonly bool ContainsBlend;
 
         public static Texture LoadFromFile(string path)
         {
@@ -22,16 +25,14 @@ namespace DAM
             GL.BindTexture(TextureTarget.Texture2D, handle);
 
             // For this example, we're going to use .NET's built-in System.Drawing library to load textures.
-
             // OpenGL has it's texture origin in the lower left corner instead of the top left corner,
             // so we tell StbImageSharp to flip the image when loading.
             StbImage.stbi_set_flip_vertically_on_load(1);
-            
+            ImageResult image;
             // Here we open a stream to the file and pass it to StbImageSharp to load.
             using (Stream stream = File.OpenRead(path))
             {
-                ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-
+                image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
                 // Now that our pixels are prepared, it's time to generate a texture. We do this with GL.TexImage2D.
                 // Arguments:
                 //   The type of texture we're generating. There are various different types of textures, but the only one we need right now is Texture2D.
@@ -70,12 +71,15 @@ namespace DAM
             // Here is an example of mips in action https://en.wikipedia.org/wiki/File:Mipmap_Aliasing_Comparison.png
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return new Texture(handle);
+            return new Texture(handle, image.Width, image.Height, true);
         }
 
-        public Texture(int glHandle)
+        public Texture(int glHandle, int width, int height, bool shouldBlend)
         {
             Handle = glHandle;
+            Width = width;
+            Height = height;
+            ContainsBlend = shouldBlend;
         }
 
         // Activate texture

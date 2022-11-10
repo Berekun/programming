@@ -4,10 +4,22 @@ namespace DAM
 {
     public class Image
     {
-        private int hash;
-        public int Hash { get { return hash; } }
-        public bool IsValid { get { return hash >= 0; } }
-        public Image(int hash) { this.hash = hash; }
+        private int code, width, height;
+        private bool shouldBlend;
+
+        public int InternalCode { get { return code; } }
+        public bool IsValid { get { return code >= 0; } }
+        public int Width { get { return width; } }
+        public int Height { get { return height; } }
+        public bool ShouldBlend { get { return shouldBlend; } }
+
+        public Image(int hash, int width, int height, bool shouldBlend)
+        {
+            this.code = hash;
+            this.width = width;
+            this.height = height;
+            this.shouldBlend = shouldBlend;
+        }
     }
 }
 

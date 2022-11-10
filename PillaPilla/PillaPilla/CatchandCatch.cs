@@ -13,9 +13,8 @@ namespace PillaPilla
         //float blue = 0.0f;
         //float horizontal = -0.02f;
         //float vertical = 0.0f;
-        float room_width = 20.0f;
-        float room_height = 15.0f;
-        double time = 0.0;
+        private double time = 0.0;
+        Image background;
         Character cat;
         Character mouse;
 
@@ -31,6 +30,9 @@ namespace PillaPilla
 
             cat.Render(canvas);
             mouse.Render(canvas);
+
+            if (colisions.IsColision(cat.x, cat.y, cat.width, cat.heigth, mouse.x, mouse.y, mouse.width, mouse.heigth) == true)
+                window.Close();
         }
 
         public void OnKeyboard(IAssetManager manager,IWindow window, IKeyboard keyboard, IMouse mouse)
@@ -53,56 +55,52 @@ namespace PillaPilla
             if (keyboard.IsKeyDown(Keys.S))
                 this.cat.y -= 0.05f;
 
-            if (this.mouse.x + (this.mouse.width /2) > room_width/2)
-                this.mouse.x = (room_width / 2) - (this.mouse.width/2);
-
-            if (this.cat.x + (this.cat.width / 2) > room_width / 2)
-                this.cat.x = room_width / 2 - (this.cat.width / 2);
-
-            if (this.mouse.x - (this.mouse.width / 2) < room_width / -2)
-                this.mouse.x = room_width / -2 + (this.mouse.width / 2);
-
-            if (this.cat.x - (this.cat.width / 2) < room_width / -2)
-                this.cat.x = room_width / -2 + (this.cat.width / 2);
-
-            if (this.mouse.y + (this.mouse.heigth / 2) > room_height / 2)
-                this.mouse.y = room_height / 2 - (this.mouse.heigth / 2);
-
-            if (this.cat.y + (this.cat.heigth / 2) > room_height / 2)
-                this.cat.y = room_height / 2 - (this.cat.heigth / 2);
-
-            if (this.mouse.y - (this.mouse.heigth / 2) < room_height / -2)
-                this.mouse.y = room_height / -2 + (this.mouse.heigth / 2);
-
-            if (this.cat.y - (this.cat.heigth / 2) < room_height / -2)
-                this.cat.y = room_height / -2 + (this.cat.heigth / 2);
+            //Cierra el programa
+            if (keyboard.IsKeyDown(Keys.Escape))
+                window.Close();
         }   
 
         public void OnLoad(IAssetManager manager, IWindow window)
         {
+            //Pone el juego en Pantalla completa
+            //window.ToggleFullscreen();
+
+            //Caracteristicas del mundo
+            background = manager.LoadImage("resources\\fondo.jpg");
+            float arimg = background.Width / background.Height;
+            float world_width = 20.0f;
+            float world_height = world_width/arimg;
+
+            //caracteristicas gato
+            float arcat;
             cat = new Character();
-            cat.x = 0.0f;
+            cat.Image = manager.LoadImage("resources\\gato.png");
+            cat.x = 7.0f;
             cat.y = 0.0f;
             cat.width = 4.0f;
-            cat.heigth = 4.0f;
+            arcat = (float)cat.Image.Width / cat.Image.Height;
+            cat.heigth = cat.width/arcat;
             cat.Type = CharacterType.Cat;
             cat.r = 0.3f;
             cat.b = 0.45f;
             cat.g = 0.7f;
             cat.a = 1.0f;
-            cat.Image = manager.LoadImage("C:\\Users\\danberinf\\Desktop\\Images\\gato.png");
 
+            //caracteristicas raton
+            float armouse;
             mouse = new Character();
-            mouse.x = 0.0f;
+            mouse.Image = manager.LoadImage("resources\\raton.png");
+            mouse.x = -7.0f;
             mouse.y = 0.0f;
             mouse.width = 3.0f;
-            mouse.heigth = 3.0f;
+            armouse = (float)(mouse.Image.Width / mouse.Image.Height);
+            mouse.heigth = mouse.width/armouse;
             mouse.Type = CharacterType.Cat;
             mouse.r = 0.3f;
             mouse.b = 0.55f;
             mouse.g = 0.2f;
             mouse.a = 0.99f;
-            mouse.Image = manager.LoadImage("C:\\Users\\danberinf\\Desktop\\Images\\raton.png");
+            
         }
 
         public void OnUnload(IAssetManager manager, IWindow window)

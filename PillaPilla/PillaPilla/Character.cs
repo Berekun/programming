@@ -22,7 +22,7 @@ namespace PillaPilla
 
         public void Render(ICanvas canvas)
         {
-            canvas.FillRectangle2(this.x,this.y, this.width, this.heigth,this.Image,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f,1.0f,this.a);
+            canvas.FillRectangle(this.x,this.y, this.width, this.heigth,this.Image,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f,1.0f,this.a);
         }
     }
 }
