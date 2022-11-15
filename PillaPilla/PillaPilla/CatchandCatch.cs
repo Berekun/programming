@@ -14,7 +14,7 @@ namespace PillaPilla
         //float horizontal = -0.02f;
         //float vertical = 0.0f;
         private double time = 0.0;
-        Image background;
+        world world;
         Character cat;
         Character mouse;
 
@@ -26,8 +26,9 @@ namespace PillaPilla
             cat.a = (float)correction;
 
             canvas.Clear(1.0f,1.0f,1.0f,1.0f);
-            canvas.SetCamera(-10.0f, -7.5f, 10.0f, 7.5f, true);
+            canvas.SetCamera(world.x,world.y,world.x + world.width,world.y + world.heigth, true);
 
+            world.Render(canvas);
             cat.Render(canvas);
             mouse.Render(canvas);
 
@@ -55,6 +56,8 @@ namespace PillaPilla
             if (keyboard.IsKeyDown(Keys.S))
                 this.cat.y -= 0.05f;
 
+
+
             //Cierra el programa
             if (keyboard.IsKeyDown(Keys.Escape))
                 window.Close();
@@ -66,10 +69,14 @@ namespace PillaPilla
             //window.ToggleFullscreen();
 
             //Caracteristicas del mundo
-            background = manager.LoadImage("resources\\fondo.jpg");
-            float arimg = background.Width / background.Height;
-            float world_width = 20.0f;
-            float world_height = world_width/arimg;
+            world = new world();
+            world.Image = manager.LoadImage("resources\\fondo.jpg");
+            float arimg = world.Image.Width / world.Image.Height;
+            world.width = 20.0f;
+            world.heigth = world.width/arimg;
+            world.x = -10.0f;
+            world.y = -7.5f;
+            world.a = 1.0f;
 
             //caracteristicas gato
             float arcat;
@@ -107,27 +114,5 @@ namespace PillaPilla
         {
             
         }
-
-        //public float dist1(float x1,float x2,float width1,float width2)
-        //{
-        //    float dist = (x1 + (width1 / 2)) - (x2 - (width2 / 2));
-        //    return dist;
-        //}
-
-        //public float dist2(float x1, float x2, float width1, float width2)
-        //{
-        //    float dist = (x1 - (width1 / 2)) - (x2 + (width2 / 2));
-        //    return dist;
-        //}
-        //public float dist3(float y1, float y2, float heigth1, float heigth2)
-        //{
-        //    float dist = (y1 - (heigth1 / 2)) - (y2 + (heigth2 / 2));
-        //   return dist;
-        //}
-        //public float dist4(float y1, float y2, float heigth1, float heigth2)
-        //{
-        //    float dist = (y1 - (heigth1 / 2)) - (y2 + (heigth2 / 2));
-        //    return dist;
-        //}
     }
 }
