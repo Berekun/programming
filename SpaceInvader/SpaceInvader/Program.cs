@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            SpaceInvader p = new SpaceInvader();
+            DAM.Game.Launch(p);
         }
     }
 }
