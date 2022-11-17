@@ -18,7 +18,7 @@ namespace PillaPilla
             float y1min = y1 - h1 / 2;
 
             float x2max = x2 + w2 / 2;
-            float y2max = y2 + h2 / 2;
+            float y2max = y2 + h2 / 2;  
             float x2min = x2 - w2 / 2;
             float y2min = y2 - h2 / 2;
 

@@ -70,7 +70,7 @@ namespace PillaPilla
 
             //Caracteristicas del mundo
             world = new world();
-            world.Image = manager.LoadImage("resources\\fondo.jpg");
+            world.Image = manager.LoadImage("resources\\fondo.jpg");    
             float arimg = world.Image.Width / world.Image.Height;
             world.width = 20.0f;
             world.heigth = world.width/arimg;
