@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,43 +10,43 @@ namespace SpaceInvader
 {
     internal class SpaceInvader : DAM.IGameDelegate
     {
-        world world;
+        World world;
         GameObject player;
         public void OnDraw(IAssetManager manager, IWindow window, ICanvas canvas)
         {
+            Time.UpdateDeltaTime();
             canvas.Clear(0.0f, 0.0f, 0.0f, 0.0f);
-            canvas.SetCamera(world.x, world.y, world.x + world.width, world.y + world.height, true);
+            canvas.SetCamera(world.minX, world.minY,world.maxX,world.maxY, true);
 
+            player.Shoot(canvas, world.bullets);
             world.Render(canvas);
             player.Render(canvas);
-            player.Limited(canvas,world.x,world.y);
-            
         }
 
         public void OnKeyboard(IAssetManager manager, IWindow window, IKeyboard keyboard, IMouse mouse)
         {
-            player.Move(keyboard);
+            player.Move(keyboard,world.maxX,world.minX);
         }
 
         public void OnLoad(IAssetManager manager, IWindow window)
         {
             //Caracteristicas del mundo
-            world = new world();
+            world = new World();
             world.Image = manager.LoadImage("resources\\fondo.jpg");
-            world.height = 10.0f;
-            world.width = 7.5f;
-            world.y = 0f;
-            world.x = 0f;
+            world.maxY = 10.0f;
+            world.maxX = 7.5f;
+            world.minY = -world.maxY;
+            world.minX = -world.maxX;
             world.a = 1.0f;
 
             //Caracteristicas de la nave principal
             player = new GameObject();
             player.Image = manager.LoadImage("resources\\player.png");
             float arplayer = player.Image.Width / player.Image.Height;
-            player.width = 1;
+            player.width = 2;
             player.height = player.width/arplayer;
             player.x = 0.0f;
-            player.y = 0.0f + player.height/2;
+            player.y = world.minY + 2;
             player.type = GameObjectsType.PLAYER;
         }
 
