@@ -1,4 +1,5 @@
-﻿
+﻿using DAM;
+using System;
 using System.Drawing;
 
 namespace DAM

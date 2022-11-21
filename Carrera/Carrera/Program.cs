@@ -13,7 +13,7 @@
                 winner = Simulation.GetWinner(list);
             }
 
-            Console.WriteLine(winner.name);
+            Console.WriteLine("El ganador es " + winner.name);
         }
     }
 }
