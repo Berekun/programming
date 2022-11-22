@@ -31,17 +31,19 @@ namespace SpaceInvader
 
         }
 
-        public void Move(IKeyboard k,float maxX, float minX)
+        public void MovePlayer(IKeyboard k,float maxX, float minX)
         {
             MovePosition(k);
-            Limited(maxX, minX);
+            LimitedPlayer(maxX, minX);
         }
 
-        public void Move(float maxY)
+        public void MoveBullet(float maxY,List<GameObject> bullets)
         {
             if (this.type == GameObjectsType.BULLET)
             {
                 this.y += 5f * Time.deltaTime;
+
+                LimitedBullet(bullets, maxY);
             }
         }
 
@@ -61,7 +63,7 @@ namespace SpaceInvader
             }
         }
 
-        public void Limited(float maxX,float minX,float maxY,List<GameObject> list)
+        public void LimitedPlayer(float maxX,float minX)
         {
             if(this.type == GameObjectsType.PLAYER)
             {
@@ -77,13 +79,13 @@ namespace SpaceInvader
                     this.x = -maxpos;
                 }
             }
+        }
 
-            if(this.type == GameObjectsType.BULLET)
+        public void LimitedBullet(List<GameObject> bullets, float maxY)
+        {
+            if(this.y >= maxY)
             {
-                if(this.y >= maxY)
-                {
-                    list.Remove(this); 
-                }
+                bullets.Remove(this);
             }
         }
 
@@ -104,6 +106,28 @@ namespace SpaceInvader
                 bullet.a = 1.0f;
                 bullets.Add(bullet);
                 this.shotTime = 0;
+            }
+        }
+
+        public void GetEnemies(ICanvas canvas,List<GameObject> enemies)
+        {
+            float round = 0;
+            if(round == 0)
+            {
+                while (enemies.Count < 5)
+                {
+                    GameObject soldier = new GameObject();
+                    soldier.x = -6.5f;
+                    soldier.y = 9.0f;
+                    soldier.width = 1f;
+                    soldier.height = 1f;
+                    soldier.type = GameObjectsType.SOLDIER;
+                    soldier.r = 0f;
+                    soldier.g = 0f;
+                    soldier.b = 0f;
+                    soldier.a = 1f;
+                    enemies.Add(soldier);
+                }
             }
         }
 

@@ -19,15 +19,15 @@ namespace SpaceInvader
         public void Render(ICanvas canvas)
         {
             canvas.FillRectangle(this.minX, this.minY, this.maxX*2, this.maxY*2, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-            RenderObjects(canvas, bullets);
+            RenderBullets(canvas, bullets);
         }
 
-        public void RenderObjects(ICanvas canvas,List<GameObject> list)
+        public void RenderBullets(ICanvas canvas,List<GameObject> list)
         {
-            foreach(GameObject go in list)
+            for(int i = 0; i < list.Count; i++)
             {
-                go.Move(this.maxY);
-                go.Render(canvas);
+                list[i].MoveBullet(this.maxY,list);
+                list[i].Render(canvas);
             }
 
         }

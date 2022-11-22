@@ -12,6 +12,7 @@ namespace SpaceInvader
     {
         World world;
         GameObject player;
+        GameObject soldier;
         public void OnDraw(IAssetManager manager, IWindow window, ICanvas canvas)
         {
             Time.UpdateDeltaTime();
@@ -21,11 +22,12 @@ namespace SpaceInvader
             player.Shoot(canvas, world.bullets);
             world.Render(canvas);
             player.Render(canvas);
+            
         }
 
         public void OnKeyboard(IAssetManager manager, IWindow window, IKeyboard keyboard, IMouse mouse)
         {
-            player.Move(keyboard,world.maxX,world.minX);
+            player.MovePlayer(keyboard,world.maxX,world.minX);
         }
 
         public void OnLoad(IAssetManager manager, IWindow window)
