@@ -47,6 +47,16 @@ namespace SpaceInvader
             }
         }
 
+        public void MoveSoldier(float minY,List<GameObject> soldiers)
+        {
+            if (this.type == GameObjectsType.SOLDIER)
+            {
+                this.y -= 2 * Time.deltaTime;
+
+                LimitedSoldier(soldiers, minY);
+            }
+        }
+
         public void MovePosition(IKeyboard keyboard)
         {
             if(this.type == GameObjectsType.PLAYER)
@@ -89,6 +99,14 @@ namespace SpaceInvader
             }
         }
 
+        public void LimitedSoldier(List<GameObject> soldier, float minY)
+        {
+            if(this.y <= minY)
+            {
+                soldier.Remove(this);
+            }
+        }
+
         public void Shoot(ICanvas canvas,List<GameObject> bullets)
         {
             this.shotTime += Time.deltaTime;
@@ -109,15 +127,16 @@ namespace SpaceInvader
             }
         }
 
-        public void GetEnemies(ICanvas canvas,List<GameObject> enemies)
+        public static void GetEnemies(List<GameObject> enemies)
         {
             float round = 0;
+            float startx = -6.5f;
             if(round == 0)
             {
-                while (enemies.Count < 5)
+                for(int i = 0; i < 7; i++,startx += 2)
                 {
                     GameObject soldier = new GameObject();
-                    soldier.x = -6.5f;
+                    soldier.x = startx;
                     soldier.y = 9.0f;
                     soldier.width = 1f;
                     soldier.height = 1f;
