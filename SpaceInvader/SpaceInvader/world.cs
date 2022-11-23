@@ -28,7 +28,7 @@ namespace SpaceInvader
             for(int i = 0; i < list.Count; i++)
             {
                 list[i].MoveBullet(this.maxY,list);
-                list[i].Render(canvas);
+                list[i].Render(canvas); 
             }
         }
 
@@ -36,8 +36,8 @@ namespace SpaceInvader
         {
             for(int i = 0; i< list.Count; i++)
             {
-                list[i].MoveSoldier(this.minY, list);
                 list[i].Render(canvas);
+                list[i].MoveSoldier(this.minY, list);
             }
         }
     }

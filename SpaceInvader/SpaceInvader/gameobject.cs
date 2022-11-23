@@ -107,6 +107,26 @@ namespace SpaceInvader
             }
         }
 
+        /*public void GameObjectColision(List<GameObject> bullets,List<GameObject> soldiers
+        {
+
+        }
+        */
+        public void GameObjectColision(GameObject gameObject1,GameObject gameObject2)
+        {
+            if(this.type == GameObjectsType.PLAYER)
+            {
+
+            }
+            else if (this.type == GameObjectsType.SOLDIER)
+            {
+                if(gameObject2.type == GameObjectsType.PLAYER)
+                {
+
+                }
+            }
+        }
+
         public void Shoot(ICanvas canvas,List<GameObject> bullets)
         {
             this.shotTime += Time.deltaTime;
