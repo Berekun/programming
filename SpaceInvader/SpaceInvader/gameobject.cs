@@ -114,15 +114,15 @@ namespace SpaceInvader
         */
         public void GameObjectColision(GameObject gameObject1,GameObject gameObject2)
         {
-            if(this.type == GameObjectsType.PLAYER)
+            if(this.type == GameObjectsType.SOLDIER)
             {
-
+                if(gameObject2.type == GameObjectsType.BULLET)
             }
-            else if (this.type == GameObjectsType.SOLDIER)
+            else if (this.type == GameObjectsType.PLAYER)
             {
-                if(gameObject2.type == GameObjectsType.PLAYER)
+                if(gameObject2.type == GameObjectsType.SOLDIER)
                 {
-
+                    colliders.IsColision(gameObject1.x, gameObject1.y, gameObject1.width, gameObject1.height, gameObject2.x, gameObject2.y, gameObject2.width, gameObject2.height);
                 }
             }
         }
