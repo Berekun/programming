@@ -19,15 +19,13 @@ namespace SpaceInvader
             canvas.SetCamera(world.minX, world.minY,world.maxX,world.maxY, true);
 
             player.Shoot(canvas, world.bullets);
-            world.Render(canvas);
-            player.Render(canvas);
-            
-            
+            world.Render(canvas, world,window,player);
+            player.Render(canvas);   
         }
 
         public void OnKeyboard(IAssetManager manager, IWindow window, IKeyboard keyboard, IMouse mouse)
         {
-            player.MovePlayer(keyboard,world.maxX,world.minX);
+            player.Move(keyboard,world,world.bullets,world.enemies);
         }
 
         public void OnLoad(IAssetManager manager, IWindow window)
@@ -52,7 +50,7 @@ namespace SpaceInvader
             player.type = GameObjectsType.PLAYER;
 
             //crear soldiers
-            GameObject.GetEnemies(world.enemies);
+            GameEngine.CreateEnemies(world.enemies);
         }
 
         public void OnUnload(IAssetManager manager, IWindow window)

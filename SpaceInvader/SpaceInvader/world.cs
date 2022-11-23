@@ -16,28 +16,47 @@ namespace SpaceInvader
         public List<GameObject> enemies = new List<GameObject>(); 
         public float r, g, b, a;
 
-        public void Render(ICanvas canvas)
+        public void Render(ICanvas canvas,World world,IWindow window,GameObject player)
         {
             canvas.FillRectangle(this.minX, this.minY, this.maxX*2, this.maxY*2, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-            RenderBullets(canvas, bullets);
-            RenderSoldier(canvas, enemies);
+            AnimateBullet(canvas, null, world, bullets, enemies);
+            AnimateSoldier(canvas, null, world, enemies,bullets);
+            RenderBullets(canvas, bullets,enemies,window,player);
+            RenderSoldier(canvas, enemies,bullets,window,player);
         }
 
-        public void RenderBullets(ICanvas canvas,List<GameObject> list)
+        public void RenderBullets(ICanvas canvas,List<GameObject> bullets,List<GameObject> soldiers,IWindow window,GameObject player)
         {
-            for(int i = 0; i < list.Count; i++)
+            for(int i = 0; i < bullets.Count; i++)
             {
-                list[i].MoveBullet(this.maxY,list);
-                list[i].Render(canvas); 
+                bullets[i].Render(canvas);
+                bullets[i].GameObjectColisionAll(bullets,soldiers,player,window);
             }
         }
 
-        public void RenderSoldier(ICanvas canvas,List<GameObject> list)
+        public void AnimateBullet(ICanvas canvas,IKeyboard keyboard,World world, List<GameObject> bullets, List<GameObject> soldier)
         {
-            for(int i = 0; i< list.Count; i++)
+            for (int i = 0; i < bullets.Count; i++)
             {
-                list[i].Render(canvas);
-                list[i].MoveSoldier(this.minY, list);
+                bullets[i].Move(keyboard, world, bullets,soldier);
+            }       
+        }
+
+        public void RenderSoldier(ICanvas canvas,List<GameObject> soldier, List<GameObject> bullets, IWindow window,GameObject player)
+        {
+            for(int i = 0; i< soldier.Count; i++)
+            {
+                soldier[i].Render(canvas);
+                soldier[i].GameObjectColisionAll(bullets,soldier,player,window);
+            }
+        }
+
+        public void AnimateSoldier(ICanvas canvas, IKeyboard keyboard, World world, List<GameObject> soldier,List<GameObject> bullets)
+        {
+            for (int i = 0; i < soldier.Count; i++)
+            {
+                soldier[i].Move(keyboard, world, bullets,soldier);
+
             }
         }
     }
