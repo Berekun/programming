@@ -9,40 +9,41 @@ using System.Numerics;
 
 namespace SpaceInvader
 {
-    public enum GameObjectsType
+    public enum GameObjectType
     {
         PLAYER,SOLDIER,CAVALIER,DAVROS,BULLET
     }
     internal class GameObject
     {
         public float x,y,width,height;
-        public GameObjectsType type;
+        public GameObjectType type;
         public float r, g, b, a;
         public Image Image;
         public List<Image> list;
         float shotTime = 0;
+        public int lives = 3;
 
         public void Render(ICanvas canvas)
         {
             if (this.Image != null)
                 canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
             else
-                canvas.FillRectangle(this.x, this.y, this.width, this.height, this.r, this.g, this.b, this.a);
+                canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.r, this.g, this.b, this.a);
 
         }
 
         public void Move(IKeyboard k,World world,List<GameObject> bullets,List<GameObject> soldiers)
         {
-            if(this.type == GameObjectsType.PLAYER)
+            if(this.type == GameObjectType.PLAYER)
             {
                 MovePosition(k);
-                LimitedPlayer(world.maxX, world.minX);
+                FixPositionPlayer(world.maxX, world.minX);
             }
-            else if(this.type == GameObjectsType.BULLET)
+            else if(this.type == GameObjectType.BULLET)
             {
                 MoveBullet(world.maxY, bullets);
             }
-            else if(this.type == GameObjectsType.SOLDIER)
+            else if(this.type == GameObjectType.SOLDIER)
             {
                 MoveSoldier(world.minY, soldiers);
             }
@@ -51,27 +52,27 @@ namespace SpaceInvader
 
         private void MoveBullet(float maxY,List<GameObject> bullets)
         {
-            if (this.type == GameObjectsType.BULLET)
+            if (this.type == GameObjectType.BULLET)
             {
                 this.y += 5f * Time.deltaTime;
 
-                LimitedBullet(bullets, maxY);
+                RemoveBullet(bullets, maxY);
             }
         }
 
         private void MoveSoldier(float minY,List<GameObject> soldiers)
         {
-            if (this.type == GameObjectsType.SOLDIER)
+            if (this.type == GameObjectType.SOLDIER)
             {
                 this.y -= 2 * Time.deltaTime;
 
-                LimitedSoldier(soldiers, minY);
+                RemoveSoldier(soldiers, minY);
             }
         }
 
         private void MovePosition(IKeyboard keyboard)
         {
-            if(this.type == GameObjectsType.PLAYER)
+            if(this.type == GameObjectType.PLAYER)
             {
                 if (keyboard.IsKeyDown(Keys.Right))
                 {
@@ -85,9 +86,9 @@ namespace SpaceInvader
             }
         }
 
-        public void LimitedPlayer(float maxX,float minX)
+        public void FixPositionPlayer(float maxX,float minX)
         {
-            if(this.type == GameObjectsType.PLAYER)
+            if(this.type == GameObjectType.PLAYER)
             {
                 float maxpos= maxX - this.width/2;
 
@@ -103,7 +104,7 @@ namespace SpaceInvader
             }
         }
 
-        public void LimitedBullet(List<GameObject> bullets, float maxY)
+        public void RemoveBullet(List<GameObject> bullets, float maxY)
         {
             if(this.y >= maxY)
             {
@@ -111,7 +112,7 @@ namespace SpaceInvader
             }
         }
 
-        public void LimitedSoldier(List<GameObject> soldier, float minY)
+        public void RemoveSoldier(List<GameObject> soldier, float minY)
         {
             if(this.y <= minY)
             {
@@ -119,23 +120,18 @@ namespace SpaceInvader
             }
         }
 
-        /*public void GameObjectColision(List<GameObject> bullets,List<GameObject> soldiers
-        {
-
-        }
-        */
         public bool GameObjectColision(GameObject gameObject2)
         {
-            if(this.type == GameObjectsType.SOLDIER)
+            if(this.type == GameObjectType.SOLDIER)
             {
-                if (gameObject2.type == GameObjectsType.BULLET)
+                if (gameObject2.type == GameObjectType.BULLET)
                 {
                     return colliders.IsColision(this.x, this.y, this.width, this.height, gameObject2.x, gameObject2.y, gameObject2.width, gameObject2.height);
                 }
             }
-            else if (this.type == GameObjectsType.PLAYER)
+            else if (this.type == GameObjectType.PLAYER)
             {
-                if(gameObject2.type == GameObjectsType.SOLDIER)
+                if(gameObject2.type == GameObjectType.SOLDIER)
                 {
                     return colliders.IsColision(this.x, this.y, this.width, this.height, gameObject2.x, gameObject2.y, gameObject2.width, gameObject2.height);
                 }
@@ -146,35 +142,49 @@ namespace SpaceInvader
 
         public void GameObjectColisionAll(List<GameObject> bullets,List<GameObject> soldiers,GameObject player,IWindow window)
         {
+
             for (int i = 0; i < soldiers.Count; i++)
             {
                 for (int j = 0; j < bullets.Count; j++)
                 {
-                   if(bullets[j].GameObjectColision(soldiers[i]) == true)
-                   {
+                    if (i < 0)
+                    {
+                        i++;
+                    }
+
+                    if (soldiers[i].GameObjectColision(bullets[j]) == true)
+                    {
                         soldiers.Remove(soldiers[i]);
-                   }
+                        bullets.Remove(bullets[j]);
+                        j--;
+                        i--;
+                    }
 
+                    if (soldiers.Count == 0)
+                        break;
                 }
+            }
 
-                if (soldiers[i].GameObjectColision(player) == true)
+            for (int i = 0; i < soldiers.Count; i++)
+            {
+                if (player.GameObjectColision(soldiers[i]) == true)
                 {
-                    window.Close();
-                } 
+                    player.lives--;
+                }
             }
         }
 
         public void Shoot(ICanvas canvas,List<GameObject> bullets)
         {
             this.shotTime += Time.deltaTime;
-            if(this.shotTime >= 1f)
+            if(this.shotTime >= 0.5f)
             {
                 GameObject bullet = new GameObject();
                 bullet.x = this.x;
                 bullet.y = this.y;
                 bullet.width = 0.4f;
                 bullet.height = 0.7f;
-                bullet.type = GameObjectsType.BULLET;
+                bullet.type = GameObjectType.BULLET;
                 bullet.r = 1.0f;
                 bullet.g = 1.0f;
                 bullet.b = 1.0f;

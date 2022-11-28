@@ -18,7 +18,7 @@ namespace SpaceInvader
 
         public void Render(ICanvas canvas,World world,IWindow window,GameObject player)
         {
-            canvas.FillRectangle(this.minX, this.minY, this.maxX*2, this.maxY*2, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+            canvas.FillRectangle(this.minX , this.minY, this.maxX*2, this.maxY*2, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
             AnimateBullet(canvas, null, world, bullets, enemies);
             AnimateSoldier(canvas, null, world, enemies,bullets);
             RenderBullets(canvas, bullets,enemies,window,player);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAM;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,12 +22,32 @@ namespace SpaceInvader
                     soldier.y = 9.0f;
                     soldier.width = 1f;
                     soldier.height = 1f;
-                    soldier.type = GameObjectsType.SOLDIER;
+                    soldier.type = GameObjectType.SOLDIER;
                     soldier.r = 0f;
                     soldier.g = 0f;
                     soldier.b = 0f;
                     soldier.a = 1f;
                     enemies.Add(soldier);
+                }
+            }
+        }
+
+        public static void ResetWorld(GameObject player,List<GameObject> enemies,List<GameObject> bullets,float startlifes,IWindow window)
+        {
+            if (startlifes == 0)
+            {
+                Console.WriteLine(player.lives);
+                window.Close();
+            }
+
+            if (startlifes > player.lives)
+            {
+                player.x = 0.0f;
+                bullets.Clear();
+
+                foreach(GameObject soldier in enemies)
+                {
+                    soldier.y = 9f;
                 }
             }
         }

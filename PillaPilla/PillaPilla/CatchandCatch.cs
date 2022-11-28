@@ -106,7 +106,7 @@ namespace PillaPilla
             mouse.r = 0.3f;
             mouse.b = 0.55f;
             mouse.g = 0.2f;
-            mouse.a = 0.99f;
+            mouse.a = 1f;
             
         }
 
