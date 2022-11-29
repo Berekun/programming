@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using System.Numerics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace SpaceInvader
 {
@@ -36,7 +37,7 @@ namespace SpaceInvader
 
         //Funcion de movimiento en general
 
-        public void Move(IKeyboard k,World world,List<GameObject> bullets,List<GameObject> soldiers)
+        public void Move(IKeyboard k,World world,List<GameObject> bullets,List<GameObject> soldiers, GameObject player, IWindow window, int startlifes)
         {
             if(this.type == GameObjectType.PLAYER)
             {
@@ -49,7 +50,7 @@ namespace SpaceInvader
             }
             else if(this.type == GameObjectType.SOLDIER)
             {
-                MoveSoldier(world.minY, soldiers);
+                MoveSoldier(world.minY, soldiers,player,window,world,startlifes);
             }
             
         }
@@ -68,13 +69,13 @@ namespace SpaceInvader
 
         //Funcion de movimiento de soldier
 
-        private void MoveSoldier(float minY,List<GameObject> soldiers)
+        private void MoveSoldier(float minY,List<GameObject> soldiers, GameObject player, IWindow window, World world, int startlifes)
         {
             if (this.type == GameObjectType.SOLDIER)
             {
                 this.y -= 2 * Time.deltaTime;
 
-                RemoveSoldier(soldiers, minY);
+                RemoveSoldier(soldiers, minY,player,window,world,startlifes);
             }
         }
 
@@ -86,12 +87,12 @@ namespace SpaceInvader
             {
                 if (keyboard.IsKeyDown(Keys.Right))
                 {
-                    this.x += 0.1f;
+                    this.x += 0.05f;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Left))
                 {
-                    this.x -= 0.1f;
+                    this.x -= 0.05f;
                 }
             }
         }
@@ -128,11 +129,12 @@ namespace SpaceInvader
 
         //Funcion que elimina soldiers
 
-        public void RemoveSoldier(List<GameObject> soldier, float minY)
+        public void RemoveSoldier(List<GameObject> soldier, float minY, GameObject player, IWindow window, World world, int startlifes)
         {
             if(this.y <= minY)
             {
                 soldier.Remove(this);
+                GameEngine.ResetWorld(player, world.enemies, world.bullets, startlifes, window);
             }
         }
 
@@ -197,7 +199,7 @@ namespace SpaceInvader
 
         //Funcion de disparo del player
 
-        public void Shoot(ICanvas canvas,List<GameObject> bullets)
+        public void Shoot(ICanvas canvas,List<GameObject> bullets,IAssetManager manager)
         {
             this.shotTime += Time.deltaTime;
             if(this.shotTime >= 0.5f)
@@ -208,6 +210,7 @@ namespace SpaceInvader
                 bullet.width = 0.4f;
                 bullet.height = 0.7f;
                 bullet.type = GameObjectType.BULLET;
+                bullet.Image = manager.LoadImage("resources\\bala.png");
                 bullet.r = 1.0f;
                 bullet.g = 1.0f;
                 bullet.b = 1.0f;

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-  <None Include="resources/**" CopyToOutputDirectory="PreserveNewest"/>
+  <None Include="resources/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
