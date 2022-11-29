@@ -1,12 +1,5 @@
 ﻿using System;
 using DAM;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-using System.Numerics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace SpaceInvader
 {
