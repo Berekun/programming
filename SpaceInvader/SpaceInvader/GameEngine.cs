@@ -9,7 +9,8 @@ namespace SpaceInvader
 {
     internal class GameEngine
     {
-        public static void CreateEnemies(List<GameObject> enemies)
+        //Crea el primer bloque de enemigos
+        public static void CreateFirstRound(List<GameObject> enemies,IAssetManager manager)
         {
             float round = 0;
             float startx = -6.5f;
@@ -20,36 +21,63 @@ namespace SpaceInvader
                     GameObject soldier = new GameObject();
                     soldier.x = startx;
                     soldier.y = 9.0f;
-                    soldier.width = 1f;
-                    soldier.height = 1f;
+                    soldier.width = 2f;
+                    soldier.height = 2f;
                     soldier.type = GameObjectType.SOLDIER;
-                    soldier.r = 0f;
-                    soldier.g = 0f;
-                    soldier.b = 0f;
-                    soldier.a = 1f;
+                    
+                    soldier.r = 1f;
+                    soldier.g = 1f;
+                    soldier.b = 1f;
+                    soldier.a = 0.9f;
+                    
+                    soldier.Image = manager.LoadImage("resources\\enemigo1.png");
+                    soldier.list.Add(soldier.Image);
+                    soldier.Image = manager.LoadImage("resources\\enemigo2.png");
+                    soldier.list.Add(soldier.Image);
+                    soldier.Image = manager.LoadImage("resources\\enemigo3.png");
+                    soldier.list.Add(soldier.Image);
+
+                    soldier.Image = soldier.list[Getrandom(0, 3)];
+
                     enemies.Add(soldier);
+
+          
                 }
             }
         }
 
+        //Si te quitan una vida, es lo que resetea el mundo
+
         public static void ResetWorld(GameObject player,List<GameObject> enemies,List<GameObject> bullets,float startlifes,IWindow window)
         {
-            if (startlifes == 0)
+            if (player.lifes == 0)
             {
-                Console.WriteLine(player.lives);
                 window.Close();
             }
 
-            if (startlifes > player.lives)
+            if (startlifes > player.lifes)
             {
                 player.x = 0.0f;
                 bullets.Clear();
+                startlifes--;
 
                 foreach(GameObject soldier in enemies)
                 {
                     soldier.y = 9f;
                 }
             }
+        }
+
+        //Es una funcion Random
+
+        private static Random random = new Random();
+
+        public static int Getrandom(int min, int max)
+        {
+            double r = random.NextDouble();
+            double dis = max - min;
+            double result = r * dis + min;
+            return (int)result;
         }
     }
 }

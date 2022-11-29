@@ -9,6 +9,8 @@ namespace SpaceInvader
 {
     internal class colliders
     {
+
+        //Es la funcion que te dice si estas colisionando o no
         public static bool IsColision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2)
         {
             float x1max = x1 + w1 / 2;

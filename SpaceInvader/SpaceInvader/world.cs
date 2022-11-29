@@ -16,23 +16,29 @@ namespace SpaceInvader
         public List<GameObject> enemies = new List<GameObject>(); 
         public float r, g, b, a;
 
-        public void Render(ICanvas canvas,World world,IWindow window,GameObject player)
+        //Renderiza todos los objetos del Mundo
+
+        public void Render(ICanvas canvas,World world,IWindow window,GameObject player,int startlifes)
         {
             canvas.FillRectangle(this.minX , this.minY, this.maxX*2, this.maxY*2, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
             AnimateBullet(canvas, null, world, bullets, enemies);
             AnimateSoldier(canvas, null, world, enemies,bullets);
-            RenderBullets(canvas, bullets,enemies,window,player);
-            RenderSoldier(canvas, enemies,bullets,window,player);
+            RenderBullets(canvas, bullets,enemies,window,player,world,startlifes);
+            RenderSoldier(canvas, enemies,bullets,window,player,world,startlifes);
         }
 
-        public void RenderBullets(ICanvas canvas,List<GameObject> bullets,List<GameObject> soldiers,IWindow window,GameObject player)
+        //Renderiza balas
+
+        public void RenderBullets(ICanvas canvas,List<GameObject> bullets,List<GameObject> soldiers,IWindow window,GameObject player,World world,int startlifes)
         {
             for(int i = 0; i < bullets.Count; i++)
             {
                 bullets[i].Render(canvas);
-                bullets[i].GameObjectColisionAll(bullets,soldiers,player,window);
+                bullets[i].GameObjectColisionAll(bullets,soldiers,player,window,world,startlifes);
             }
         }
+
+        //Anima las balas
 
         public void AnimateBullet(ICanvas canvas,IKeyboard keyboard,World world, List<GameObject> bullets, List<GameObject> soldier)
         {
@@ -42,14 +48,18 @@ namespace SpaceInvader
             }       
         }
 
-        public void RenderSoldier(ICanvas canvas,List<GameObject> soldier, List<GameObject> bullets, IWindow window,GameObject player)
+        //Renderiza los soldiers
+
+        public void RenderSoldier(ICanvas canvas,List<GameObject> soldier, List<GameObject> bullets, IWindow window,GameObject player,World world, int startlifes)
         {
             for(int i = 0; i< soldier.Count; i++)
             {
                 soldier[i].Render(canvas);
-                soldier[i].GameObjectColisionAll(bullets,soldier,player,window);
+                soldier[i].GameObjectColisionAll(bullets,soldier,player,window,world,startlifes);
             }
         }
+
+        //Anima los soldiers
 
         public void AnimateSoldier(ICanvas canvas, IKeyboard keyboard, World world, List<GameObject> soldier,List<GameObject> bullets)
         {

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace SpaceInvader
 {
+
+    //Sirve para controlar los tiempos
     internal class Time
     {
 

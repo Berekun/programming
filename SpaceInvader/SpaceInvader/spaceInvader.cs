@@ -12,7 +12,7 @@ namespace SpaceInvader
     {
         World world;
         GameObject player;
-        float startlifes = 3;
+        int startlifes = 3;
         public void OnDraw(IAssetManager manager, IWindow window, ICanvas canvas)
         {
             Time.UpdateDeltaTime();
@@ -20,19 +20,24 @@ namespace SpaceInvader
             canvas.SetCamera(world.minX, world.minY,world.maxX,world.maxY, true);
 
             player.Shoot(canvas, world.bullets);
-            world.Render(canvas, world,window,player);
+            world.Render(canvas, world,window,player,startlifes);
             player.Render(canvas);
-            GameEngine.ResetWorld(player, world.enemies, world.bullets, startlifes,window);
-            startlifes = player.lives;
+            startlifes = player.lifes;
         }
 
         public void OnKeyboard(IAssetManager manager, IWindow window, IKeyboard keyboard, IMouse mouse)
         {
             player.Move(keyboard,world,world.bullets,world.enemies);
+
+            if (keyboard.IsKeyDown(Keys.Escape))
+                window.Close();
         }
 
         public void OnLoad(IAssetManager manager, IWindow window)
         {
+
+            window.ToggleFullscreen();
+
             //Caracteristicas del mundo
             world = new World();
             world.Image = manager.LoadImage("resources\\fondo.jpg");
@@ -53,7 +58,7 @@ namespace SpaceInvader
             player.type = GameObjectType.PLAYER;
 
             //crear soldiers
-            GameEngine.CreateEnemies(world.enemies);
+            GameEngine.CreateFirstRound(world.enemies,manager);
         }
 
         public void OnUnload(IAssetManager manager, IWindow window)

@@ -19,18 +19,22 @@ namespace SpaceInvader
         public GameObjectType type;
         public float r, g, b, a;
         public Image Image;
-        public List<Image> list;
+        public List<Image> list = new List<Image>();
         float shotTime = 0;
-        public int lives = 3;
+        public int lifes = 3;
+
+        //Renderiza los GameObjects
 
         public void Render(ICanvas canvas)
         {
             if (this.Image != null)
-                canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+                canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.9f);
             else
                 canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.r, this.g, this.b, this.a);
 
         }
+
+        //Funcion de movimiento en general
 
         public void Move(IKeyboard k,World world,List<GameObject> bullets,List<GameObject> soldiers)
         {
@@ -50,6 +54,8 @@ namespace SpaceInvader
             
         }
 
+        //Funcion de movimiento de bala
+
         private void MoveBullet(float maxY,List<GameObject> bullets)
         {
             if (this.type == GameObjectType.BULLET)
@@ -60,6 +66,8 @@ namespace SpaceInvader
             }
         }
 
+        //Funcion de movimiento de soldier
+
         private void MoveSoldier(float minY,List<GameObject> soldiers)
         {
             if (this.type == GameObjectType.SOLDIER)
@@ -69,6 +77,8 @@ namespace SpaceInvader
                 RemoveSoldier(soldiers, minY);
             }
         }
+
+        //Funcion de movimiento de la nave
 
         private void MovePosition(IKeyboard keyboard)
         {
@@ -85,6 +95,8 @@ namespace SpaceInvader
                 }
             }
         }
+
+        //Funcion de limite de jugador
 
         public void FixPositionPlayer(float maxX,float minX)
         {
@@ -104,6 +116,8 @@ namespace SpaceInvader
             }
         }
 
+        //Funcion que elimina balas
+
         public void RemoveBullet(List<GameObject> bullets, float maxY)
         {
             if(this.y >= maxY)
@@ -112,6 +126,8 @@ namespace SpaceInvader
             }
         }
 
+        //Funcion que elimina soldiers
+
         public void RemoveSoldier(List<GameObject> soldier, float minY)
         {
             if(this.y <= minY)
@@ -119,6 +135,8 @@ namespace SpaceInvader
                 soldier.Remove(this);
             }
         }
+
+        //Funcion que comprueba si dos GameObject estan colisionando
 
         public bool GameObjectColision(GameObject gameObject2)
         {
@@ -140,7 +158,9 @@ namespace SpaceInvader
             return false;
         }
 
-        public void GameObjectColisionAll(List<GameObject> bullets,List<GameObject> soldiers,GameObject player,IWindow window)
+        //Funcion que comprueba objetos de listas con otros objetos
+
+        public void GameObjectColisionAll(List<GameObject> bullets,List<GameObject> soldiers,GameObject player,IWindow window,World world,int startlifes)
         {
 
             for (int i = 0; i < soldiers.Count; i++)
@@ -169,10 +189,13 @@ namespace SpaceInvader
             {
                 if (player.GameObjectColision(soldiers[i]) == true)
                 {
-                    player.lives--;
+                    player.lifes--;
+                    GameEngine.ResetWorld(player, world.enemies, world.bullets, startlifes, window);
                 }
             }
         }
+
+        //Funcion de disparo del player
 
         public void Shoot(ICanvas canvas,List<GameObject> bullets)
         {
