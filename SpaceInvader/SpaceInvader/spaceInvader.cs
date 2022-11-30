@@ -46,7 +46,7 @@ namespace SpaceInvader
             player = new GameObject();
             player.Image = manager.LoadImage("resources\\player.png");
             float arplayer = player.Image.Width / player.Image.Height;
-            player.width = 3;
+            player.width = 4;
             player.height = player.width/arplayer;
             player.x = 0.0f;
             player.y = world.minY + 2;
