@@ -2,13 +2,16 @@
 {
     internal class Program
     {
+        // Nota: 2
         public static double Funcion1(int a, int b)
         {
+            // mmm, no sé por qué has puesto esto
             if (a < 0 || b < 0)
                 return 0;
             return (a + 1) / b;
         }
 
+        // Nota: 4
         public static double Funcion2(int a, int b, int c, int d, int e, int x)
         {
             int x4 = x * x * x * x;
@@ -18,6 +21,7 @@
             return (a * x4) + (b * x3) + (c * x2) + d * x + e;
         }
 
+        // Nota: 4
         public static double Funcion3(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
         {
             int primero = GetMinor(a, b);
@@ -49,6 +53,7 @@
             return b;
         }
 
+        // Esta función tiene bugs
         public static int GetCentral(int a, int b, int c)
         {
             if ((a > b && a < c) || (a < b && a > c))
@@ -59,6 +64,7 @@
                 return c;
         }
 
+        // Nota: 4
         public static int Funcion4(int a, int b, int c)
         {
             int max = GetMajor(c, GetMajor(a, b));
@@ -71,6 +77,8 @@
             return GetMajor(distanceafter, distancebefore);
         }
 
+        // Esta será la función 5, no?
+        // Nota: 4
         public static int Funcion4(int a)
         {
             int digit = 0;
@@ -84,6 +92,7 @@
             return digit;
         }
 
+        // Nota: 4
         public static int Funcion6(int n)
         {
             if (n == 1)
@@ -92,6 +101,7 @@
             return nalcuadrado + Funcion6(n - 1);
         }
 
+        // Nota: 4
         public static (int, int) Funcion7(string word)
         {
             int firstvocal = 0;
@@ -99,6 +109,7 @@
 
             for (int i = 0; i < word.Length; i++)
             {
+                // Tenías que sacarme eso a una función, a la próxima te bajo nota
                 if (word[i] == 'a' || word[i] == 'e' || word[i] == 'i' || word[i] == 'o' || word[i] == 'u')
                 {
                     firstvocal = i;
@@ -141,6 +152,7 @@
             for (int i = 1; i < n; i++)
             {
                 if (n % i == 0)
+                    // aquí pondría un break o un return
                     divisible = 1;
             }
 
@@ -149,6 +161,7 @@
             return false;
         }
 
+        // Nota: 4
         public static int Funcion8(int n)
         {
             int numberofprime = 0;
@@ -173,6 +186,7 @@
             PREPARADA,PROCESANDO,EJECUTANDO,TERMINADO
         }
 
+        // Nota: 3, aquí si que te quito nota
         public static MachineStatus Funcion9(MachineStatus status,bool x)
         {
             switch (status)
@@ -213,6 +227,7 @@
             return status;
         }
 
+        // Nota: 4
         public static int Funcion10(int n)
         {
             int result = 0;
