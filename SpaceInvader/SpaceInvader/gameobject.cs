@@ -7,22 +7,31 @@ namespace SpaceInvader
     {
         PLAYER,SOLDIER,CAVALIER,DAVROS,BULLET
     }
+
+    public enum EnemyStatus
+    {
+        ALIVE,DEAD,EXPLODED
+    }
     internal class GameObject
     {
         public float x,y,width,height;
         public GameObjectType type;
+        public EnemyStatus status;
         public float r, g, b, a;
-        public Image Image;
+        public Image image;
         public List<Image> list = new List<Image>();
         float shotTime = 0;
+        public int kills = 0;
+        public float explosionTime = 0;
+        public int explosioncount = 0;
         public int lifes = 3;
 
         //Renderiza los GameObjects
 
         public void Render(ICanvas canvas)
         {
-            if (this.Image != null)
-                canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.Image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.9f);
+            if (this.image != null)
+                canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.image, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.9f);
             else
                 canvas.FillRectangle(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height, this.r, this.g, this.b, this.a);
 
@@ -167,12 +176,13 @@ namespace SpaceInvader
                         i++;
                     }
 
-                    if (soldiers[i].GameObjectColision(bullets[j]) == true)
+                    if (soldiers[i].GameObjectColision(bullets[j]) == true && soldiers[i].status == EnemyStatus.ALIVE)
                     {
-                        soldiers.Remove(soldiers[i]);
+                        soldiers[i].status = EnemyStatus.EXPLODED;
                         bullets.Remove(bullets[j]);
                         j--;
                         i--;
+                        player.kills++;
                     }
 
                     if (soldiers.Count == 0)
@@ -182,7 +192,7 @@ namespace SpaceInvader
 
             for (int i = 0; i < soldiers.Count; i++)
             {
-                if (player.GameObjectColision(soldiers[i]) == true)
+                if (player.GameObjectColision(soldiers[i]) == true && soldiers[i].status == EnemyStatus.ALIVE)
                 {
                     player.lifes--;
                     GameEngine.ResetWorld(player, world.enemies, world.bullets, startlifes, window);
@@ -203,7 +213,7 @@ namespace SpaceInvader
                 bullet.width = 0.4f;
                 bullet.height = 0.7f;
                 bullet.type = GameObjectType.BULLET;
-                bullet.Image = manager.LoadImage("resources\\bala.png");
+                bullet.image = manager.LoadImage("resources\\bala.png");
                 bullet.r = 1.0f;
                 bullet.g = 1.0f;
                 bullet.b = 1.0f;

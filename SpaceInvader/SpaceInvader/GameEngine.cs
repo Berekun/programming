@@ -24,24 +24,23 @@ namespace SpaceInvader
                     soldier.width = 2f;
                     soldier.height = 2f;
                     soldier.type = GameObjectType.SOLDIER;
+                    soldier.status = EnemyStatus.ALIVE;
                     
                     soldier.r = 1f;
                     soldier.g = 1f;
                     soldier.b = 1f;
                     soldier.a = 0.9f;
                     
-                    soldier.Image = manager.LoadImage("resources\\enemigo1.png");
-                    soldier.list.Add(soldier.Image);
-                    soldier.Image = manager.LoadImage("resources\\enemigo2.png");
-                    soldier.list.Add(soldier.Image);
-                    soldier.Image = manager.LoadImage("resources\\enemigo3.png");
-                    soldier.list.Add(soldier.Image);
+                    soldier.image = manager.LoadImage("resources\\enemigo1.png");
+                    soldier.list.Add(soldier.image);
+                    soldier.image = manager.LoadImage("resources\\enemigo2.png");
+                    soldier.list.Add(soldier.image);
+                    soldier.image = manager.LoadImage("resources\\enemigo3.png");
+                    soldier.list.Add(soldier.image);
 
-                    soldier.Image = soldier.list[Getrandom(0, 3)];
+                    soldier.image = soldier.list[Getrandom(0, 3)];
 
                     enemies.Add(soldier);
-
-          
                 }
             }
         }

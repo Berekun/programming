@@ -7,7 +7,7 @@ namespace SpaceInvader
     {
         public float minX, minY, maxX, maxY;
         public Image Image;
-        public List<Image> list;
+        public List<Image> explosions = new List<Image>();
         public List<GameObject> bullets = new List<GameObject>();
         public List<GameObject> enemies = new List<GameObject>(); 
         public float r, g, b, a;
@@ -62,8 +62,52 @@ namespace SpaceInvader
             for (int i = 0; i < soldier.Count; i++)
             {
                 soldier[i].Move(keyboard, world, bullets,soldier,player,window,startlifes);
-
             }
         }
+
+        public void FillExplosionsSprites(IAssetManager manager)
+        {
+            for(int i = 1; i <= 11;i++)
+            {
+                explosions.Add(manager.LoadImage("resources\\explosion" + i + ".png"));
+            }
+        }
+
+        public void AnimateExplosions()
+        {
+            for(int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i].status == EnemyStatus.EXPLODED)
+                {
+                    enemies[i].explosionTime += Time.deltaTime;
+
+                    if(enemies[i].explosionTime > 0.05f)
+                    {
+                        enemies[i].image = explosions[enemies[i].explosioncount];
+                        enemies[i].explosioncount++;
+                        enemies[i].explosionTime = 0;
+                    }
+
+                    if (enemies[i].explosioncount > 10)
+                    {
+                        enemies[i].status = EnemyStatus.DEAD;
+                    }
+                }
+            }
+        }
+
+        public void RemoveDeads()
+        {
+            for(int i = 0; i < enemies.Count; i++) 
+            {
+                if (enemies[i].status == EnemyStatus.DEAD)
+                {
+                    enemies.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
+        
     }
 }
