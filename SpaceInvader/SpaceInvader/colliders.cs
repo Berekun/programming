@@ -3,6 +3,7 @@ using DAM;
 
 namespace SpaceInvader
 {
+    // Esta clase debe ir en PascalCase
     internal class colliders
     {
 
