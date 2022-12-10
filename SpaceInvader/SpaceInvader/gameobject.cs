@@ -5,15 +5,18 @@ namespace SpaceInvader
 {
     public enum GameObjectType
     {
+        // Espacios
         PLAYER,SOLDIER,CAVALIER,DAVROS,BULLET
     }
 
     public enum EnemyStatus
     {
+        // Espacios
         ALIVE,DEAD,EXPLODED
     }
     internal class GameObject
     {
+        // ESPACIOS !!!!!!!!!!!
         public float x,y,width,height;
         public GameObjectType type;
         public EnemyStatus status;
@@ -61,6 +64,7 @@ namespace SpaceInvader
 
         private void MoveBullet(float maxY,List<GameObject> bullets)
         {
+            // Este if es innecesario
             if (this.type == GameObjectType.BULLET)
             {
                 this.y += 5f * Time.deltaTime;
@@ -73,6 +77,7 @@ namespace SpaceInvader
 
         private void MoveSoldier(float minY,List<GameObject> soldiers, GameObject player, IWindow window, World world, int startlifes)
         {
+            // If innecesario
             if (this.type == GameObjectType.SOLDIER)
             {
                 this.y -= 2 * Time.deltaTime;
@@ -85,6 +90,7 @@ namespace SpaceInvader
 
         private void MovePosition(IKeyboard keyboard)
         {
+            // If innecesario
             if(this.type == GameObjectType.PLAYER)
             {
                 if (keyboard.IsKeyDown(Keys.Right))
@@ -135,15 +141,17 @@ namespace SpaceInvader
         {
             if(this.y <= minY)
             {
+                // Esto es un poco peligroso, no lo hagas, usa RemoveAt
                 soldier.Remove(this);
                 GameEngine.ResetWorld(player, world.enemies, world.bullets, startlifes, window);
             }
         }
 
         //Funcion que comprueba si dos GameObject estan colisionando
-
+        // Verbo
         public bool GameObjectColision(GameObject gameObject2)
         {
+            // Duplicado de código, coméntame esto en clase
             if(this.type == GameObjectType.SOLDIER)
             {
                 if (gameObject2.type == GameObjectType.BULLET)
@@ -180,6 +188,7 @@ namespace SpaceInvader
                     {
                         soldiers[i].status = EnemyStatus.EXPLODED;
                         bullets.Remove(bullets[j]);
+                        // No es necesario decrementar los dos, coméntame esto en clase
                         j--;
                         i--;
                         player.kills++;
@@ -192,6 +201,7 @@ namespace SpaceInvader
 
             for (int i = 0; i < soldiers.Count; i++)
             {
+                // == true?!!?!?!?!? comentame esto en clase
                 if (player.GameObjectColision(soldiers[i]) == true && soldiers[i].status == EnemyStatus.ALIVE)
                 {
                     player.lifes--;
