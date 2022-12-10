@@ -30,6 +30,7 @@ namespace SpaceInvader
             for(int i = 0; i < bullets.Count; i++)
             {
                 bullets[i].Render(canvas);
+                // No, cuando se renderiza no se pueden calcular otro tipo de cosas
                 bullets[i].GameObjectColisionAll(bullets,soldiers,player,window,world,startlifes);
             }
         }
