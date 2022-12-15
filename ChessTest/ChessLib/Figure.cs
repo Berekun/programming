@@ -22,5 +22,9 @@ namespace ChessLib
         private FigureType _type;
     } 
 
+    public int X
+    {
+        get { return _x; }
+    }
 
 }
