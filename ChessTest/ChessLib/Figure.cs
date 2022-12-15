@@ -8,23 +8,40 @@ namespace ChessLib
 {
     public enum FigureType
     {
-        BISHOP, KING, QUEEN, PAWN, ROCK, KNIGHT
+        BISHOP, KING, QUEEN, PAWN, ROOK, KNIGHT
     }
 
     public enum FigureColor
     {
         BLACK, WHITE
     }
-    internal class Figure
+    abstract class Figure
     {
-        private int _x, _y;
-        private FigureColor _color;
-        private FigureType _type;
-    } 
+        //Variables
+        protected int _x, _y;
+        protected FigureColor _color;
 
-    public int X
-    {
-        get { return _x; }
+        //Properties
+        public int X => _x;
+
+        public int Y => _y;
+
+        public FigureColor Color => _color;
+
+
+        //Funciones
+        public Figure()
+        {
+
+        }
+        
+        public Figure(int x, int y, FigureColor color)
+        {
+            _x = x;
+            _y = y;
+            _color = color;
+        }
+
     }
 
 }
