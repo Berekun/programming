@@ -7,6 +7,7 @@ namespace SpaceInvader
     {
         public float minX, minY, maxX, maxY;
         public Image Image;
+        public List<Image> spritesEnemies = new List<Image>();
         public List<Image> explosions = new List<Image>();
         public List<GameObject> bullets = new List<GameObject>();
         public List<GameObject> enemies = new List<GameObject>(); 
@@ -107,6 +108,13 @@ namespace SpaceInvader
                     i--;
                 }
             }
+        }
+
+        public void LoadImagesSoldier(List<Image> image,IAssetManager manager)
+        {
+            image.Add(manager.LoadImage("resources\\enemigo1.png"));
+            image.Add(manager.LoadImage("resources\\enemigo2.png"));
+            image.Add(manager.LoadImage("resources\\enemigo3.png"));
         }
 
         

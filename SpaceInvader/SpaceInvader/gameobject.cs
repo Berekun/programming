@@ -5,19 +5,16 @@ namespace SpaceInvader
 {
     public enum GameObjectType
     {
-        // Espacios
-        PLAYER,SOLDIER,CAVALIER,DAVROS,BULLET
+        PLAYER, SOLDIER, CAVALIER, DAVROS, BULLET
     }
 
     public enum EnemyStatus
     {
-        // Espacios
-        ALIVE,DEAD,EXPLODED
+        ALIVE, DEAD, EXPLODED
     }
     internal class GameObject
     {
-        // ESPACIOS !!!!!!!!!!!
-        public float x,y,width,height;
+        public float x, y, width, height;
         public GameObjectType type;
         public EnemyStatus status;
         public float r, g, b, a;

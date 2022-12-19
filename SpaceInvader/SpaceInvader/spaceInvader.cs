@@ -44,7 +44,7 @@ namespace SpaceInvader
         public void OnLoad(IAssetManager manager, IWindow window)
         {
 
-            window.ToggleFullscreen();
+            //window.ToggleFullscreen();
 
             //Caracteristicas del mundo
             world = new World();
@@ -68,6 +68,7 @@ namespace SpaceInvader
             //crear soldiers
             GameEngine.CreateFirstRound(world.enemies,manager);
             world.FillExplosionsSprites(manager);
+            world.LoadImagesSoldier(world.spritesEnemies, manager);
         }
 
         public void OnUnload(IAssetManager manager, IWindow window)

@@ -30,15 +30,6 @@ namespace SpaceInvader
                     soldier.g = 1f;
                     soldier.b = 1f;
                     soldier.a = 0.9f;
-                    
-                    // MAAAALLLL!!!!! Estás cargando mil millones de trillones de cuatrillcnwlbjfvjlbdsfkjhv
-                    // de veces las mismas imágenes
-                    soldier.image = manager.LoadImage("resources\\enemigo1.png");
-                    soldier.list.Add(soldier.image);
-                    soldier.image = manager.LoadImage("resources\\enemigo2.png");
-                    soldier.list.Add(soldier.image);
-                    soldier.image = manager.LoadImage("resources\\enemigo3.png");
-                    soldier.list.Add(soldier.image);
 
                     soldier.image = soldier.list[Getrandom(0, 3)];
 
