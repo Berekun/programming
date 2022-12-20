@@ -24,7 +24,7 @@ namespace SpaceInvader
             if(world.enemies.Count == 0) 
             {
                 world.bullets.Clear();
-                GameEngine.CreateFirstRound(world.enemies, manager);
+                GameEngine.CreateFirstRound(world.enemies, manager, world);
             }
 
             if(player.kills >= 28)
@@ -44,7 +44,7 @@ namespace SpaceInvader
         public void OnLoad(IAssetManager manager, IWindow window)
         {
 
-            //window.ToggleFullscreen();
+            window.ToggleFullscreen();
 
             //Caracteristicas del mundo
             world = new World();
@@ -66,9 +66,9 @@ namespace SpaceInvader
             player.type = GameObjectType.PLAYER;
 
             //crear soldiers
-            GameEngine.CreateFirstRound(world.enemies,manager);
-            world.FillExplosionsSprites(manager);
             world.LoadImagesSoldier(world.spritesEnemies, manager);
+            GameEngine.CreateFirstRound(world.enemies,manager,world);
+            world.FillExplosionsSprites(manager);
         }
 
         public void OnUnload(IAssetManager manager, IWindow window)

@@ -10,7 +10,7 @@ namespace SpaceInvader
     internal class GameEngine
     {
         //Crea el primer bloque de enemigos
-        public static void CreateFirstRound(List<GameObject> enemies,IAssetManager manager)
+        public static void CreateFirstRound(List<GameObject> enemies,IAssetManager manager,World world)
         {
             float round = 0;
             float startx = -6.5f;
@@ -31,7 +31,7 @@ namespace SpaceInvader
                     soldier.b = 1f;
                     soldier.a = 0.9f;
 
-                    soldier.image = soldier.list[Getrandom(0, 3)];
+                    soldier.image = world.spritesEnemies[Getrandom(0, 3)];
 
                     enemies.Add(soldier);
                 }

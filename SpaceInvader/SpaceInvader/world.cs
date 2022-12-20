@@ -115,6 +115,7 @@ namespace SpaceInvader
             image.Add(manager.LoadImage("resources\\enemigo1.png"));
             image.Add(manager.LoadImage("resources\\enemigo2.png"));
             image.Add(manager.LoadImage("resources\\enemigo3.png"));
+            Console.WriteLine("a");
         }
 
         
