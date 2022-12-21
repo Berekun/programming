@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,8 +22,9 @@ namespace SpaceInvader
                     GameObject soldier = new GameObject();
                     soldier.x = startx;
                     soldier.y = 9.0f;
-                    soldier.width = 2f;
-                    soldier.height = 2f;
+                    soldier.image = world.spritesEnemies[Getrandom(0, 3)];
+                    soldier.height = 1.5f;
+                    soldier.width = 1.5f;
                     soldier.type = GameObjectType.SOLDIER;
                     soldier.status = EnemyStatus.ALIVE;
                     
@@ -30,8 +32,6 @@ namespace SpaceInvader
                     soldier.g = 1f;
                     soldier.b = 1f;
                     soldier.a = 0.9f;
-
-                    soldier.image = world.spritesEnemies[Getrandom(0, 3)];
 
                     enemies.Add(soldier);
                 }

@@ -92,12 +92,12 @@ namespace SpaceInvader
             {
                 if (keyboard.IsKeyDown(Keys.Right))
                 {
-                    this.x += 0.1f;
+                    this.x += 0.05f;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Left))
                 {
-                    this.x -= 0.1f;
+                    this.x -= 0.05f;
                 }
             }
         }

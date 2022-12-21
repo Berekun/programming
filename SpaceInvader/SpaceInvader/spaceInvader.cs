@@ -44,7 +44,7 @@ namespace SpaceInvader
         public void OnLoad(IAssetManager manager, IWindow window)
         {
 
-            window.ToggleFullscreen();
+            //window.ToggleFullscreen();
 
             //Caracteristicas del mundo
             world = new World();
@@ -59,7 +59,7 @@ namespace SpaceInvader
             player = new GameObject();
             player.image = manager.LoadImage("resources\\player.png");
             float arplayer = player.image.Width / player.image.Height;
-            player.width = 4;
+            player.width = 3;
             player.height = player.width/arplayer;
             player.x = 0.0f;
             player.y = world.minY + 2;
