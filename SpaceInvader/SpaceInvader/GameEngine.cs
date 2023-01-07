@@ -14,7 +14,7 @@ namespace SpaceInvader
         public static void CreateFirstRound(List<GameObject> enemies,IAssetManager manager,World world)
         {
             float round = 0;
-            float startx = -6.5f;
+            float startx = -6.0f;
             if (round == 0)
             {
                 for (int i = 0; i < 7; i++, startx += 2)
