@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ChessLib
 {
-    internal class IBoard
+    public interface IBoard
     {
+        Figure GetFigureAt(int x, int y);
     }
 }

@@ -15,7 +15,7 @@ namespace ChessLib
     {
         BLACK, WHITE
     }
-    abstract class Figure
+    public abstract class Figure
     {
         //Variables
         protected int _x, _y;

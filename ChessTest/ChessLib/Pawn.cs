@@ -8,6 +8,11 @@ namespace ChessLib
 {
     internal class Pawn : FigureInternal
     {
+
+        public Pawn(int x, int y, FigureColor color):base(x, y ,color)
+        { 
+        
+        }
         public override FigureType GetType()
         {
             return FigureType.PAWN;

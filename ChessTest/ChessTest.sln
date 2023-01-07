@@ -4,8 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessTest", "ChessTest\ChessTest.csproj", "{13ECBABB-E235-4C08-B168-0FAD2CE6587C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FDC6574D-57F7-44D0-9959-C390AAB111CB} = {FDC6574D-57F7-44D0-9959-C390AAB111CB}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessLib", "ChessLib\ChessLib.csproj", "{FDC6574D-57F7-44D0-9959-C390AAB111CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessLib", "ChessLib\ChessLib.csproj", "{FDC6574D-57F7-44D0-9959-C390AAB111CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
