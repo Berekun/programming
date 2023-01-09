@@ -18,7 +18,7 @@
             return major;
         }
 
-        public static int IndexOf(List<int> list, int number)
+        public static int IndexOf1(List<int> list, int number)
         {
             int position = -1;
             for(int i = 0; i < list.Count; i++)
@@ -30,12 +30,12 @@
             return position;
         }
 
-        public static bool IsNumberInList(List<int> list, int number)
-        {
-            return IndexOf(list, number) >= 0;
-        }
+        //public static bool IsNumberInList(List<int> list, int number)
+        //{
+            //return IndexOf(list, number) >= 0;
+        //}
 
-        public static List<int> Sort(List<int> list)
+        public static List<int> Sort1(List<int> list)
         {
             int minor = int.MaxValue;
             int position = 0;
@@ -121,7 +121,7 @@
 
         static void Main(string[] args)
         {
-            List<int> list = new List<int>();
+            /*/List<int> list = new List<int>();
             list.Add(3);
             list.Add(5);
             list.Add(-1);
@@ -141,18 +141,20 @@
             list.Add(4);
             list.Add(3);
             list.Add(2);
-            list.Add(1);
+            list.Add(1);/*/
 
-            var ll = Sort(list);
-            list = list;
+            //var ll = Sort(list);
+            //list = list;
 
-            int[] array = new int[4];
+            int[] array = new int[6];
             array[0] = 2;
             array[1] = 5;
             array[2] = -3;
             array[3] = 7;
-            array[4] = 10;
+            array[4] = -7;
+            array[5] = 10;
 
+            /*/
             double[] array1 = new double[4];
             array1[0] = 2.3;
             array1[1] = 5.7;
@@ -179,7 +181,80 @@
             array4[1] = "nacho";
             array4[2] = "berekun";
             array4[3] = "pabloskio";
-            array4[4] = "nicogay";
+            array4[4] = "nicogay";/*/
+
+            Comparator<int> comp = (a , b) =>
+            {
+                if (a < b)
+                    return 0;
+                return 1;
+            };
+
+            Comparator<int> equal = (a, b) =>
+            {
+                if (a == b)
+                    return 0;
+                return 1;
+            };
+
+            Sort(array,comp);
+            IndexOf(array, 4, equal);
+            BinarySearch(array, -7, equal, comp);
+        }
+
+        public delegate int Comparator<T>(T a, T b);
+
+        //Deberes Navidad
+
+        public static T[] Sort<T>(T[] array, Comparator<T> comp)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                for (int j = i + 1; j < array.Length; j++)
+                {
+                    if (comp(array[i], array[j]) == 0)
+                    {
+                        T aux = array[i];             //
+                        array[i] = array[j];          //SWAP
+                        array[j] = aux;               //
+                    }
+                }
+            }
+            return array;
+        }
+
+        public static int IndexOf<T>(T[] array, T value, Comparator<T> equal)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (equal(array[i], value) == 0)
+                    return i;
+            }
+            return -1;
+        }
+
+        public static int BinarySearch<T>(T[] array, T value, Comparator<T> equal, Comparator<T> comp)
+        {
+            int min = 0;
+            int max = array.Length - 1;
+
+            while (min <= max)
+            {
+                int mid = (min + max) / 2;
+                if (equal(value, array[mid]) == 0)
+                {
+                    return mid;
+                }
+                if (comp(value, array[mid]) == 0)
+                {
+                    max = mid - 1;
+                }
+                else
+                {
+                    min = mid + 1;
+                }
+            }
+            return 0;
         }
 
 
