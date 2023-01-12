@@ -8,7 +8,7 @@ namespace ChessTest
         {
             Board board = new Board();
 
-            board.GetPawn();
+            board.CreateFigures();
         }
     }
 }

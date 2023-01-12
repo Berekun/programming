@@ -8,6 +8,10 @@ namespace ChessLib
 {
     internal class Bishop : FigureInternal
     {
+        public Bishop(int x, int y, FigureColor color) : base(x, y, color)
+        {
+
+        }
         public override FigureType GetType()
         {
             return FigureType.BISHOP;
