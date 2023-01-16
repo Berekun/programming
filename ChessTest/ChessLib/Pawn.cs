@@ -22,14 +22,29 @@ namespace ChessLib
         {
             List<Position> positions = new List<Position>();
             
-            if(Y == 1 && board.GetFigureAt(X,Y+2) == null)
-                positions.Add(new Position(0,Y+2));
+            if(CanMove(board,X, Y) == true)
+                positions.Add(new Position(0,Y + 2));
+            if (CanMove(board, X, Y) == true)
+                positions.Add(new Position(0, Y + 1));
+            if (board.GetFigureAt(X+1, Y+1) != null)
             
 
 
 
 
             return positions;
+        }
+
+        public override bool CanMove(IBoard board, int x, int y)
+        {
+            if (y == 1 && board.GetFigureAt(x, y + 2) == null)
+                return true;
+            else if (Y != 1 && board.GetFigureAt(X, Y + 1) == null)
+                return true;
+            else if (board.GetFigureAt(X + 1, Y + 1) != null && Color != FigureColor.WHITE)
+                return true;
+            return false;
+
         }
     }
 }

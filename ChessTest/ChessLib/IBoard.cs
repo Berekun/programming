@@ -9,5 +9,7 @@ namespace ChessLib
     public interface IBoard
     {
         Figure GetFigureAt(int x, int y);
+
+
     }
 }

@@ -14,11 +14,16 @@ namespace ChessLib
 
         }
 
-        public override List<Position> GetAvaliablePosition()
+        public override List<Position> GetAvaliablePosition(IBoard board)
         {
             throw new NotImplementedException();
         }
-        
+
+        public override bool CanMove(IBoard borad, int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+
         public void GetPosition(int x, int y)
         {
             _x = x;
