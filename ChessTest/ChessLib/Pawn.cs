@@ -18,7 +18,7 @@ namespace ChessLib
             return FigureType.PAWN;
         }
 
-        public override List<Position> GetAvaliablePosition(IBoard board)
+        /*public override List<Position> GetAvaliablePosition(IBoard board)
         {
             List<Position> positions = new List<Position>();
             
@@ -33,7 +33,7 @@ namespace ChessLib
 
 
             return positions;
-        }
+        }*/
 
         public override bool CanMove(IBoard board, int x, int y)
         {
