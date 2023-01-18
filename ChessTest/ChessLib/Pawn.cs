@@ -37,11 +37,12 @@ namespace ChessLib
 
         public override bool CanMove(IBoard board, int x, int y)
         {
+            Figure figure = board.GetFigureAt(x, y);
             if (y == 1 && board.GetFigureAt(x, y + 2) == null)
                 return true;
-            else if (Y != 1 && board.GetFigureAt(X, Y + 1) == null)
+            else if (y != 1 && board.GetFigureAt(x, y + 1) == null)
                 return true;
-            else if (board.GetFigureAt(X + 1, Y + 1) != null && Color != FigureColor.WHITE)
+            else if (board.GetFigureAt(x + 1, y + 1) != null && figure.Color != Color)
                 return true;
             return false;
 

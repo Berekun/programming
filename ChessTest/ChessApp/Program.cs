@@ -1,10 +1,12 @@
-﻿namespace ChessApp
+﻿using DAM;
+
+namespace ChessApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            DAM.Game.Launch(new MyChessGame());
         }
     }
 }

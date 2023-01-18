@@ -16,5 +16,23 @@ namespace ChessLib
         {
             return FigureType.ROOK;
         }
+
+        public static List<Position> GetRookAvaliablePosition(IBoard board, int startx,int starty, FigureColor color)
+        {
+            List<Position> positionList = new List<Position>();
+
+            for(int x = 0; x < 8; x++)
+            {
+                if (board.CanMove(x, starty, color) == true)
+                    positionList.Add(new Position(x, starty));
+            }
+            
+            return positionList;
+        }
+
+        public override List<Position> GetAvaliablePosition(IBoard board)
+        {
+            return GetRookAvaliablePosition();
+        }
     }
 }
