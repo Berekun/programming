@@ -11,16 +11,16 @@ namespace ChessLib
     {
         Figure GetFigureAt(int x, int y);
 
-        public bool CanMove(int x, int y, FigureColor color)
+        public int CanMove(int x, int y, FigureColor color)
         {
             Figure figure = GetFigureAt(x, y);
             if (x < 8 && 0 < x && figure == null)
-                return true;
+                return 0;
             else if (y < 8 && 0 < x && figure == null)
-                return true;
+                return 0;
             else if (figure != null && figure.Color != color)
-                return true;
-            return false;
+                return 1;
+            return -1;
         }
     }
 }
