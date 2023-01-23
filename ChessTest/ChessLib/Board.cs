@@ -91,7 +91,7 @@
             figures.Add(new King(4, 7, FigureColor.BLACK));
         }
 
-        public Figure GetFigureAt(int x, int y)
+        public Figure? GetFigureAt(int x, int y)
         {
             foreach (Figure f in figures)
                 if (x == f.X && y == f.Y)

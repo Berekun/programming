@@ -16,5 +16,44 @@ namespace ChessLib
         {
             return FigureType.BISHOP;
         }
+
+        public static void SearchBishopPositions(IBoard board,List<Position> positionList, int x, int y, FigureColor color, int dirX, int dirY)
+        {
+            if (dirX != 1 || dirX != -1 && dirY != 1 || dirY != -1)
+                throw new InvalidOperationException("El valor introducido para dirY o dirX no es validado, introduce 1 o -1 dependiendo de la direccion que desee");
+
+            while (y < 8 || y > 0 || x < 8 || x > 0)
+            {
+                if (board.CanMove(x, y, color) == 0)
+                {
+                    positionList.Add(new Position(x, y));
+                    x = x + dirX;
+                    y = y + dirY;
+                }
+                else if (board.CanMove(x, y, color) == 1)
+                {
+                    positionList.Add(new Position(x, y));
+                    break;
+                }
+            }
+        }
+
+
+        public static List<Position> GetBishopAvaliablePosition(IBoard board, int x, int y, FigureColor color)
+        {
+            List<Position> positionList = new List<Position>(); 
+
+            SearchBishopPositions(board,positionList, x, y, color, 1, 1);
+            SearchBishopPositions(board,positionList, x, y, color, -1, 1);
+            SearchBishopPositions(board,positionList, x, y, color, 1, -1);
+            SearchBishopPositions(board,positionList, x, y, color, -1, -1);
+
+            return positionList;
+        }
+
+        public override List<Position> GetAvaliablePosition(IBoard board)
+        {
+            return GetBishopAvaliablePosition(board, X, Y, Color);
+        }
     }
 }
