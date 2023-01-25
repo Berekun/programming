@@ -11,7 +11,14 @@
         public int X => _x;
         public int Y => _y;
 
+        public int FigureCount => figures.Count;
+
         //Funciones
+
+        public Board()
+        {
+            CreateFigures();
+        }
 
         //Crea todas las figuras
 
@@ -28,11 +35,11 @@
 
         public void CreatePawns()
         { 
-            for(int i = 0; i < 7; i++)
+            for(int i = 0; i < 8; i++)
             {
                 figures.Add(new Pawn(i, 1, FigureColor.WHITE));
             }
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 8; i++)
             {
                 figures.Add(new Pawn(i, 6, FigureColor.BLACK));
             }
@@ -89,6 +96,11 @@
             figures.Add(new Queen(3, 7, FigureColor.BLACK));
             figures.Add(new King(4, 0, FigureColor.WHITE));
             figures.Add(new King(4, 7, FigureColor.BLACK));
+        }
+
+        public Figure? GetFigureIndex(int index)
+        {
+            return figures[index];
         }
 
         public Figure? GetFigureAt(int x, int y)
