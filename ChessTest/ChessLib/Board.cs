@@ -17,16 +17,16 @@
 
         public void CreateFigures()
         {
-            CreatePawn();
-            CreateRook();
-            CreateKnight();
-            CreateBishop();
+            CreatePawns();
+            CreateRooks();
+            CreateKnights();
+            CreateBishops();
             CreateMonarchs();
         }
 
         //Crea los peones
 
-        public void CreatePawn()
+        public void CreatePawns()
         { 
             for(int i = 0; i < 7; i++)
             {
@@ -40,7 +40,7 @@
 
         //Crea las torres
 
-        public void CreateRook()
+        public void CreateRooks()
         {
             for(int i=0;i <=7; i += 7)
             {
@@ -55,7 +55,7 @@
 
         //Crea los caballos
 
-        public void CreateKnight()
+        public void CreateKnights()
         {
             for (int i = 1; i <= 6; i += 5)
             {
@@ -69,7 +69,7 @@
 
         //Crea los alfiles
 
-        public void CreateBishop()
+        public void CreateBishops()
         {
             for (int i = 2; i <= 5; i += 3)
             {

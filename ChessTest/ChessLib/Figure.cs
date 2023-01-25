@@ -47,6 +47,8 @@ namespace ChessLib
 
         public FigureColor Color => _color;
 
+        public Position Position => new(_x, _y);
+
 
         //Funciones
         public Figure()
@@ -64,8 +66,6 @@ namespace ChessLib
         public abstract FigureType GetType();
 
         public abstract List<Position> GetAvaliablePosition(IBoard borad);
-
-        public abstract bool CanMove(IBoard borad, int x, int y);
     }
 
 }
