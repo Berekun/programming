@@ -17,5 +17,18 @@ namespace ChessLib
         {
             return FigureType.PAWN;
         }
+
+        /*public override List<Position> GetAvaliablePosition(IBoard board)
+        {
+            List<Position> positions = new List<Position>();
+            
+            if(CanMove(board,X, Y) == true)
+                positions.Add(new Position(0,Y + 2));
+            if (CanMove(board, X, Y) == true)
+                positions.Add(new Position(0, Y + 1));
+            if (board.GetFigureAt(X+1, Y+1) != null)
+            
+            return positions;
+        }*/
     }
 }

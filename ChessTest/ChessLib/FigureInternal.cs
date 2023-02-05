@@ -9,13 +9,17 @@ namespace ChessLib
 {
     abstract class FigureInternal : Figure
     {
-        public FigureInternal(int x,int y, FigureColor color):base(x, y, color) 
-        { 
-        
+        public FigureInternal(int x, int y, FigureColor color) : base(x, y, color)
+        {
+
         }
-        public abstract FigureType GetType();     
-        
-        public void Position(int x, int y)
+
+        public override List<Position> GetAvaliablePosition(IBoard board)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetPosition(int x, int y)
         {
             _x = x;
             _y = y;
