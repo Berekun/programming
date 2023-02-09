@@ -18,17 +18,36 @@ namespace ChessLib
             return FigureType.PAWN;
         }
 
-        /*public override List<Position> GetAvaliablePosition(IBoard board)
+        public override List<Position> GetAvaliablePosition(IBoard board)
         {
-            List<Position> positions = new List<Position>();
-            
-            if(CanMove(board,X, Y) == true)
-                positions.Add(new Position(0,Y + 2));
-            if (CanMove(board, X, Y) == true)
-                positions.Add(new Position(0, Y + 1));
-            if (board.GetFigureAt(X+1, Y+1) != null)
-            
-            return positions;
-        }*/
+            List<Position> positionsList = new List<Position>();
+
+            SearchPawnPosition(board, positionsList, X, Y, Color);
+
+            return positionsList;
+        }
+
+        public void SearchPawnPosition(IBoard board, List<Position> list, int startx, int starty, FigureColor color)
+        {
+            int dir = 0;
+            if (color == FigureColor.WHITE)
+                dir++;
+            else
+                dir--;
+
+            if(color == FigureColor.WHITE && starty == 1 && board.CanMove(X,Y + 2,  color) == 0)
+                list.Add(new Position(X, Y + dir * 2));
+            if(color == FigureColor.BLACK && starty == 6 && board.CanMove(X, Y - 2, color) == 0)
+                list.Add(new Position(X, Y + dir * 2));
+
+            if(board.CanMove(X,Y + dir,color) == 0)
+                list.Add(new Position(X, Y + dir));
+
+            if (board.CanMove(X + 1, Y + dir, color) == 1)
+                list.Add(new Position(X + 1, Y + dir));
+
+            if (board.CanMove(X - 1, Y + dir, color) == 1)
+                list.Add(new Position(X - 1, Y + dir));
+        }
     }
 }

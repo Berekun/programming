@@ -111,6 +111,29 @@
             return null;
 
         }
+
+        public void Move(Figure figure, int x, int y)
+        {
+            if (figure == null)
+                return;
+
+            List<Position> positions = figure.GetAvaliablePosition(this);
+
+            foreach(Position position in positions)
+            {
+                if(position.x == x && position.y ==  y)
+                Movement(figure, x , y);
+            }
+        }
+
+        public void Movement(Figure figure, int x, int y)
+        {
+            Figure? enemy = GetFigureAt(x, y);
+            figure.SetPosition(x, y);
+
+            if (enemy != null)
+                figures.Remove(enemy);
+        }
     }
 }
 

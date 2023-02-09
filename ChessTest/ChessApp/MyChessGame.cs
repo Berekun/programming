@@ -10,13 +10,16 @@ namespace ChessApp
         List<IBuffer>? buffers = new List<IBuffer>();
         Board board = new Board();
         Rect2D worldRect = Rect2D.FromMinMax(0.0, 0.0, 8.0, 8.0);
+        List<Position>? positions = null;
+        Figure? figure = null;
         public void OnDraw(GameDelegateEvent gameEvent, ICanvas canvas)
         {
             canvas.Clear(new RGBA(0.38, 0.28, 0.15, 1.0));
             canvas.Camera.SetRect(worldRect);
 
             DrawBorad(canvas);
-            DrawFigures(canvas, board, buffers); 
+            DrawFigures(canvas, board, buffers);
+            RenderAvaliblePosition(canvas, board, figure);
 
 
         }
@@ -26,13 +29,7 @@ namespace ChessApp
             if (keyboard.IsKeyDown(Keys.Escape))
                 gameEvent.window.Close();
 
-            if (mouse.IsPressed(MouseButton.Left))
-            {
-                float x = mouse.X;
-                float y = mouse.Y;
-                var position = gameEvent.coordinateConversor.ViewToWorld(x, y);
-                board.GetFigureAt((int)position.x, (int)position.y);
-            }
+            OnClick(gameEvent, mouse);
         }
 
         public void OnLoad(GameDelegateEvent gameEvent)
@@ -42,6 +39,26 @@ namespace ChessApp
 
         public void OnUnload(GameDelegateEvent gameEvent)
         {
+        }
+
+        public void OnClick(GameDelegateEvent gameEvent, IMouse mouse)
+        {
+            if (mouse.IsPressed(MouseButton.Left))
+            {
+                float x = mouse.X;
+                float y = mouse.Y;
+                var position = gameEvent.coordinateConversor.ViewToWorld(x, y);
+                if(positions != null)
+                {
+                    board.Move(figure, (int)position.x, (int)position.y);
+                    figure = null;
+                    positions = null;
+                    return; 
+                }
+                
+                figure = board.GetFigureAt((int)position.x, (int)position.y);
+                positions = figure?.GetAvaliablePosition(board);
+            }
         }
 
         //Dibuja el tablero
@@ -118,6 +135,24 @@ namespace ChessApp
             buffers.Add(IAtomicDecoder.LoadFromFile("resources\\caballo.png").CloneToBuffer(gameEvent.canvasContext, new CreateBufferParams(), true));
             buffers.Add(IAtomicDecoder.LoadFromFile("resources\\rei.png").CloneToBuffer(gameEvent.canvasContext, new CreateBufferParams(), true));
             buffers.Add(IAtomicDecoder.LoadFromFile("resources\\reina.png").CloneToBuffer(gameEvent.canvasContext, new CreateBufferParams(), true));
+        }
+
+        public void RenderAvaliblePosition(ICanvas canvas,IBoard board, Figure? figure)
+        {
+            if (figure == null)
+                return;
+
+            List<Position> list = figure.GetAvaliablePosition(board);
+            canvas.FillShader.SetColor(new RGBA(1.0, 0.0, 1.0, 0.3));
+            canvas.Transform.SetIdentity();
+            canvas.FillRectangle(new Rect2D(figure.X, figure.Y, 1, 1));
+
+            foreach(Position position in list)
+            {
+                canvas.FillShader.SetColor(new RGBA(1.0, 0.0, 1.0, 0.3));
+                canvas.Transform.SetIdentity();
+                canvas.FillRectangle(new Rect2D(position.x, position.y, 1, 1));
+            }
         }
     }
 }

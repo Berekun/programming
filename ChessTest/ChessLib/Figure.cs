@@ -65,7 +65,9 @@ namespace ChessLib
 
         public abstract FigureType GetType();
 
-        public abstract List<Position> GetAvaliablePosition(IBoard borad);
+        public abstract List<Position> GetAvaliablePosition(IBoard board);
+
+        public abstract void SetPosition(int x, int y);
     }
 
 }

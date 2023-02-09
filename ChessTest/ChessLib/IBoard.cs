@@ -14,9 +14,9 @@ namespace ChessLib
         public int CanMove(int x, int y, FigureColor color)
         {
             Figure figure = GetFigureAt(x, y);
-            if (x < 8 && 0 < x && figure == null)
+            if (x < 8 && 0 <= x && figure == null)
                 return 0;
-            else if (y < 8 && 0 < x && figure == null)
+            else if (y < 8 && 0 <= x && figure == null)
                 return 0;
             else if (figure != null && figure.Color != color)
                 return 1;
