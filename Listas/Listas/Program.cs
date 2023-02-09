@@ -154,6 +154,8 @@
             array[4] = -7;
             array[5] = 10;
 
+            int[] array2 = { 1, 2, 3, 5 };
+
             /*/
             double[] array1 = new double[4];
             array1[0] = 2.3;
@@ -197,9 +199,10 @@
                 return 1;
             };
 
-            Sort(array,comp);
-            IndexOf(array, 4, equal);
-            BinarySearch(array, -7, equal, comp);
+            //Sort(array,comp);
+            //IndexOf(array, 4, equal);
+            //BinarySearch(array, -7, equal, comp);
+            RemoveAT(array, 2);
         }
 
         public delegate int Comparator<T>(T a, T b);
@@ -255,6 +258,29 @@
                 }
             }
             return 0;
+        }
+
+        public static T[] RemoveAT<T>(T[] array,int index)
+        {
+            T[] result = new T[array.Length - 1];
+
+            for(int i = 0; i < array.Length; i++)
+            {
+                if (i != index && i < index)
+                {
+                    result[i] = array[i];
+                }
+                else if(i != index && i > index)
+                {
+                    result[i-1] = array[i];
+                }
+                else
+                {
+                    result[i] = array[++i];
+                }
+            }
+
+            return result;
         }
 
 

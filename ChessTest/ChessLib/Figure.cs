@@ -15,6 +15,25 @@ namespace ChessLib
     {
         BLACK, WHITE
     }
+
+    public struct Position
+    {
+        public int x;
+        public int y;
+
+        public Position()
+        {
+
+        }
+
+        public Position(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+
+    }
     public abstract class Figure
     {
         //Variables
@@ -27,6 +46,8 @@ namespace ChessLib
         public int Y => _y;
 
         public FigureColor Color => _color;
+
+        public Position Position => new(_x, _y);
 
 
         //Funciones
@@ -42,6 +63,11 @@ namespace ChessLib
             _color = color;
         }
 
+        public abstract FigureType GetType();
+
+        public abstract List<Position> GetAvaliablePosition(IBoard board);
+
+        public abstract void SetPosition(int x, int y);
     }
 
 }
