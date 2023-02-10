@@ -48,6 +48,9 @@ namespace ChessApp
                 float x = mouse.X;
                 float y = mouse.Y;
                 var position = gameEvent.coordinateConversor.ViewToWorld(x, y);
+                if (position.x < 0 || position.x > 8)
+                    return;
+
                 if(positions != null)
                 {
                     board.Move(figure, (int)position.x, (int)position.y);
@@ -70,7 +73,7 @@ namespace ChessApp
                 for (int j = 0; j < 8; j++)
                 {
                     if (aux)
-                        canvas.FillShader.SetColor(new RGBA(0.2, 0.2, 0.2, 1));
+                        canvas.FillShader.SetColor(new RGBA(0.5, 0.3, 0.1, 1));
                     else
                         canvas.FillShader.SetColor(new RGBA(1.0, 1.0, 1.0, 1.0));
                     canvas.Transform.SetIdentity();
@@ -143,15 +146,15 @@ namespace ChessApp
                 return;
 
             List<Position> list = figure.GetAvaliablePosition(board);
-            canvas.FillShader.SetColor(new RGBA(1.0, 0.0, 1.0, 0.3));
+            canvas.FillShader.SetColor(new RGBA(1.0, 1.0, 0.0, 0.2));
             canvas.Transform.SetIdentity();
             canvas.FillRectangle(new Rect2D(figure.X, figure.Y, 1, 1));
 
             foreach(Position position in list)
             {
-                canvas.FillShader.SetColor(new RGBA(1.0, 0.0, 1.0, 0.3));
-                canvas.Transform.SetIdentity();
-                canvas.FillRectangle(new Rect2D(position.x, position.y, 1, 1));
+                canvas.FillShader.SetColor(new RGBA(0.0, 0.0, 0.0, 0.5));
+                canvas.Transform.SetTranslation(0.0,0.0);
+                canvas.FillRectangle(new Rect2D(position.x + 0.35, position.y + 0.35, 0.25, 0.25));
             }
         }
     }

@@ -14,13 +14,15 @@ namespace ChessLib
         public int CanMove(int x, int y, FigureColor color)
         {
             Figure figure = GetFigureAt(x, y);
-            if (x < 8 && 0 <= x && figure == null)
-                return 0;
-            else if (y < 8 && 0 <= x && figure == null)
-                return 0;
+            if (7 < x || x < 0)
+                return -1;
+            else if (7 < y || y < 0)
+                return -1;
             else if (figure != null && figure.Color != color)
                 return 1;
-            return -1;
+            else if(figure != null && figure.Color == color)
+                return -1;
+            return 0;
         }
     }
 }

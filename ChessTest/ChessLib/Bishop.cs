@@ -19,22 +19,24 @@ namespace ChessLib
 
         public static void SearchBishopPositions(IBoard board,List<Position> positionList, int x, int y, FigureColor color, int dirX, int dirY)
         {
-            if (dirX != 1 || dirX != -1 && dirY != 1 || dirY != -1)
+            if (dirX < -1 || dirX > 1 && dirY < -1 || dirY > 1)
                 throw new InvalidOperationException("El valor introducido para dirY o dirX no es validado, introduce 1 o -1 dependiendo de la direccion que desee");
 
-            while (y < 8 || y > 0 || x < 8 || x > 0)
+            for(int i = 0; i < 14; i++)
             {
-                if (board.CanMove(x, y, color) == 0)
+                if (board.CanMove(x + dirX, y + dirY, color) == 0)
                 {
-                    positionList.Add(new Position(x, y));
+                    positionList.Add(new Position(x + dirX, y + dirY));
                     x = x + dirX;
                     y = y + dirY;
                 }
-                else if (board.CanMove(x, y, color) == 1)
+                else if (board.CanMove(x + dirX, y + dirY, color) == 1)
                 {
-                    positionList.Add(new Position(x, y));
+                    positionList.Add(new Position(x + dirX, y + dirY));
                     break;
                 }
+                else if (board.CanMove(x + dirX, y + dirY, color) == -1)
+                    break;
             }
         }
 
