@@ -90,35 +90,36 @@ namespace ChessApp
             for(int i = 0; i < board.FigureCount; i++)
             {
                 Figure figure = board.GetFigureIndex(i);
+                RGBA color = GetImageColor(figure);
                 switch (figure.GetType())
                 {
                     case FigureType.PAWN:
-                        canvas.FillShader.SetImage(buffer[2]);
+                        canvas.FillShader.SetImage(buffer[2],color);
                         canvas.Transform.SetTranslation(figure.X, figure.Y);
                         canvas.FillRectangle(new Rect2D(0, 0, 1, 1));
                         break;
                     case FigureType.ROOK:
-                        canvas.FillShader.SetImage(buffer[0]);
+                        canvas.FillShader.SetImage(buffer[0],color);
                         canvas.Transform.SetTranslation(figure.X, figure.Y);
                         canvas.FillRectangle(new Rect2D(0, 0, 1, 1));
                         break;
                     case FigureType.KNIGHT:
-                        canvas.FillShader.SetImage(buffer[3]);
+                        canvas.FillShader.SetImage(buffer[3], color);
                         canvas.Transform.SetTranslation(figure.X, figure.Y);
                         canvas.FillRectangle(new Rect2D(0, 0, 1, 1));
                         break;
                     case FigureType.BISHOP:
-                        canvas.FillShader.SetImage(buffer[1]);
+                        canvas.FillShader.SetImage(buffer[1], color);
                         canvas.Transform.SetTranslation(figure.X, figure.Y);
                         canvas.FillRectangle(new Rect2D(0, 0, 1, 1));
                         break;
                     case FigureType.QUEEN:
-                        canvas.FillShader.SetImage(buffer[5]);
+                        canvas.FillShader.SetImage(buffer[5], color);
                         canvas.Transform.SetTranslation(figure.X, figure.Y);
                         canvas.FillRectangle(new Rect2D(0, 0, 1, 1));
                         break;
                     case FigureType.KING:
-                        canvas.FillShader.SetImage(buffer[4]);
+                        canvas.FillShader.SetImage(buffer[4], color);
                         canvas.Transform.SetTranslation(figure.X, figure.Y);
                         canvas.FillRectangle(new Rect2D(0, 0, 1, 1));
                         break;
@@ -156,6 +157,14 @@ namespace ChessApp
                 canvas.Transform.SetTranslation(0.0,0.0);
                 canvas.FillRectangle(new Rect2D(position.x + 0.35, position.y + 0.35, 0.25, 0.25));
             }
+        }
+
+        private RGBA GetImageColor(Figure? figure)
+        {
+
+            if(figure != null && figure.Color == FigureColor.BLACK)
+                return new RGBA(0.1, 0.1, 0.1, 1.0);
+            return new RGBA(1, 1, 1, 1);
         }
     }
 }

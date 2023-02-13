@@ -22,7 +22,7 @@ namespace ChessLib
             if (dirX < -1 || dirX > 1 && dirY < -1 || dirY > 1)
                 throw new InvalidOperationException("El valor introducido para dirY o dirX no es validado, introduce 1 o -1 dependiendo de la direccion que desee");
 
-            for(int i = 0; i < 14; i++)
+            while(true)
             {
                 if (board.CanMove(x + dirX, y + dirY, color) == 0)
                 {

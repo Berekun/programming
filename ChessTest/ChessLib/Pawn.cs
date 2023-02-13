@@ -35,9 +35,9 @@ namespace ChessLib
             else
                 dir--;
 
-            if(color == FigureColor.WHITE && starty == 1 && board.CanMove(X,Y + 2,  color) == 0)
+            if(color == FigureColor.WHITE && starty == 1 && board.CanMove(X,Y + 2,  color) == 0 && board.CanMove(X, Y + 1, color) == 0)
                 list.Add(new Position(X, Y + dir * 2));
-            if(color == FigureColor.BLACK && starty == 6 && board.CanMove(X, Y - 2, color) == 0)
+            if(color == FigureColor.BLACK && starty == 6 && board.CanMove(X, Y - 2, color) == 0 && board.CanMove(X, Y - 1, color) == 0)
                 list.Add(new Position(X, Y + dir * 2));
 
             if(board.CanMove(X,Y + dir,color) == 0)
