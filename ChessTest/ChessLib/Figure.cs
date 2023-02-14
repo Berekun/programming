@@ -32,6 +32,16 @@ namespace ChessLib
             this.y = y;
         }
 
+        public static bool operator ==(Position pos1, Position pos2)
+        {
+            return (pos1.x == pos2.x && pos1.y == pos2.y);
+        }
+
+        public static bool operator !=(Position pos1, Position pos2)
+        {
+            return !(pos1 == pos2);
+        }
+
 
     }
     public abstract class Figure

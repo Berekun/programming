@@ -17,11 +17,10 @@ namespace ChessLib
             return FigureType.ROOK;
         }
 
-        public static void SearchRookPositions(IBoard board,List<Position> positionList,int x, int y,FigureColor color,int dirX, int dirY)
+        public static void SearchRookPositions(IBoard board, List<Position> positionList, int x, int y, FigureColor color, int dirX, int dirY)
         {
             if (dirX < -1 || dirX > 1 && dirY < -1 || dirY > 1)
                 throw new InvalidOperationException("El valor introducido para dirY o dirX no es validado, introduce 1 o -1 dependiendo de la direccion que desee");
-
 
             while(true)
             {
@@ -39,10 +38,9 @@ namespace ChessLib
                 else if (board.CanMove(x + dirX, y + dirY, color) == -1)
                     break;
             }
-        
         }
 
-        public static List<Position> GetRookAvaliablePosition(IBoard board, int x,int y, FigureColor color) //CAMBIAR, HAY QUE HACER UNA FUNCIUON CON UN FOR Y DEPENDE EL VALOR QUE LE PASES HACE UNA DIRECCION U OTRA
+        public static List<Position> GetRookAvaliablePosition(IBoard board, int x, int y, FigureColor color) 
         {
             List<Position> positionList = new List<Position>();
 
@@ -56,7 +54,7 @@ namespace ChessLib
 
         public override List<Position> GetAvaliablePosition(IBoard board)
         {
-            return GetRookAvaliablePosition(board,X,Y,Color);
+            return GetRookAvaliablePosition(board, X, Y, Color);
         }
     }
 }

@@ -41,6 +41,7 @@ namespace ChessApp
         {
         }
 
+        //Transforma las cordenadas de pantalla a cordenadas de juego, despues dependiendo donde clickes te selecciona o no la figura.
         public void OnClick(GameDelegateEvent gameEvent, IMouse mouse)
         {
             if (mouse.IsPressed(MouseButton.Left))
@@ -60,7 +61,10 @@ namespace ChessApp
                 }
                 
                 figure = board.GetFigureAt((int)position.x, (int)position.y);
-                positions = figure?.GetAvaliablePosition(board);
+                if (figure.Color == board.GetColorTurn())
+                    positions = figure?.GetAvaliablePosition(board);
+                else
+                    figure = null;  
             }
         }
 
@@ -130,7 +134,7 @@ namespace ChessApp
 
         }
 
-        //Carga las figuras
+        //Carga los sprites de las figuras
         public void LoadSprites(GameDelegateEvent gameEvent, List<IBuffer>? buffers)
         {
             buffers.Add(IAtomicDecoder.LoadFromFile("resources\\torre.png").CloneToBuffer(gameEvent.canvasContext, new CreateBufferParams(), true));
@@ -141,6 +145,7 @@ namespace ChessApp
             buffers.Add(IAtomicDecoder.LoadFromFile("resources\\reina.png").CloneToBuffer(gameEvent.canvasContext, new CreateBufferParams(), true));
         }
 
+        //Da forma visible a los posibles movimientos y la figura seleccionada
         public void RenderAvaliblePosition(ICanvas canvas,IBoard board, Figure? figure)
         {
             if (figure == null)
@@ -159,6 +164,7 @@ namespace ChessApp
             }
         }
 
+        //Te devuelve el color de la figura para cambiar el color de su sprite
         private RGBA GetImageColor(Figure? figure)
         {
 

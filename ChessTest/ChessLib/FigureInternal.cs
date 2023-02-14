@@ -12,6 +12,7 @@
             throw new NotImplementedException();
         }
 
+        //Cambia la posicion
         public override void SetPosition(int x, int y)
         {
             _x = x;

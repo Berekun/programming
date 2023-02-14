@@ -16,5 +16,32 @@ namespace ChessLib
         {
             return FigureType.KING;
         }
+
+        public void SearchKingPositions(IBoard board, List<Position> positionList, int x, int y, FigureColor color)
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                if (board.CanMove(x + i, y, color) == 0 || board.CanMove(x + i, y, color) == 1 && board.AntiSuicide(this))
+                {
+                    positionList.Add(new Position(x + i, y));
+                }
+            }
+        }
+
+        public List<Position> GetKingAvaliablePosition(IBoard iboard, int x, int y, FigureColor color)
+        {
+            List<Position> positionList = new List<Position>();
+
+            SearchKingPositions(iboard, positionList, x - 1, y + 1, color);
+            SearchKingPositions(iboard, positionList, x - 1, y, color);
+            SearchKingPositions(iboard, positionList, x - 1, y - 1, color);
+
+            return positionList;
+        }
+
+        public override List<Position> GetAvaliablePosition(IBoard board)
+        {
+            return GetKingAvaliablePosition(board, X, Y, Color);
+        }
     }
 }

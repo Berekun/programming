@@ -1,4 +1,6 @@
-﻿namespace ChessLib
+﻿using System.Drawing;
+
+namespace ChessLib
 {
     public class Board : IBoard
     {
@@ -6,12 +8,15 @@
         private int _x;
         private int _y;
         private List<Figure> figures = new List<Figure>();
+        private int ColorTurn = 0;
 
         //properties
         public int X => _x;
         public int Y => _y;
 
         public int FigureCount => figures.Count;
+
+        public List<Figure> FigureList => figures;
 
         //Funciones
 
@@ -98,11 +103,13 @@
             figures.Add(new King(4, 7, FigureColor.BLACK));
         }
 
+        //Busca en la lista de figuras una figura y te delvuelvo su posicion en la lista
         public Figure? GetFigureIndex(int index)
         {
             return figures[index];
         }
 
+        //Te dice si en la posicion que le pasas hay o no una figura
         public Figure? GetFigureAt(int x, int y)
         {
             foreach (Figure f in figures)
@@ -112,6 +119,7 @@
 
         }
 
+        //Verifica si la posicion seleccionada es igual al de una figura para poder moverla
         public void Move(Figure figure, int x, int y)
         {
             if (figure == null)
@@ -124,15 +132,48 @@
                 if(position.x == x && position.y ==  y)
                 Movement(figure, x , y);
             }
+
         }
 
+        //Mueve la figura y elemina al enemigo en caso de ser comido
         public void Movement(Figure figure, int x, int y)
         {
             Figure? enemy = GetFigureAt(x, y);
             figure.SetPosition(x, y);
+            ColorTurn++;
 
             if (enemy != null)
                 figures.Remove(enemy);
+        }
+
+        //Te duelve un color dependiendo el turno
+        public FigureColor GetColorTurn()
+        {
+            if (ColorTurn % 2 == 0)
+                return FigureColor.WHITE;
+            return FigureColor.BLACK;
+            
+        }
+
+        public bool AntiSuicide(Figure f)
+        {
+            List<Position> positionListKing = f.GetAvaliablePosition(this);
+
+            for (int i = 0; i < positionListKing.Count; i++)
+            {
+                for (int j = 0; j < FigureCount; j++)
+                {
+                    List<Position> positionList = figures[j].GetAvaliablePosition(this);
+
+                    for (int k = 0; k < positionList.Count; k++)
+                    {
+                        if (positionListKing[i] == positionList[k])
+                            return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
