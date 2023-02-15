@@ -19,11 +19,16 @@ namespace ChessLib
 
         public void SearchKingPositions(IBoard board, List<Position> positionList, int x, int y, FigureColor color)
         {
-            for(int i = 0; i < 3; i++)
+            Position? p = board.AntiSuicide(this);
+            for (int i = 0; i < 3; i++)
             {
-                if (board.CanMove(x + i, y, color) == 0 || board.CanMove(x + i, y, color) == 1 && board.AntiSuicide(this))
+                if (board.CanMove(x + i, y, color) == 0 || board.CanMove(x + i, y, color) == 1)
                 {
                     positionList.Add(new Position(x + i, y));
+                }
+                if(p != null)
+                {
+                    positionList.Remove(p);
                 }
             }
         }

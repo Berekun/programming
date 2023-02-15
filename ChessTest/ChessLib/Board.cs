@@ -155,25 +155,27 @@ namespace ChessLib
             
         }
 
-        public bool AntiSuicide(Figure f)
+        public Position? AntiSuicide(Figure f)
         {
             List<Position> positionListKing = f.GetAvaliablePosition(this);
 
             for (int i = 0; i < positionListKing.Count; i++)
             {
+                f.SetPosition(positionListKing[i].x, positionListKing[i].y);
+
                 for (int j = 0; j < FigureCount; j++)
                 {
                     List<Position> positionList = figures[j].GetAvaliablePosition(this);
 
                     for (int k = 0; k < positionList.Count; k++)
                     {
-                        if (positionListKing[i] == positionList[k])
-                            return true;
+                        if (f.Position == positionList[k])
+                            return f.Position;
                     }
                 }
             }
 
-            return false;
+            return null;
         }
     }
 }

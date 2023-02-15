@@ -11,7 +11,7 @@ namespace ChessLib
     {
         Figure GetFigureAt(int x, int y);
 
-        public bool AntiSuicide(Figure f);
+        public Position? AntiSuicide(Figure f);
 
         //Funcion que comprueba las condiciones de limites y movimientos de las figuras
         public int CanMove(int x, int y, FigureColor color)

@@ -20,8 +20,6 @@ namespace ChessApp
             DrawBorad(canvas);
             DrawFigures(canvas, board, buffers);
             RenderAvaliblePosition(canvas, board, figure);
-
-
         }
 
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
