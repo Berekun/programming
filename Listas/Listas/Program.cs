@@ -217,9 +217,9 @@
                 {
                     if (comp(array[i], array[j]) == 0)
                     {
-                        T aux = array[i];             //
-                        array[i] = array[j];          //SWAP
-                        array[j] = aux;               //
+                        T aux = array[i];             
+                        array[i] = array[j];          
+                        array[j] = aux;               
                     }
                 }
             }
@@ -282,6 +282,88 @@
 
             return result;
         }
+
+        public static void Swap<T>(ref T valor1, ref T valor2)
+        {
+            T save = valor1;
+            valor1 = valor2;
+            valor2 = save;
+
+        }
+
+        public static T[] Remove<T>(T[] array, T valor)
+        {
+            T[] theReturn = new T[0];
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i].Equals(valor))
+                    continue;
+                theReturn = Add(theReturn, array[i]);
+
+            }
+            return theReturn;
+        }
+
+        public static T[] Add<T>(T[] array, T valor)
+        {
+            T[] theReturn = new T[array.Length + 1];
+            for (int i = 0; i < array.Length; i++)
+            {
+                theReturn[i] = array[i];
+            }
+
+            theReturn[array.Length] = valor;
+            return theReturn;
+        }
+
+        public static void Rotate<T>(T[] array, int rotation)
+        {
+            if (array == null)
+                return;
+            int len = array.Length, start = -1;
+
+            if (rotation >= 0)
+                start = len;
+            else
+                start = 0;
+
+            FlipInTheRangeOf(array, 0, start - rotation - 1);
+            FlipInTheRangeOf(array, start - rotation, len - 1);
+            Flip(array);
+
+        }
+
+        public static void Flip<T>(T[] array)
+        {
+            if (array == null)
+                return;
+            int len = array.Length - 1, lenMid = (len / 2) + 1;
+            T save;
+            for (int i = 0; i < lenMid; i++)
+            {
+                save = array[len];
+                array[len] = array[i];
+                array[i] = save;
+
+                len--;
+            }
+        }
+
+        public static void FlipInTheRangeOf<T>(T[] array, int min, int max)
+        {
+            if (array == null || max > array.Length || min < 0)
+                return;
+            T save;
+            for (int i = min; i <= max; i++)
+            {
+                save = array[max];
+                array[max] = array[i];
+                array[i] = save;
+
+                max--;
+            }
+        }
+
 
 
     }

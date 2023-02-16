@@ -59,7 +59,7 @@ namespace ChessApp
                 }
                 
                 figure = board.GetFigureAt((int)position.x, (int)position.y);
-                if (figure.Color == board.GetColorTurn())
+                if (figure?.Color == board.GetColorTurn())
                     positions = figure?.GetAvaliablePosition(board);
                 else
                     figure = null;  

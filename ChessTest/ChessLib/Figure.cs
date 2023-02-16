@@ -49,6 +49,7 @@ namespace ChessLib
         //Variables
         protected int _x, _y;
         protected FigureColor _color;
+        protected int TotalMoves = 0;
 
         //Properties
         public int X => _x;

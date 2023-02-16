@@ -22,12 +22,12 @@ namespace ChessLib
         {
             List<Position> positionsList = new List<Position>();
 
-            SearchPawnPosition(board, positionsList, X, Y, Color);
+            SearchPawnPosition(board, positionsList, Y, Color);
 
             return positionsList;
         }
 
-        public void SearchPawnPosition(IBoard board, List<Position> list, int startx, int starty, FigureColor color)
+        public void SearchPawnPosition(IBoard board, List<Position> list, int starty, FigureColor color)
         {
             int dir = 0;
             if (color == FigureColor.WHITE)

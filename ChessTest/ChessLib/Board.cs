@@ -29,11 +29,11 @@ namespace ChessLib
 
         public void CreateFigures()
         {
+            CreateMonarchs();
             CreatePawns();
             CreateRooks();
-            CreateKnights();
-            CreateBishops();
-            CreateMonarchs();
+            //CreateKnights();
+            //CreateBishops();
         }
 
         //Crea los peones
@@ -97,10 +97,10 @@ namespace ChessLib
 
         public void CreateMonarchs()
         {
-            figures.Add(new Queen(3, 0, FigureColor.WHITE));
-            figures.Add(new Queen(3, 7, FigureColor.BLACK));
             figures.Add(new King(4, 0, FigureColor.WHITE));
             figures.Add(new King(4, 7, FigureColor.BLACK));
+            figures.Add(new Queen(3, 0, FigureColor.WHITE));
+            figures.Add(new Queen(3, 7, FigureColor.BLACK));
         }
 
         //Busca en la lista de figuras una figura y te delvuelvo su posicion en la lista
@@ -155,27 +155,28 @@ namespace ChessLib
             
         }
 
-        public Position? AntiSuicide(Figure f)
+        public bool AntiSuicide(Figure f,int x,int y)
         {
-            List<Position> positionListKing = f.GetAvaliablePosition(this);
+            Position aux = f.Position;
+            f.SetPosition(x, y);
+            List<Position> positionList = new List<Position>();
 
-            for (int i = 0; i < positionListKing.Count; i++)
+            for (int j = 0; j < FigureCount; j++)
             {
-                f.SetPosition(positionListKing[i].x, positionListKing[i].y);
+                if (figures[j].Color != f.Color && figures[j].GetType() != FigureType.KING)
+                    positionList = figures[j].GetAvaliablePosition(this);
 
-                for (int j = 0; j < FigureCount; j++)
+                for (int k = 0; k < positionList.Count; k++)
                 {
-                    List<Position> positionList = figures[j].GetAvaliablePosition(this);
-
-                    for (int k = 0; k < positionList.Count; k++)
+                    if (f.Position == positionList[k])
                     {
-                        if (f.Position == positionList[k])
-                            return f.Position;
+                        f.SetPosition(aux.x, aux.y);
+                        return true;
                     }
                 }
             }
-
-            return null;
+            f.SetPosition(aux.x, aux.y);
+            return false;
         }
     }
 }
