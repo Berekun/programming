@@ -32,8 +32,8 @@ namespace ChessLib
             CreateMonarchs();
             CreatePawns();
             CreateRooks();
-            //CreateKnights();
-            //CreateBishops();
+            CreateKnights();
+            CreateBishops();
         }
 
         //Crea los peones
