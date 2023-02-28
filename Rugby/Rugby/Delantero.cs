@@ -8,6 +8,7 @@ namespace Rugby
 {
     internal class Delantero : Jugador
     {
+        protected int probPas = (int)Utils.GetRandomDouble(0.2, 0.4);
         public Delantero(Equipo equipo, int x, int y) : base(equipo, x, y)
         {
 

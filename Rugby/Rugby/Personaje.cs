@@ -20,11 +20,6 @@ namespace Rugby
             position = new Position(x, y);
         }
 
-        public void ChangePosition()
-        {
-
-        }
-
         public abstract void Ejecutar(Pelota pelota, Partido partido);
     }
 }

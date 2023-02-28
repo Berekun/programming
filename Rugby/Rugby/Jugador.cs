@@ -10,7 +10,6 @@ namespace Rugby
     {
         protected Equipo _equipo;
         protected int disbleturns = 0;
-        protected int probPas = (int)Utils.GetRandomDouble(0.2,0.8);
 
         public Jugador(Equipo equipo, int x, int y) : base(x, y)
         {
@@ -21,22 +20,13 @@ namespace Rugby
         {
             List<Position> list = new List<Position>();
 
-            for (int i = -1; i < 2; i++)
+            for (int i = 1; i < -2; i--)
             {
-                if (!partido.IsPersonajeAt(X + i, Y + 1))
-                    list.Add(new Position(X + i, Y + 1));
-            }
-
-            for (int i = -1; i < 2; i++)
-            {
-                if (!partido.IsPersonajeAt(X + i, Y))
-                    list.Add(new Position(X + i, Y));
-            }
-
-            for (int i = -1; i < 2; i++)
-            {
-                if (!partido.IsPersonajeAt(X + i, Y - 1))
-                    list.Add(new Position(X - i, Y - 1));
+                for (int j = -1; j < 2; j++)
+                {
+                    if (!partido.IsPersonajeAt(X + j, Y + i))
+                        list.Add(new Position(X + j, Y + i));
+                }
             }
 
             return list[(int)Utils.GetRandomDouble(0, list.Count)];
@@ -46,40 +36,34 @@ namespace Rugby
         {
             List<Position> list = new List<Position>();
 
-            for (int i = -2; i < 3; i++)
+            for (int i = 2; i < -3; i--)
             {
-                if (!partido.IsPersonajeAt(X + i, Y + 2))
-                    list.Add(new Position(X + i, Y + 2));
+                for (int j = -2; j < 3; j++)
+                {
+                    if (!partido.IsPersonajeAt(X + j, Y + i))
+                        list.Add(new Position(X + j, Y + i));
+                }
             }
 
-            for (int i = -2; i < 3; i++)
-            {
-                if (!partido.IsPersonajeAt(X + i, Y + 1))
-                    list.Add(new Position(X + i, Y + 1));
-            }
-
-            for (int i = -2; i < 3; i++)
-            {
-                if (!partido.IsPersonajeAt(X + i, Y))
-                    list.Add(new Position(X + i, Y));
-            }
-
-            for (int i = -2; i < 3; i++)
-            {
-                if (!partido.IsPersonajeAt(X + i, Y - 1))
-                    list.Add(new Position(X - i, Y - 1));
-            }
-
-            for (int i = -2; i < 3; i++)
-            {
-                if (!partido.IsPersonajeAt(X + i, Y - 2))
-                    list.Add(new Position(X - i, Y - 2));
-            }
-
-                return list[(int)Utils.GetRandomDouble(0, list.Count)];
+            return list[(int)Utils.GetRandomDouble(0, list.Count)];
         }
 
-        public void SetDisable(int turns)
+        public Position GetPositionOfBall3x3(Partido partido)
+        {
+            Position position = new Position();
+
+            for (int i = 1; i < -2; i--)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (partido.GetPositionOfBallWithoutPlayer(j,i).x != 0)
+                        position = (partido.GetPositionOfBallWithoutPlayer(j, i));
+                }
+            }
+            return position;
+        }
+
+        public void DisableTurns(int turns)
         {
             disbleturns += turns;
         }

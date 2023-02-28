@@ -10,6 +10,8 @@ namespace Rugby
     {
         private Position position = new Position();
 
+        public Position Position => position;
+
         public int X => position.x;
 
         public int Y => position.y;

@@ -87,6 +87,30 @@ namespace Rugby
             return null;
         }
 
+        public Position GetPositionOfBallWithoutPlayer(int x, int y)
+        {
+            Position positionball = new Position();
+
+            if (x > 10 || x < 0)
+                return positionball;
+            if (y > 20 || y < 0)
+                return positionball;
+
+            Personaje personaje;
+
+            for (int i = 0; i < GetPersonajesCount(); i++)
+            {
+                personaje = GetPersonajeAt(i);
+                if (pelota.X == personaje.X && pelota.Y == personaje.Y)
+                    return positionball;
+                if(pelota.X == x && pelota.Y == y)
+                {
+                    return positionball = pelota.Position;
+                }
+            }
+            return positionball;
+        }
+
         public void CreateTeams()
         {
             _equipos.Add(new Equipo("rojo"));

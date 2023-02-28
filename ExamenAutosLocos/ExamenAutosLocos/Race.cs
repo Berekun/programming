@@ -12,12 +12,17 @@ namespace ExamenAutosLocos
         public List<RaceObject> raceObjects= new List<RaceObject>();
         public RaceObject GetObjectAt(int index)
         {
-            return raceObjects[index];
+            for (int i = 0; i < GetObjectCount(); i++)
+            {
+                if (index == i)
+                    return raceObjects[i];
+            }
+            return null;
         }
 
         public int GetObjectCount()
         {
-            throw new NotImplementedException();
+            return raceObjects.Count;
         }
 
         public void Init(double distance)
@@ -36,7 +41,7 @@ namespace ExamenAutosLocos
             Init(1000);
 
             List<RaceObject> winer = new List<RaceObject>();
-            while (winer == null)
+            while (winer.Count == 0)
             {
                 foreach (var racer in raceObjects)
                 {
