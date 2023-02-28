@@ -42,13 +42,13 @@ namespace ExamenDragonBall
         public bool QuiereEsquivar()
         {
             double random = Utils.GetRandom(0,1);
-            if (random >= 0.5) return true;
-            return false;
+            if (random >= _dodgedesire) return false;
+            return true;
         }
 
         public void RecibirAtaque(double blockdmg, double maxdmg)
         {
-            if (QuiereEsquivar() == true && ObtenerCapacidadDeEsquiva() > Utils.GetRandom(0, 1)) return;
+            if (QuiereEsquivar() && ObtenerCapacidadDeEsquiva() > Utils.GetRandom(0, 1)) return;
             if (!QuiereEsquivar() && ObtenerCapacidadDeParada() > Utils.GetRandom(0, 1))
                 QuitarEnergia(blockdmg);
             else

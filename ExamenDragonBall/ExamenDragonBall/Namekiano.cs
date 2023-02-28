@@ -22,12 +22,12 @@ namespace ExamenDragonBall
         }
         public override void Atacar(Persona persona)
         {
-            if (Utils.GetRandom(0, 1) >= 6)
+            if (Utils.GetRandom(0, 1) <= 0.6 && Utils.GetRandom(0,1) <= _golpe)
             {
                 QuitarEnergia(10);
                 persona.RecibirAtaque(7, 19);
             }
-            else
+            else if(Utils.GetRandom(0,1) <= _rayo)
             {
                 QuitarEnergia(50);
                 persona.RecibirAtaque(20, 100);

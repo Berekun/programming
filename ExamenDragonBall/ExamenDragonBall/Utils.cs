@@ -19,14 +19,5 @@ namespace ExamenDragonBall
             return _random.NextDouble() * (max - min) + min;
 
         }
-
-        public static int GetRandomInt(int min, int max)
-        {
-            if (min > max)
-                return GetRandomInt(max, min);
-
-            return _random.Next() * (max - min) + min;
-
-        }
     }
 }

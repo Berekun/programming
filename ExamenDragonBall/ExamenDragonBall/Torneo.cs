@@ -12,37 +12,38 @@ namespace ExamenDragonBall
     {
         List<Persona> personas = new List<Persona>();
         private string[] NombresParticipantes = { "Paquito", "Juanito", "Pepito", "Ricardo", "Goku", "Vegeta" };
+
+        public void CreateParticipants()
+        {
+
+            for (int i = 0; i < 16; i++)
+            {
+                int random = (int)Utils.GetRandom(0, 4);
+                switch (random)
+                {
+                    case 0:
+                        Humano human = new Humano(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
+                        personas.Add(human);
+                        break;
+                    case 1:
+                        Saiyan saiyan = new Saiyan(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
+                        personas.Add(saiyan);
+                        break;
+                    case 2:
+                        SuperSaiyan supersaiyan = new SuperSaiyan(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
+                        personas.Add(supersaiyan);
+                        break;
+                    case 3:
+                        Namekiano namekiano = new Namekiano(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
+                        personas.Add(namekiano);
+                        break;
+                    default: break;
+                }
+            }
+        }
         public void Init()
         {
             CreateParticipants();
-        }
-        public void CreateParticipants()
-        {
-            
-            for (int i = 0; i < 16; i++)
-            {
-                int random = (int)Utils.GetRandom(0, 3.99);
-                if (random == 0)
-                {
-                    Humano human = new Humano(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
-                    personas.Add(human);
-                }
-                if (random == 1)
-                {
-                    Saiyan saiyan = new Saiyan(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
-                    personas.Add(saiyan);
-                }
-                if (random == 2)
-                {
-                    SuperSaiyan supersaiyan = new SuperSaiyan(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
-                    personas.Add(supersaiyan);
-                }
-                if(random == 3)
-                {
-                    Namekiano namekiano = new Namekiano(NombresParticipantes[(int)Utils.GetRandom(0, 5.99)]);
-                    personas.Add(namekiano);
-                }
-            }         
         }
         public List<string> Execute()
         {

@@ -21,7 +21,7 @@ namespace ExamenDragonBall
         public override void Atacar(Persona persona)
         {
             QuitarEnergia(1);
-            //if (Utils.GetRandom(0, 1) > _golpe) return;
+            if (Utils.GetRandom(0, 1) < _golpe)
             persona.RecibirAtaque(0.5, 3);
         }
 
