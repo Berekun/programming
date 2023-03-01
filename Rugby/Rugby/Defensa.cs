@@ -8,7 +8,8 @@ namespace Rugby
 {
     internal class Defensa : Jugador
     {
-        protected int probPas = (int)Utils.GetRandomDouble(0.2, 0.8);
+        protected double probPas = Utils.GetRandomDouble(0.2, 0.8);
+        protected double probSteal = Utils.GetRandomDouble(0.4, 0.6);
         public Defensa(Equipo equipo, int x, int y) : base(equipo, x, y)
         {
         }
@@ -48,10 +49,21 @@ namespace Rugby
 
         public void DefenseWithoutBall(Pelota pelota, Partido partido)
         {
-            if (Utils.GetRandomDouble(0, 1) < 0.25)
+            double random = Utils.GetRandomDouble(0, 1);
+            if (random < 0.25)
             {
+                if(GetPositionOfBall3x3(partido).x != 0)
                 partido.Move(position, GetPositionOfBall3x3(partido));
             }
+            else if (random > 0.25 && 0.5 > random)
+            {
+                if(Utils.GetRandomDouble(0,1) < probSteal)
+                {
+                    if (GetPositionOfPlayerWithBall3x3(partido).x != 0)
+                        pelota.ChangePosition(partido, GetRandomPosition5x5(partido));
+                }
+            }
+
         }
     }
 }

@@ -11,6 +11,8 @@ namespace Rugby
         protected Equipo _equipo;
         protected int disbleturns = 0;
 
+        public Equipo Equipo => _equipo;
+
         public Jugador(Equipo equipo, int x, int y) : base(x, y)
         {
             _equipo = equipo;
@@ -57,6 +59,21 @@ namespace Rugby
                 for (int j = -1; j < 2; j++)
                 {
                     if (partido.GetPositionOfBallWithoutPlayer(j,i).x != 0)
+                        position = (partido.GetPositionOfBallWithoutPlayer(j, i));
+                }
+            }
+            return position;
+        }
+
+        public Position GetPositionOfPlayerWithBall3x3(Partido partido)
+        {
+            Position position = new Position();
+
+            for (int i = 1; i < -2; i--)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (partido.GetPositionPlayerWhitBall(j, i).x != 0)
                         position = (partido.GetPositionOfBallWithoutPlayer(j, i));
                 }
             }

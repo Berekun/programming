@@ -13,6 +13,15 @@ namespace Rugby
         private List<Personaje> _personajes = new List<Personaje>();
         private List<Equipo> _equipos = new List<Equipo>();
         Pelota pelota = new Pelota();
+        public delegate int Comparator<T>(T a, T b);
+
+        Comparator<int> comp = (a, b) =>
+        {
+            if (a < b)
+                return 0;
+            return 1;
+        };
+
 
         public Personaje GetPersonajeAt(int index)
         {
@@ -69,7 +78,7 @@ namespace Rugby
 
         }
 
-        public Personaje? GetPersonajeAtPosition(int x, int y)
+        public Personaje? GetJugadorAtPosition(int x, int y)
         {
             if (x > 10 || x < 0)
                 return null;
@@ -109,6 +118,65 @@ namespace Rugby
                 }
             }
             return positionball;
+        }
+
+        public Position GetPositionPlayerWhitBall(int x, int y)
+        {
+            Position positionball = new Position();
+
+            if (x > 10 || x < 0)
+                return positionball;
+            if (y > 20 || y < 0)
+                return positionball;
+
+            Personaje personaje;
+
+            for (int i = 0; i < GetPersonajesCount(); i++)
+            {
+                personaje = GetPersonajeAt(i);
+                if (pelota.X == personaje.X && pelota.Y == personaje.Y)
+                    return positionball = pelota.Position;
+            }
+
+            return positionball;
+        }
+
+        public Jugador WhatPlayerIsNear(Jugador jugador)
+        {
+            Jugador personaje;
+            int minX = 0, minY = 0, maxX, maxY;
+            Jugador jugadornear = jugador;
+
+            for (int i = 0; i < GetPersonajesCount(); i++)
+            {
+                if (GetPersonajeAt(i) is Jugador)
+                {
+                    personaje = (Jugador)GetPersonajeAt(i);
+                    maxX = Math.Abs(personaje.X - jugador.X);
+                    maxY = Math.Abs(personaje.Y - jugador.Y);
+
+                    if (personaje.Equipo != jugador.Equipo && maxX < minX && maxY < minY)
+                    {
+                        minX = maxX;
+                        minY = maxY;
+                        jugadornear = personaje;
+                    }
+                }
+            }
+            return jugadornear;
+        }
+
+        public void AproxToPlayer(Jugador jugador)
+        {
+            int distX, distY;
+            Comparator<int> comp;
+
+            distX = WhatPlayerIsNear(jugador).X - jugador.X;
+            distY = WhatPlayerIsNear(jugador).Y - jugador.Y;
+
+            comp(Math.Abs(distX), Math.Abs(distY)); 
+            
+             
         }
 
         public void CreateTeams()

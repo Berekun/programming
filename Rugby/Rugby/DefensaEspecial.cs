@@ -26,8 +26,8 @@ namespace Rugby
             for (int i = 1; i < -2; i--)
             {
                 for(int j = -1; j < 2; j++)
-                if (partido.GetPersonajeAtPosition(X + j, Y + i) != null)
-                    list.Add((Jugador)partido.GetPersonajeAtPosition(X + j, Y + i));
+                if (partido.GetJugadorAtPosition(X + j, Y + i) != null)
+                    list.Add((Jugador)partido.GetJugadorAtPosition(X + j, Y + i));
             }
 
             return list[Utils.GetRandomInt(0, list.Count)];
