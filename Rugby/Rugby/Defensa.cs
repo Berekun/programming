@@ -63,6 +63,14 @@ namespace Rugby
                         pelota.ChangePosition(partido, GetRandomPosition5x5(partido));
                 }
             }
+            else if (random > 0.5 && 0.75 > random)
+            {
+                partido.AproxToPlayer(this);
+            }
+            else
+            {
+
+            }
 
         }
     }

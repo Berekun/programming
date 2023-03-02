@@ -8,12 +8,12 @@ using static Rugby.Personaje;
 namespace Rugby
 {
     public delegate void Visitor(Personaje personaje);
+    public delegate int Comparator<T>(T a, T b);
     public class Partido
     {
         private List<Personaje> _personajes = new List<Personaje>();
         private List<Equipo> _equipos = new List<Equipo>();
         Pelota pelota = new Pelota();
-        public delegate int Comparator<T>(T a, T b);
 
         Comparator<int> comp = (a, b) =>
         {
@@ -169,14 +169,24 @@ namespace Rugby
         public void AproxToPlayer(Jugador jugador)
         {
             int distX, distY;
-            Comparator<int> comp;
 
             distX = WhatPlayerIsNear(jugador).X - jugador.X;
             distY = WhatPlayerIsNear(jugador).Y - jugador.Y;
 
-            comp(Math.Abs(distX), Math.Abs(distY)); 
-            
-             
+            int compared = comp(Math.Abs(distX), Math.Abs(distY));
+
+            if (compared == 0)
+            {
+                if (distX < 0)
+                    Move(jugador.Position, new Position(jugador.X - 1, jugador.Y));
+                Move(jugador.Position, new Position(jugador.X + 1, jugador.Y));
+            }
+            else
+            {
+                if (distY < 0)
+                    Move(jugador.Position, new Position(jugador.X, jugador.Y - 1));
+                Move(jugador.Position, new Position(jugador.X, jugador.Y + 1));
+            }
         }
 
         public void CreateTeams()

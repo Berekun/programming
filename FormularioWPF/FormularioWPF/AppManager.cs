@@ -8,5 +8,6 @@ namespace FormularioWPF
 {
     internal class AppManager
     {
+        List<Student> students = new List<Student>();
     }
 }
