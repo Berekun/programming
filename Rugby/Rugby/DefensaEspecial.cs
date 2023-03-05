@@ -15,22 +15,15 @@ namespace Rugby
 
         public override void Ejecutar(Pelota pelota, Partido partido)
         {
-            base.Ejecutar(pelota, partido);
-            GetRandomPersonaje3x3(partido).DisableTurns(1);
-        }
-
-        public Jugador GetRandomPersonaje3x3(Partido partido)
-        {
-            List<Jugador> list = new List<Jugador>();
-
-            for (int i = 1; i < -2; i--)
+            if (disbleturns == 0)
             {
-                for(int j = -1; j < 2; j++)
-                if (partido.GetJugadorAtPosition(X + j, Y + i) != null)
-                    list.Add((Jugador)partido.GetJugadorAtPosition(X + j, Y + i));
+                Jugador personaje = partido.GetRandomPersonaje3x3(partido, this);
+                base.Ejecutar(pelota, partido);
+                if (personaje != null)
+                    personaje.DisableTurns(1);
             }
-
-            return list[Utils.GetRandomInt(0, list.Count)];
+            else
+                disbleturns -= 1;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,29 +17,14 @@ namespace Rugby
         public Jugador(Equipo equipo, int x, int y) : base(x, y)
         {
             _equipo = equipo;
-        }
-
-        public Position GetRandomPosition3x3(Partido partido)
-        {
-            List<Position> list = new List<Position>();
-
-            for (int i = 1; i < -2; i--)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-                    if (!partido.IsPersonajeAt(X + j, Y + i))
-                        list.Add(new Position(X + j, Y + i));
-                }
-            }
-
-            return list[(int)Utils.GetRandomDouble(0, list.Count)];
+            _equipo.AddPlayers(this);
         }
 
         public Position GetRandomPosition5x5(Partido partido)
         {
             List<Position> list = new List<Position>();
 
-            for (int i = 2; i < -3; i--)
+            for (int i = 2; i > -3; i--)
             {
                 for (int j = -2; j < 3; j++)
                 {
@@ -54,7 +40,7 @@ namespace Rugby
         {
             Position position = new Position();
 
-            for (int i = 1; i < -2; i--)
+            for (int i = 1; i > -2; i--)
             {
                 for (int j = -1; j < 2; j++)
                 {
@@ -69,7 +55,7 @@ namespace Rugby
         {
             Position position = new Position();
 
-            for (int i = 1; i < -2; i--)
+            for (int i = 1; i > -2; i--)
             {
                 for (int j = -1; j < 2; j++)
                 {

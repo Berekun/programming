@@ -8,7 +8,7 @@ namespace Rugby
 {
     public class Pelota
     {
-        private Position position = new Position();
+        private Position position = new Position(5,11);
 
         public Position Position => position;
 
@@ -16,9 +16,9 @@ namespace Rugby
 
         public int Y => position.y;
 
-        public void ChangePosition(Partido partido, Position newPosition)
+        public void ChangePosition(Position newPosition)
         {
-            partido.Move(position, newPosition);
+            position = newPosition;
         }
     }
 }

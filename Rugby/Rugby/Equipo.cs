@@ -12,8 +12,12 @@ namespace Rugby
         {
             _nombre = nombre;
         }
+
         private string _nombre = "";
         private List<Personaje> _personajesequipo = new List<Personaje>();
+        private int _puntos;
+
+        public string Nombre => _nombre;
 
         public Personaje GetPersonajeAt(int index)
         {
@@ -30,6 +34,16 @@ namespace Rugby
         public int GetPersonajesCount()
         {
             return _personajesequipo.Count;
+        }
+
+        public void AddScore(int puntos)
+        {
+            _puntos += puntos;
+        }
+
+        public void AddPlayers(Jugador jugador)
+        {
+            _personajesequipo.Add(jugador);
         }
     }
 }

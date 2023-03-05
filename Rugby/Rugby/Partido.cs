@@ -8,20 +8,11 @@ using static Rugby.Personaje;
 namespace Rugby
 {
     public delegate void Visitor(Personaje personaje);
-    public delegate int Comparator<T>(T a, T b);
     public class Partido
     {
         private List<Personaje> _personajes = new List<Personaje>();
         private List<Equipo> _equipos = new List<Equipo>();
         Pelota pelota = new Pelota();
-
-        Comparator<int> comp = (a, b) =>
-        {
-            if (a < b)
-                return 0;
-            return 1;
-        };
-
 
         public Personaje GetPersonajeAt(int index)
         {
@@ -47,23 +38,91 @@ namespace Rugby
             CreateDementors();
         }
 
+        public bool IsScoreGoal()
+        {
+            foreach (Personaje personaje in _personajes)
+            {
+                if (personaje is Jugador)
+                {
+                    Jugador jugador = (Jugador)personaje;
+
+                    if (jugador.Equipo.Nombre == "rojo" && jugador.Y == 19)
+                    {
+                        if (IsThisPlayerHavingBall(jugador) && jugador is Delantero)
+                        {
+                            _equipos[0].AddScore(10);
+                            return true;
+                        }
+                        else if (IsThisPlayerHavingBall(jugador) && (jugador is Defensa || jugador is DefensaEspecial))
+                        {
+                            _equipos[0].AddScore(3);
+                            return true;
+                        }
+                    }
+                    else if (jugador.Equipo.Nombre == "azul" && jugador.Y == 0)
+                    {
+                        if (IsThisPlayerHavingBall(jugador) && jugador is Delantero)
+                        {
+                            _equipos[1].AddScore(10);
+                            return true;
+                        }
+                        else if (IsThisPlayerHavingBall(jugador) && (jugador is Defensa || jugador is DefensaEspecial))
+                        {
+                            _equipos[1].AddScore(3);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void ResetWorld()
+        {
+            if (IsScoreGoal())
+            {
+                foreach (Personaje personaje in _personajes)
+                {
+                    MovePersonaje(personaje, personaje.PositionInicial);
+                }
+
+            }
+        }
+
         public void Ejecutar()
         {
-
+            Iniciar();
+            for (int i = 0; i <= 1000; i++)
+            {
+                foreach(Personaje personaje in _personajes)
+                {
+                    personaje.Ejecutar(pelota, this);
+                    IsScoreGoal();
+                    ResetWorld();
+                }
+            }
         }
 
         public void Visit(Visitor visit)
         {
             for (int i = 0; i < GetPersonajesCount(); i++)
                 visit(GetPersonajeAt(i));
+        }
+
+        public bool IsThisPlayerHavingBall(Personaje personaje)
+        {
+            if (personaje.X == pelota.X && personaje.Y == pelota.Y)
+                return true;
+            return false;
 
         }
 
         public bool IsPersonajeAt(int x, int y)
         {
-            if (x > 10 || x < 0)
+            if (x >= 10 || x < 0)
                 return true;
-            if (y > 20 || y < 0)
+            if (y >= 20 || y < 0)
                 return true;
 
             Personaje personaje;
@@ -71,7 +130,7 @@ namespace Rugby
             for (int i = 0; i < GetPersonajesCount(); i++)
             {
                 personaje = GetPersonajeAt(i);
-                if (x == GetPersonajeAt(i).X && y == GetPersonajeAt(i).Y)
+                if (x == personaje.X && y == personaje.Y)
                     return true;
             }
             return false;
@@ -168,25 +227,155 @@ namespace Rugby
 
         public void AproxToPlayer(Jugador jugador)
         {
-            int distX, distY;
+            int distX = WhatPlayerIsNear(jugador).X - jugador.X;
+            int distY = WhatPlayerIsNear(jugador).Y - jugador.Y;
 
-            distX = WhatPlayerIsNear(jugador).X - jugador.X;
-            distY = WhatPlayerIsNear(jugador).Y - jugador.Y;
-
-            int compared = comp(Math.Abs(distX), Math.Abs(distY));
+            int compared = Utils.comp(Math.Abs(distX), Math.Abs(distY));
 
             if (compared == 0)
             {
                 if (distX < 0)
-                    Move(jugador.Position, new Position(jugador.X - 1, jugador.Y));
-                Move(jugador.Position, new Position(jugador.X + 1, jugador.Y));
+                    MovePersonaje(jugador, new Position(jugador.X - 1, jugador.Y));
+                MovePersonaje(jugador, new Position(jugador.X + 1, jugador.Y));
             }
             else
             {
                 if (distY < 0)
-                    Move(jugador.Position, new Position(jugador.X, jugador.Y - 1));
-                Move(jugador.Position, new Position(jugador.X, jugador.Y + 1));
+                    MovePersonaje(jugador, new Position(jugador.X, jugador.Y - 1));
+                MovePersonaje(jugador, new Position(jugador.X, jugador.Y + 1));
             }
+        }
+
+        public void AproxToBall(Jugador jugador)
+        {
+            int distX = pelota.X - jugador.X;
+            int distY = pelota.Y - jugador.Y;
+
+            int compared = Utils.comp(Math.Abs(distX), Math.Abs(distY));
+
+            if (compared == 0)
+            {
+                if (distX < 0)
+                    MovePersonaje(jugador, new Position(jugador.X - 1, jugador.Y));
+                else
+                    MovePersonaje(jugador, new Position(jugador.X + 1, jugador.Y));
+            }
+            else
+            {
+                if (distY < 0)
+                    MovePersonaje(jugador, new Position(jugador.X, jugador.Y - 1));
+                else
+                    MovePersonaje(jugador, new Position(jugador.X, jugador.Y + 1));
+            }
+        }
+
+        public Jugador GetRandomPersonaje3x3(Partido partido, Personaje personaje)
+        {
+            List<Jugador> list = new List<Jugador>();
+
+            for (int i = 1; i < -2; i--)
+            {
+                for (int j = -1; j < 2; j++)
+                    if (partido.GetJugadorAtPosition(personaje.X + j, personaje.Y + i) != null)
+                        list.Add((Jugador)partido.GetJugadorAtPosition(personaje.X + j, personaje.Y + i));
+            }
+
+            if (list.Count == 0)
+                return null;
+            return list[Utils.GetRandomInt(0, list.Count)];
+        }
+
+        public Position GetRandomPosition3x3(Partido partido, Personaje personaje)
+        {
+            List<Position> list = new List<Position>();
+
+            for (int i = 1; i > -2; i--)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (!partido.IsPersonajeAt(personaje.X + j, personaje.Y + i))
+                        list.Add(new Position(personaje.X + j, personaje.Y + i));
+                }
+            }
+
+            if (list.Count == 0)
+                return new Position(personaje.X, personaje.Y);
+            return list[(int)Utils.GetRandomDouble(0, list.Count)];
+        }
+
+        public Jugador MostNearPlayer5x5(Personaje personaje)
+        {
+            List<Jugador> list = new List<Jugador>();
+            Jugador newjugador = null;
+
+            for (int i = 2; i > -3; i--)
+            {
+                for (int j = -2; j < 3; j++)
+                {
+                    if (GetJugadorAtPosition(personaje.X - j, personaje.Y - i) is Jugador)
+                    {
+                        newjugador = (Jugador)GetJugadorAtPosition(personaje.X - j, personaje.Y - i);
+
+                        if (personaje.X - newjugador.X == 2 && personaje.Y - newjugador.Y <= 2 || personaje.Y - newjugador.Y == 2 && personaje.X - newjugador.X <= 2)
+                        {
+                            int distance = int.MaxValue;
+                            if (distance > Math.Abs((personaje.X - newjugador.X) + (personaje.Y - newjugador.Y)))
+                            {
+                                distance = Math.Abs((personaje.X - newjugador.X) + (personaje.Y - newjugador.Y));
+                                list.Add(newjugador);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (list.Count == 0)
+                return null;
+            return list[list.Count - 1];
+        }
+
+        public int GetScore(Jugador jugador)
+        {
+            int scoreup = 0;
+            int scoremid = 0;
+            int scoredown = 0;
+
+            for (int i = -1; i < 2; i++)
+            {
+                if (!IsPersonajeAt(jugador.X + i, jugador.Y + 1))
+                    scoreup += 2;
+            }
+            for (int i = -1; i < 2; i++)
+            {
+                if (!IsPersonajeAt(jugador.X + i, jugador.Y))
+                    scoremid++;
+            }
+            for (int i = -1; i < 2; i++)
+            {
+                if (!IsPersonajeAt(jugador.X + i, jugador.Y - 1))
+                    scoredown++;
+            }
+
+            if (scoreup > scoremid && scoreup > scoredown)
+                return 0;
+            else if (scoremid > scoreup && scoremid > scoredown)
+                return 1;
+            else if (scoredown > scoreup && scoredown > scoremid)
+                return 2;
+            else if (scoredown > 0)
+                return 2;
+            else if (scoremid > 0)
+                return 1;
+            else
+                return -1;
+                
+        }
+
+        public Position GetPositionAt(int x, int y)
+        {
+            if (!IsPersonajeAt(x, y))
+                return new Position(x, y);
+            return new Position(-100,-100);
         }
 
         public void CreateTeams()
@@ -217,17 +406,17 @@ namespace Rugby
         {
             for (int i = 3; i < 7; i++)
             {
-                _personajes.Add(new Delantero(_equipos[0], i, 19));
+                _personajes.Add(new Delantero(_equipos[1], i, 18));
             }
 
             for (int i = 3; i < 7; i++)
             {
-                _personajes.Add(new Defensa(_equipos[0], i, 18));
+                _personajes.Add(new Defensa(_equipos[1], i, 19));
             }
 
             for (int i = 2; i < 8; i += 5)
             {
-                _personajes.Add(new DefensaEspecial(_equipos[0], i, 19));
+                _personajes.Add(new DefensaEspecial(_equipos[1], i, 19));
             }
         }
 
@@ -239,10 +428,24 @@ namespace Rugby
             }
         }
 
-        public void Move(Position oldPosition,Position newPosition)
+        public void MovePersonaje(Personaje personaje,Position newPosition)
         {
-            oldPosition.x = newPosition.x;
-            oldPosition.y = newPosition.y;
+            if(newPosition.x < 0 || newPosition.x > 9)
+                return;
+            if (newPosition.y < 0 || newPosition.y > 19)
+                return;
+
+            personaje.ChangePosition(newPosition);
+        }
+
+        public void MoveBall(Position newPosition)
+        {
+            if (newPosition.x < 0 || newPosition.x > 9)
+                return;
+            if (newPosition.y < 0 || newPosition.y > 19)
+                return;
+
+            pelota.ChangePosition(newPosition);
         }
     }
 }

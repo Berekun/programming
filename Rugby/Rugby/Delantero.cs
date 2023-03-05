@@ -16,69 +16,89 @@ namespace Rugby
 
         public override void Ejecutar(Pelota pelota, Partido partido)
         {
-            if (pelota.Y == position.y && pelota.X == position.x)
+            if (disbleturns == 0)
             {
-                if (Utils.GetRandomDouble(0, 1) < 0.6)
+                if (pelota.Y == position.y && pelota.X == position.x)
                 {
-                    Position moveposition = GetRandomPosition3x3(partido);
-                    partido.Move(position, moveposition);
-                    pelota.ChangePosition(partido, moveposition);
-
-                    if (Utils.GetRandomDouble(0, 1) <= 0.2)
-                    {
-                        Ejecutar(pelota, partido);
-                    }
+                    DelanteroWithBall(pelota, partido);
                 }
                 else
                 {
-                    if (Utils.GetRandomDouble(0, 1) < probPas)
-                    {
-                        pelota.ChangePosition(partido, _equipo.GetPersonajeAt(Utils.GetRandomInt(0, _equipo.GetPersonajesCount())).Position);
-                    }
-                    else
-                    {
-                        pelota.ChangePosition(partido, GetRandomPosition5x5(partido));
-                    }
+                    DelanteroWithoutBall(pelota, partido);
+                }
+            }
+            else
+                disbleturns -= 1;
+
+        }
+
+        public void DelanteroWithBall(Pelota pelota, Partido partido)
+        {
+            List<Position> positions = new List<Position>();
+            Position moveposition = position;
+            if (Utils.GetRandomDouble(0, 1) < 0.6)
+            {
+                for (int i = -1; i < 2; i++)
+                {
+                    if(partido.GetPositionAt(position.x + i, position.y).x >= 0)
+                    positions.Add(partido.GetPositionAt(position.x + i, position.y));
+                }
+                if (positions.Count == 0)
+                    moveposition = position;
+                else
+                    moveposition = positions[Utils.GetRandomInt(0,positions.Count - 1)];
+
+                partido.MovePersonaje(this, moveposition);
+                pelota.ChangePosition(moveposition);
+                
+                if (Utils.GetRandomDouble(0, 1) <= 0.2)
+                {
+                    Ejecutar(pelota, partido);
                 }
             }
             else
             {
-                partido.Move(position,GetRandomPositionStrike(partido));
+                if (Utils.GetRandomDouble(0, 1) < probPas)
+                {
+                    pelota.ChangePosition(_equipo.GetPersonajeAt(Utils.GetRandomInt(0, _equipo.GetPersonajesCount())).Position);
+                }
+                else
+                {
+                    pelota.ChangePosition(GetRandomPosition5x5(partido));
+                }
             }
         }
 
-        //No esta hecho hazlo en casa chaval
+        public void DelanteroWithoutBall(Pelota pelota, Partido partido)
+        {
+            partido.MovePersonaje(this,GetRandomPositionStrike(partido));
+        }
+
         public Position GetRandomPositionStrike(Partido partido)
         {
-            int scoreup = 0;
-            int scoremid = 0;
-            int scoredown = 0;
+            List<Position> positionList = new List<Position>();
+
+            int score = partido.GetScore(this);
 
             for (int i = -1; i < 2; i++)
             {
-                if (!partido.IsPersonajeAt(position.x + 1, position.y + i))
-                    scoreup++;
-            }
-            for (int i = -1; i < 2; i++)
-            {
-                if (!partido.IsPersonajeAt(position.x + 1, position.y + i))
-                    scoremid++;
-            }
-            for (int i = -1; i < 2; i++)
-            {
-                if (!partido.IsPersonajeAt(position.x + 1, position.y + i))
-                    scoredown++;
+                if(score == 0 && partido.GetPositionAt(X + i, Y + 1).x >= 0)
+                {
+                    positionList.Add(partido.GetPositionAt(X + i, Y + 1));
+                }
+                else if (score == 1 && partido.GetPositionAt(X + i, Y).x >= 0)
+                {
+                    positionList.Add(partido.GetPositionAt(X + i, Y));
+                }
+                else if (score == 2 && partido.GetPositionAt(X + i, Y - 1).x >= 0)
+                {
+                    positionList.Add(partido.GetPositionAt(X + i, Y - 1));
+                }
             }
 
-            List<int> list = new List<int>();
-            list.Add(scoreup);
-            list.Add(scoremid);
-            list.Add(scoredown);
-
-            list.Sort();
-            //TO DO ordenar
-
-            return position;
+            if (positionList.Count == 0)
+                return position;
+            return positionList[Utils.GetRandomInt(0, positionList.Count - 1)];
         }
     }
 }
