@@ -15,12 +15,15 @@ namespace Rugby
 
         }
 
+        // Javi: Esta función está muy bien hecha, pero permíteme unas mejoras estéticas
         public override void Ejecutar(Pelota pelota, Partido partido)
         {
             if (disbleturns == 0)
             {
+                // Javi: En vez de esto, llamaría a una función TengoLaPelota(pelota)
                 if (pelota.Y == Y && pelota.X == X)
                 {
+                    // Javi: Los nombres de las funciones debería empezar por verbo
                     DefenseWithBall(pelota, partido);
                 }
                 else
@@ -59,6 +62,7 @@ namespace Rugby
             double random = Utils.GetRandomDouble(0, 1);
             if (random < 0.25)
             {
+                // Javi: Tabula
                 if(GetPositionOfBall3x3(partido).x != 0)
                 partido.MovePersonaje(this, GetPositionOfBall3x3(partido));
             }
@@ -72,6 +76,7 @@ namespace Rugby
             }
             else if (random > 0.5 && 0.75 > random)
             {
+                // Javi: Creo que la funcion hubiese sido mejor: this.AproximateToPlayer(partido)
                 partido.AproxToPlayer(this);
             }
             else
