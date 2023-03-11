@@ -20,6 +20,7 @@ namespace Rugby
             _equipo.AddPlayers(this);
         }
 
+        // Javi: No sería mejor una función a la que le pasaras un entero?
         public Position GetRandomPosition5x5(Partido partido)
         {
             List<Position> list = new List<Position>();
@@ -28,6 +29,7 @@ namespace Rugby
             {
                 for (int j = -2; j < 3; j++)
                 {
+                    // Javi: ContainsPersonaje
                     if (!partido.IsPersonajeAt(X + j, Y + i))
                         list.Add(new Position(X + j, Y + i));
                 }
@@ -44,6 +46,7 @@ namespace Rugby
             {
                 for (int j = -1; j < 2; j++)
                 {
+                    // Javi: En este if no iria un break?
                     if (partido.GetPositionOfBallWithoutPlayer(j,i).x != 0)
                         position = (partido.GetPositionOfBallWithoutPlayer(j, i));
                 }
@@ -51,6 +54,7 @@ namespace Rugby
             return position;
         }
 
+        // Javi: No sería mejor un parámetro en la funcion con el rango de casillas?
         public Position GetPositionOfPlayerWithBall3x3(Partido partido)
         {
             Position position = new Position();
@@ -59,6 +63,7 @@ namespace Rugby
             {
                 for (int j = -1; j < 2; j++)
                 {
+                    // Javi: break?
                     if (partido.GetPositionPlayerWhitBall(j, i).x != 0)
                         position = (partido.GetPositionOfBallWithoutPlayer(j, i));
                 }
