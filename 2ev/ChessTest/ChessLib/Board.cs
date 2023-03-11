@@ -5,6 +5,7 @@ namespace ChessLib
     public class Board : IBoard
     {
         //Variables
+        // Javi: El tablero tiene una xy una y!?!??!!?
         private int _x;
         private int _y;
         private List<Figure> figures = new List<Figure>();
@@ -129,6 +130,7 @@ namespace ChessLib
 
             foreach(Position position in positions)
             {
+                // Javi: Tabula
                 if(position.x == x && position.y ==  y)
                 Movement(figure, x , y);
             }
@@ -136,6 +138,7 @@ namespace ChessLib
         }
 
         //Mueve la figura y elemina al enemigo en caso de ser comido
+        // Javi: Nombre no muy bueno
         public void Movement(Figure figure, int x, int y)
         {
             Figure? enemy = GetFigureAt(x, y);
@@ -147,6 +150,7 @@ namespace ChessLib
         }
 
         //Te duelve un color dependiendo el turno
+        // Javi: mal nombre
         public FigureColor GetColorTurn()
         {
             if (ColorTurn % 2 == 0)
@@ -155,6 +159,7 @@ namespace ChessLib
             
         }
 
+        // Javi: ::::DDDDDDD
         public bool AntiSuicide(Figure f,int x,int y)
         {
             Position aux = f.Position;
