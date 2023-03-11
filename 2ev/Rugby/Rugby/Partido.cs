@@ -14,6 +14,8 @@ namespace Rugby
         private List<Equipo> _equipos = new List<Equipo>();
         Pelota pelota = new Pelota();
 
+        // Javi: Esta función no la puedo perdonar, ..., ibas camino del 9,5, ...., por favor rectifica esta función
+        // porque es para poner un cero en el examen
         public Personaje GetPersonajeAt(int index)
         {
             for(int i = 0; i < GetPersonajesCount(); i++)
@@ -46,6 +48,7 @@ namespace Rugby
                 {
                     Jugador jugador = (Jugador)personaje;
 
+                    // Javi: Estos ifs, hay que mejorarlos
                     if (jugador.Equipo.Nombre == "rojo" && jugador.Y == 19)
                     {
                         if (IsThisPlayerHavingBall(jugador) && jugador is Delantero)
@@ -80,6 +83,7 @@ namespace Rugby
 
         public void ResetWorld()
         {
+            // Javi: Este if mejor fuera. Coméntame esto en clase
             if (IsScoreGoal())
             {
                 foreach (Personaje personaje in _personajes)
@@ -173,6 +177,7 @@ namespace Rugby
                     return positionball;
                 if(pelota.X == x && pelota.Y == y)
                 {
+                    // Javi: Que!?!?!?!?
                     return positionball = pelota.Position;
                 }
             }
@@ -193,6 +198,7 @@ namespace Rugby
             for (int i = 0; i < GetPersonajesCount(); i++)
             {
                 personaje = GetPersonajeAt(i);
+                // Javi: Esto que es!??!?!!?!?
                 if (pelota.X == personaje.X && pelota.Y == personaje.Y)
                     return positionball = pelota.Position;
             }
