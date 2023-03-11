@@ -8,6 +8,7 @@
 
         public void Add(T value)
         {
+            // Javi: No, el set tiene que comprobar que no está ya metido el value
             list.Add(value);
         }
 
