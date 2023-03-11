@@ -14,6 +14,7 @@ namespace Rugby
 
         }
 
+        // Javi: Uf!!!, .... no se parece esta mucho mucho mucho a otra función??
         public override void Ejecutar(Pelota pelota, Partido partido)
         {
             if (disbleturns == 0)
@@ -40,6 +41,7 @@ namespace Rugby
             {
                 for (int i = -1; i < 2; i++)
                 {
+                    // Javi: Tabulación, y yo hubiese usado una funcion
                     if(partido.GetPositionAt(position.x + i, position.y).x >= 0)
                     positions.Add(partido.GetPositionAt(position.x + i, position.y));
                 }
@@ -48,6 +50,7 @@ namespace Rugby
                 else
                     moveposition = positions[Utils.GetRandomInt(0,positions.Count - 1)];
 
+                // Javi: Función para esto
                 partido.MovePersonaje(this, moveposition);
                 pelota.ChangePosition(moveposition);
                 
@@ -60,6 +63,7 @@ namespace Rugby
             {
                 if (Utils.GetRandomDouble(0, 1) < probPas)
                 {
+                    // Javi: Que bueno!!!!!!!!! pero en 2 lineas
                     pelota.ChangePosition(_equipo.GetPersonajeAt(Utils.GetRandomInt(0, _equipo.GetPersonajesCount())).Position);
                 }
                 else
