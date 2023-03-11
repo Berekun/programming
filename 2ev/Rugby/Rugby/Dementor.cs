@@ -23,6 +23,7 @@ namespace Rugby
                 if (jugador != null)
                     jugador.DisableTurns(2);
             }
+            // Javi: para poner un intervalo mejor 0.33 < random && random <= 0.66, porque además, ..., tienes un error
             else if (random > 0.33 && 0.66 <= random)
             {
                 jugador = partido.GetRandomPersonaje3x3(partido, this);
