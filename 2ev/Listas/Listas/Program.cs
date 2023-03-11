@@ -260,6 +260,7 @@
             return 0;
         }
 
+        // Javi: Mal, y si en index te paso un 4315234562456345623454?
         public static T[] RemoveAT<T>(T[] array,int index)
         {
             T[] result = new T[array.Length - 1];
@@ -291,6 +292,7 @@
 
         }
 
+        // Javi: Aunque funcione, no me gusta esta manera de hacerlo
         public static T[] Remove<T>(T[] array, T valor)
         {
             T[] theReturn = new T[0];
