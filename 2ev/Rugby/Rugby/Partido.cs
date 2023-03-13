@@ -18,15 +18,7 @@ namespace Rugby
         // porque es para poner un cero en el examen
         public Personaje GetPersonajeAt(int index)
         {
-            for(int i = 0; i < GetPersonajesCount(); i++)
-            {
-                if (i == index)
-                {
-                    return _personajes[i];
-                }
-            }
-
-            return null;
+            return _personajes[index];
         }
         public int GetPersonajesCount()
         {
