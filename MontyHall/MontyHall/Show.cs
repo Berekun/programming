@@ -41,7 +41,7 @@ namespace MontyHall
 
             for (int i = 0; i < numberOfGames; i++)
             {
-                Init(15);
+                Init(3);
                 result = DoAGame(true);
                 if (result == GameResult.WIN)
                     Wins++;

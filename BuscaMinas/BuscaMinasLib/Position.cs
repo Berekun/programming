@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices.ObjectiveC;
 
 namespace BuscaMinasLib
 {
@@ -14,7 +10,6 @@ namespace BuscaMinasLib
             _x = x;
             _y = y;
         }
-
         public Position()
         {
 

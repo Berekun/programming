@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BuscaMinasLib
+﻿namespace BuscaMinasLib
 {
     internal class Board : IBoard
     {
@@ -12,7 +6,6 @@ namespace BuscaMinasLib
         private List<Position> _flags = new List<Position>();
         private int _width, _height;
         private List<Position> _openCells = new List<Position>();
-        private List<Position> _cells = new List<Position>();
 
         public void CreateBoard(int width, int height)
         {
@@ -26,12 +19,12 @@ namespace BuscaMinasLib
 
             for (int i = 0; i < bombsCount; i++)
             {
-                int random = Utils.GetRandomInt(0, _cells.Count - 1);
-                aux = _cells[random];
+                int randomx = Utils.GetRandomInt(0, _width);
+                int randomy = Utils.GetRandomInt(0, _height);
+                aux = new Position(randomx, randomy);
                 if (aux != pos)
                 {
                     _bombs.Add(aux);
-                    _cells.RemoveAt(random);
                 }
                 
             }
@@ -39,16 +32,11 @@ namespace BuscaMinasLib
 
         public void CreateCells()
         {
-            int numberCells = _width * _height;
-
-            for (int i = 0; i < numberCells; i++)
+            for (int j = 0; j < _height; j++)
             {
-                for (int j = 0; j < _height; j++)
+                for (int k = 0; k < _width; k++)
                 {
-                    for (int k = 0; k < _width; k++)
-                    {
-                        _cells.Add(new Position(k, j));
-                    }
+                   new Position(k, j);
                 }
             }
         }
@@ -60,11 +48,6 @@ namespace BuscaMinasLib
             {
                 _flags.Remove(aux);
             }
-        }
-
-        public int GetBombProximity(int x, int y)
-        {
-            
         }
 
         public void Init(int x, int y, int bombCount)
@@ -114,7 +97,6 @@ namespace BuscaMinasLib
             if (!IsFlagAt(aux) && !IsOpen(aux))
             {
                 _openCells.Add(aux);
-                _cells.Remove(aux);
             }
         }
 
@@ -124,8 +106,22 @@ namespace BuscaMinasLib
             if (!IsOpen(aux))
             {
                 _flags.Add(aux);
-                _cells.Remove(aux);
             }
+        }
+
+        public int BombsCount()
+        {
+            return _bombs.Count;
+        }
+
+        public int OpenCellsCount()
+        {
+            return _bombs.Count;
+        }
+
+        public int WorldSize()
+        {
+            return _width * _height;
         }
     }
 }
