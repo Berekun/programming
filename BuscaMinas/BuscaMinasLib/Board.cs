@@ -13,20 +13,20 @@
             _height = height;
         }
 
-        public void CreateBombs(int bombsCount, Position pos)
+        public void CreateBombs(int bombsCount, int x, int y)
         {
             Position aux;
+            Position pos = new Position(x, y);
 
             for (int i = 0; i < bombsCount; i++)
             {
                 int randomx = Utils.GetRandomInt(0, _width);
                 int randomy = Utils.GetRandomInt(0, _height);
                 aux = new Position(randomx, randomy);
-                if (aux != pos)
-                {
+                if (aux != pos && !IsBombAt(randomx, randomy))
                     _bombs.Add(aux);
-                }
-                
+                else
+                    i--;
             }
         }
 
@@ -44,7 +44,7 @@
         public void DeleteFlagAt(int x, int y)
         {
             Position aux = new Position(x, y);
-            if (!IsFlagAt(aux))
+            if (!IsFlagAt(x,y))
             {
                 _flags.Remove(aux);
             }
@@ -52,13 +52,14 @@
 
         public void Init(int x, int y, int bombCount)
         {
-            Position firstPos = new Position(x, y);
+            CreateBoard(7, 7);
             CreateCells();
-            CreateBombs(bombCount, firstPos);
+            CreateBombs(bombCount, x, y);
         }
 
-        public bool IsBombAt(Position position)
+        public bool IsBombAt(int x, int y)
         {
+            Position position = new Position(x, y);
             foreach (Position pos in _bombs)
             {
                 if (pos == position)
@@ -68,8 +69,9 @@
             return false;
         }
 
-        public bool IsFlagAt(Position position)
+        public bool IsFlagAt(int x, int y)
         {
+            Position position = new Position(x, y);
             foreach (Position pos in _flags)
             {
                 if (pos == position)
@@ -79,8 +81,9 @@
             return false;
         }
 
-        public bool IsOpen(Position position)
+        public bool IsOpen(int x, int y)
         {
+            Position position = new Position(x, y);
             foreach (Position pos in _openCells)
             {
                 if (pos == position)
@@ -94,7 +97,7 @@
         {
             Position aux = new Position(x, y);
 
-            if (!IsFlagAt(aux) && !IsOpen(aux))
+            if (!IsFlagAt(x,y) && !IsOpen(x,y))
             {
                 _openCells.Add(aux);
             }
@@ -103,7 +106,7 @@
         public void SetFlagAt(int x, int y)
         {
             Position aux = new Position(x, y);
-            if (!IsOpen(aux))
+            if (!IsOpen(x,y) && !IsFlagAt(x,y))
             {
                 _flags.Add(aux);
             }
@@ -119,7 +122,7 @@
             return _bombs.Count;
         }
 
-        public int WorldSize()
+        public int CellsCount()
         {
             return _width * _height;
         }

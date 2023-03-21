@@ -4,9 +4,13 @@
     {
         void CreateBoard(int width, int height);
 
+        public void CreateBombs(int bombsCount, int x, int y);
+
+        public void CreateCells();
+
         void Init(int x, int y, int bombCount);
 
-        bool IsBombAt(Position pos);
+        bool IsBombAt(int x, int y);
 
         int GetBombProximity(int x, int y)
         {
@@ -15,7 +19,7 @@
             {
                 for (int j = -1; j < 2; j++)
                 {
-                    if(IsBombAt(new Position(x + j, y + i)))
+                    if(IsBombAt(x + j, y + i))
                         countBomb++;
                 }
             }
@@ -23,7 +27,7 @@
             return countBomb;
         }
 
-        bool IsFlagAt(Position pos);
+        bool IsFlagAt(int x, int y);
 
         void SetFlagAt(int x, int y);
 
@@ -31,12 +35,12 @@
 
         public bool HasWin()
         {
-            if (OpenCellsCount() == WorldSize() - BombsCount())
+            if (OpenCellsCount() == CellsCount() - BombsCount())
                 return true;
             return false;
         }
 
-        bool IsOpen(Position pos);
+        bool IsOpen(int x, int y);
 
         void OpenCell(int x, int y);
 
@@ -44,6 +48,6 @@
 
         int OpenCellsCount();
 
-        int WorldSize();
+        int CellsCount();
     }
 }
