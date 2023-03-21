@@ -63,8 +63,8 @@ namespace BuscaMinasLib
 
         public void DeleteFlagAt(int x, int y)
         {
-            throw new NotImplementedException();
-        }
+            if (_cells[x, y].IsFlag)
+                _cells[x, y].SetFlag(false);        }
 
         public void Init(int x, int y, int bombCount)
         {
