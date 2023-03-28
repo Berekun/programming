@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BuscaMinasLib
+﻿namespace BuscaMinasLib
 {
-    internal class BoardArray : IBoard
+    public class BoardArray : IBoard
     {
-        private Cell[] _cells;
-        private int _width, _height;
+        #region ATRIBUTOS
+            private Cell[] _cells;
+            private int _width, _height;
+        #endregion
+
+        #region FUNCIONES_IBOARD
         public int BombsCount()
         {
             int count = 0;
@@ -24,8 +22,8 @@ namespace BuscaMinasLib
 
         public void CreateBoard(int width, int height)
         {
-            if(width <= 0 || height <= 0)
-                throw new ArgumentOutOfRangeException("Los datos introducidos no son validos, tienen que ser mayor que 0");
+            if(width < 1 || height < 1)
+                throw new ArgumentOutOfRangeException("Los datos introducidos no son validos, tienen que ser mayor que 1");
 
             _width = width;
             _height = height;
@@ -34,42 +32,67 @@ namespace BuscaMinasLib
 
         public void DeleteFlagAt(int x, int y)
         {
-            if (!_cells[y * _width + x].IsFlag)
-                _cells[y * _width + x].SetFlag(false);
+            if (!Utils.IsValueOnRange(x, y, this))
+                return;
+
+            if (_cells[PositionToIndexArray(x, y)].IsFlag)
+                _cells[PositionToIndexArray(x, y)].SetFlag(false);
         }
 
         public void Init(int x, int y, int bombCount)
         {
-            CreateBoard(7, 7);
+            if (!Utils.IsValueOnRange(x, y, this) || bombCount > CellsCount() / 2)
+                return;
+
             CreateCells();
-            CreateBombs(bombCount, x, y);
+            Utils.CreateBombs(bombCount,_width,_height, (xx,yy) =>
+            {
+                if (!IsBombAt(xx, yy) && (x != xx || y != yy))
+                {
+                    _cells[PositionToIndexArray(xx, yy)].SetBomb(true);
+                    return true;
+                }
+                return false;
+            });
         }
 
         public bool IsBombAt(int x, int y)
         {
-            if (_cells[y * _width + x].IsBomb)
+            if (!Utils.IsValueOnRange(x, y, this))
+                return false;
+
+            if (_cells[PositionToIndexArray(x, y)].IsBomb)
                 return true;
             return false;
         }
 
         public bool IsFlagAt(int x, int y)
         {
-            if (_cells[y * _width + x].IsFlag)
+            if (!Utils.IsValueOnRange(x, y, this))
+                return false;
+
+            if (_cells[PositionToIndexArray(x, y)].IsFlag)
                 return true;
             return false;
         }
 
         public bool IsOpen(int x, int y)
         {
-            if (_cells[y * _width + x].IsOpen)
+            if (!Utils.IsValueOnRange(x, y, this))
+                return false;
+
+            if (_cells[PositionToIndexArray(x, y)].IsOpen)
                 return true;
             return false;
         }
 
         public void OpenCell(int x, int y)
         {
-            if (!_cells[y * _width + x].IsOpen)
-                _cells[y * _width + x].SetCellState(true);
+            if (!Utils.IsValueOnRange(x, y, this))
+                return;
+
+            if (!_cells[PositionToIndexArray(x, y)].IsOpen)
+                _cells[PositionToIndexArray(x, y)].SetCellState(true);
         }
 
         public int OpenCellsCount()
@@ -83,12 +106,13 @@ namespace BuscaMinasLib
 
             return count;
         }
-
         public void SetFlagAt(int x, int y)
         {
-            if (!_cells[y * _width + x].IsFlag)
-                _cells[y * _width + x].SetFlag(true);
+            if (!Utils.IsValueOnRange(x, y, this))
+                return;
 
+            if (!_cells[PositionToIndexArray(x, y)].IsFlag)
+                _cells[PositionToIndexArray(x, y)].SetFlag(true);
         }
 
         public int CellsCount()
@@ -96,14 +120,21 @@ namespace BuscaMinasLib
             return _width * _height;
         }
 
-        public void CreateBombs(int bombsCount, int x, int y)
+        public int GetHeight()
         {
-            for (int i = 0; i < bombsCount; i++)
-            {
-                int random = Utils.GetRandomInt(0, _cells.Length - 1);
-                if (!_cells[random].IsBomb && _cells[random] != _cells[y * _width + x])
-                    _cells[random].SetBomb(true);
-            }
+            return _height;
+        }
+
+        public int GetWidth()
+        {
+            return _width;
+        }
+        #endregion
+
+        #region FUNCIONES_NO_IBOARD
+        public int PositionToIndexArray(int x, int y)
+        {
+            return y * _width + x;
         }
 
         public void CreateCells()
@@ -113,5 +144,6 @@ namespace BuscaMinasLib
                 _cells[i] = new Cell();
             }
         }
+        #endregion
     }
 }

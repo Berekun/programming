@@ -1,10 +1,12 @@
-﻿namespace BuscaMinas
+﻿using BuscaMinasApp;
+
+namespace BuscaMinas
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            UDK.Game.Launch(new BuscaMinasGame());
         }
     }
 }
