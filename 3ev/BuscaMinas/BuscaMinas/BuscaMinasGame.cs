@@ -1,5 +1,4 @@
 ﻿using BuscaMinasLib;
-using System.Runtime.Intrinsics.X86;
 using UDK;
 
 namespace BuscaMinasApp
@@ -12,12 +11,15 @@ namespace BuscaMinasApp
         private bool _isLoose = false;
         private bool _isWin = false;
         UDK.IFontFace? fontFace;
-
+        //array de colores
+        double random1 = Utils.GetRadomDouble(0, 1);
+        double random2 = Utils.GetRadomDouble(0, 1);
+        double random3 = Utils.GetRadomDouble(0, 1);
 
         public void OnDraw(GameDelegateEvent gameEvent, ICanvas canvas)
         {
             canvas.Clear(new rgba_f64(0.2, 0.3, 0.3, 1.0));
-            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-2, -2, 10, 10), true);
+            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-2, -2, _board.GetWidth() + 2, _board.GetHeight() + 2), true);
 
             DrawBorad(canvas);
             DrawCells(canvas);
@@ -32,22 +34,31 @@ namespace BuscaMinasApp
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
         {
             var pos = gameEvent.coordinateConversor.ViewToWorld(mouse.X, mouse.Y);
+            if (pos.x < 0.0 || pos.y < 0.0)
+                return;
+
             int x = (int)pos.x;
             int y = (int)pos.y;
 
             if (mouse.IsPressed(MouseButton.Left))
             {
+                if (!Utils.IsValueOnRange(x, y, _board))
+                    return;
+
                 if (_isLoose)
                     return;
 
                 if (!_firstClick)
                 {
-                    _board.Init(x, y, 10);
+                    _board.Init(x, y, 50);
+                    OpenSeveralCells(x, y);
                     _firstClick = true;
                 }
 
                 if (!_board.IsOpen(x, y))
                 {
+                    if(_board.GetBombProximity(x,y) == 0)
+                        OpenSeveralCells(x, y);
                     _board.OpenCell(x, y);
                 }
 
@@ -83,11 +94,11 @@ namespace BuscaMinasApp
         {
             _board.CreateBoard(8, 8);
             bool aux = true;
-            for (int i = 0; i < _board.GetWidth(); i++)
+            for (int i = 0; i < _board.GetHeight(); i++)
             {
-                for (int j = 0; j < _board.GetHeight(); j++)
+                for (int j = 0; j < _board.GetWidth(); j++)
                 {
-                    aux = (i + j) % 2 == 0;
+                    aux = (j + i) % 2 == 0;
                     if (aux)
                         canvas.FillShader.SetColor(new rgba_f64(0.5, 0.3, 0.1, 1));
                     else
@@ -103,9 +114,9 @@ namespace BuscaMinasApp
         public void DrawCells(ICanvas canvas)
         {
             bool aux = true;
-            for (int i = 0; i < _board.GetWidth(); i++)
+            for (int i = 0; i < _board.GetHeight(); i++)
             {
-                for (int j = 0; j < _board.GetHeight(); j++)
+                for (int j = 0; j < _board.GetWidth(); j++)
                 {
                     if (_board.IsFlagAt(j, i))
                     {
@@ -125,11 +136,17 @@ namespace BuscaMinasApp
                         
                         aux = !aux;
                     }
-                    else if (_board.IsOpen(j, i) && !_board.IsBombAt(j, i))
+                    else if (_board.IsOpen(j, i) && !_board.IsBombAt(j, i) && _board.GetBombProximity(j,i) > 0)
                     {
                         canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
                         canvas.Transform.SetTranslation(j + 0.45, i + 0.25);
                         canvas.DrawText(new vec2d_f64(0, 0), $"{_board.GetBombProximity(j, i)}", fontFace, new TextMode() { height = 0.7, bottomCoords = false });
+                    }
+                    else if (_board.IsBombAt(j, i))
+                    {
+                        canvas.FillShader.SetColor(new rgba_f64(random1, random2, random3, 1.0));
+                        canvas.Transform.SetTranslation(j, i);
+                        canvas.DrawRectangle(new rect2d_f64(0, 0, 1.0, 1.0));
                     }
                     else
                         continue;
@@ -140,12 +157,42 @@ namespace BuscaMinasApp
 
         public void ChangeCellWithBombToOpenCell()
         {
-            for (int i = 0; i < _board.GetWidth(); i++)
+            for (int i = 0; i < _board.GetHeight(); i++)
             {
-                for (int j = 0; j < _board.GetHeight(); j++)
+                for (int j = 0; j < _board.GetWidth(); j++)
                 {
                     if(_board.IsBombAt(j,i))
                         _board.OpenCell(j, i);
+                }
+            }
+        }
+
+        public void OpenSeveralCells(int x, int y)
+        {
+            Position[] positions = new Position[] { new Position(x + 1, y), new Position(x - 1, y), new Position(x, y + 1), new Position(x, y - 1) };
+
+            for(int i = 0; i < 4; i++)
+            {
+                if (Utils.IsValueOnRange(positions[i].X, positions[i].Y, _board))
+                {
+                    if (_board.GetBombProximity(positions[i].X, positions[i].Y) == 0 && !_board.IsOpen(positions[i].X, positions[i].Y) && !_board.IsFlagAt(positions[i].X, positions[i].Y) && !_board.IsBombAt(positions[i].X, positions[i].Y))
+                    {
+                        _board.OpenCell(positions[i].X, positions[i].Y);
+                        OpenAroundZero(positions[i].X, positions[i].Y);
+                        OpenSeveralCells(positions[i].X, positions[i].Y);
+                    }
+                }
+            }
+        }
+
+        public void OpenAroundZero(int x, int y)
+        {
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (!_board.IsOpen(j + x, i + y) && !_board.IsFlagAt(j + x, i + y) && _board.GetBombProximity(j + x,i + y) > 0 && Utils.IsValueOnRange(j + x, i + y, _board))
+                        _board.OpenCell(j + x, i + y);
                 }
             }
         }

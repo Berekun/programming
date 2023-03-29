@@ -3,7 +3,7 @@
 namespace BuscaMinasLib
 {
     public delegate bool SetBombDelegate(int x, int y);
-    internal class Utils
+    public class Utils
     {
         #region ATRIBUTOS
         public static Random random = new Random();
@@ -16,6 +16,14 @@ namespace BuscaMinasLib
                 return GetRandomInt(max, min);
             return random.Next(min, max);
         }
+
+        public static double GetRadomDouble(int min, int max)
+        {
+            if (min > max)
+                return GetRadomDouble(max, min);
+            return random.NextDouble() * (max - min) + min;
+        }
+
 
         public static void CreateBombs(int bombsCount,int width,int height, SetBombDelegate bombdelegate)
         {
@@ -47,7 +55,7 @@ namespace BuscaMinasLib
 
         public static bool IsValueOnRange(int x, int y, IBoard board)
         {
-            if (x < 0 || y < 0)
+            if (x < 0 || y < 0 || x >= board.GetWidth() || y >= board.GetHeight())
                 return false;
             return true;
         }

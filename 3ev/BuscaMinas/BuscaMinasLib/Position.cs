@@ -2,7 +2,7 @@
 
 namespace BuscaMinasLib
 {
-    internal class Position
+    public class Position
     {
         #region ATRIBUTOS
         private int _x, _y;

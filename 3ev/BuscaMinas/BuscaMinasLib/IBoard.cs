@@ -34,6 +34,9 @@
         #region FUNCIONES_HECHAS
         int GetBombProximity(int x, int y)
         {
+            if (x < 0 || y < 0 || x > GetWidth() || y > GetHeight())
+                return -1;
+
             int countBomb = 0;
             for (int i = -1; i < 2; i++)
             {
