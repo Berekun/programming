@@ -28,6 +28,7 @@
             _width = width;
             _height = height;
             _cells = new Cell[CellsCount()];
+            CreateCells();
         }
 
         public void DeleteFlagAt(int x, int y)
@@ -44,7 +45,6 @@
             if (!Utils.IsValueOnRange(x, y, this) || bombCount > CellsCount() / 2)
                 return;
 
-            CreateCells();
             Utils.CreateBombs(bombCount,_width,_height, (xx,yy) =>
             {
                 if (!IsBombAt(xx, yy) && (x != xx || y != yy))

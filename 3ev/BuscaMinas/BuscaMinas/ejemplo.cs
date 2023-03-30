@@ -24,42 +24,42 @@ namespace BuscaMinasApp
                 canvas.Clear(new rgba_f64(0.2, 0.3, 0.3, 1.0));
                 canvas.Camera.SetRect(rect2d_f64.FromMinMax(-2.0, -2.0, 10.0, 2.0), true);
 
-                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.Transform.SetIdentity();
-                canvas.DrawRectangle(new rect2d_f64(-2.0, -2.0, 12.0, 4.0));
+            //canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 1.0, 1.0));
+            //canvas.Transform.SetIdentity();
+            //canvas.DrawRectangle(new rect2d_f64(-2.0, -2.0, 12.0, 4.0));
 
-                canvas.FillShader.SetColor(new rgba_f64(1.0, 1.0, 1.0, 1.0));
-                canvas.Transform.SetTranslation(x, y + 1.0f);
-                canvas.Mask.PushRoundedRect(new rect2d_f64(0.0, 0.0, 1.0, 1.0), 0.2, 0.3, 0.4, 0.5);
-                canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.Mask.Pop();
+            //canvas.FillShader.SetColor(new rgba_f64(1.0, 1.0, 1.0, 1.0));
+            //canvas.Transform.SetTranslation(x, y + 1.0f);
+            //canvas.Mask.PushRoundedRect(new rect2d_f64(0.0, 0.0, 1.0, 1.0), 0.2, 0.3, 0.4, 0.5);
+            //canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
+            //canvas.Mask.Pop();
 
-                canvas.FillShader.SetColor(new rgba_f64(1.0, 1.0, 1.0, 1.0));
-                canvas.Transform.SetTranslation(x + 1.0f, y + 1.0f);
-                canvas.Mask.PushRoundedRect(new rect2d_f64(0.0, 0.0, 1.0, 1.0), RectMode.Default, new ShapeMode() { LineWidth = 0.02 }, 0.2, 0.3, 0.4, 0.5);
-                canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.Mask.Pop();
+            //canvas.FillShader.SetColor(new rgba_f64(1.0, 1.0, 1.0, 1.0));
+            //canvas.Transform.SetTranslation(x + 1.0f, y + 1.0f);
+            //canvas.Mask.PushRoundedRect(new rect2d_f64(0.0, 0.0, 1.0, 1.0), RectMode.Default, new ShapeMode() { LineWidth = 0.02 }, 0.2, 0.3, 0.4, 0.5);
+            //canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
+            //canvas.Mask.Pop();
 
-                canvas.Transform.SetTranslation(x + 2.0f, y);
-                canvas.FillShader.SetRadialGradient(new rect2d_f64(0.0, 0.0, 1.0, 1.0), new RectMode(), new rgba_f64(1.0, 0.0, 0.0, 1.0), new rgba_f64(0.0, 1.0, 0.0, 1.0));
-                canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
+            //canvas.Transform.SetTranslation(x + 2.0f, y);
+            //canvas.FillShader.SetRadialGradient(new rect2d_f64(0.0, 0.0, 1.0, 1.0), new RectMode(), new rgba_f64(1.0, 0.0, 0.0, 1.0), new rgba_f64(0.0, 1.0, 0.0, 1.0));
+            //canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
 
-                canvas.Transform.SetTranslation(x + 4.0f, y + 2.0f);
-                canvas.FillShader.SetRadialGradient(new rect2d_f64(0.0, 0.0, 1.0, 1.0), new RectMode(), new rgba_f64(1.0, 0.0, 0.0, 1.0), new rgba_f64(0.0, 1.0, 0.0, 1.0));
-                canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.Mask.Pop();
+            //canvas.Transform.SetTranslation(x + 4.0f, y + 2.0f);
+            //canvas.FillShader.SetRadialGradient(new rect2d_f64(0.0, 0.0, 1.0, 1.0), new RectMode(), new rgba_f64(1.0, 0.0, 0.0, 1.0), new rgba_f64(0.0, 1.0, 0.0, 1.0));
+            //canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
+            //canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1.0, 1.0));
+            //canvas.Mask.Pop();
 
-                canvas.FillShader.SetColor(new rgba_f64(1.0, 1.0, 0.0, 1.0));
-                canvas.Transform.SetIdentity();
-                canvas.Transform.Rotate(1);
-                canvas.Transform.Translate(x, y);
-                canvas.Mask.PushCircle(new rect2d_f64(0.2, 0.2, 1.0, 1.0));
-                canvas.DrawRectangle(new rect2d_f64(0.2, 0.2, 1.0, 1.0));
-                canvas.Mask.Pop();
+            canvas.FillShader.SetColor(new rgba_f64(1.0, 1.0, 0.0, 1.0));
+            canvas.Transform.SetIdentity();
+            canvas.Transform.Rotate(1);
+            canvas.Transform.Translate(x, y);
+            canvas.Mask.PushCircle(new rect2d_f64(0.2, 0.2, 1.0, 1.0));
+            canvas.DrawRectangle(new rect2d_f64(0.2, 0.2, 1.0, 1.0));
+            canvas.Mask.Pop();
 
 
-                if (posString != null)
+            if (posString != null)
                 {
                     {
                         var line = canvas.AcquirePath();
