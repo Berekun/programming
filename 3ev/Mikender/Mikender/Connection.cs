@@ -1,21 +1,28 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection.PortableExecutable;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
-namespace Connections
+namespace Mikender
 {
-    internal class Program
+    internal class Connection
     {
-        public static void Main()
+        public static void Connect()
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection("Data Source=192.168.56.101,1433;Initial Catalog=MIKENDER;User ID=sa;Password=SqlServer123;Connection Timeout=30"))
                 {
                     connection.Open();
-                    //User user = new UserBuilder().SetName("n").Create();
-                    string json = "{\"idClient\":1,\"name\":\"n\",\"age\":98,\"image\":\"A\",\"description\":\"A\",\"gender\":\"MUJER\",\"rating\":5}";
-                    //string sentence1 = "EXEC updateUser '" + json + "'";
-                    //string sentence2 = "EXEC addUsuario '" + json + "'";
+                    User user = new UserBuilder().SetName("hhhh").SetIdClient(7).Create();
+                    string json = JsonSerializer.Serialize<User>(user);
+                    string sentence1 = "EXEC updateUser '" + json + "'";
+                    string sentence2 = "EXEC addUsuario '" + json + "'";
                     string sentence3 = " SELECT * FROM dbo.GetFilteredUsers('" + json + "', 0, 10);";
                     using (SqlCommand command = new SqlCommand(sentence3, connection))
                     {

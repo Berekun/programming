@@ -23,6 +23,7 @@ namespace Mikender
         public MainWindow()
         {
             InitializeComponent();
+            Connection.Connect();
         }
     }
 }

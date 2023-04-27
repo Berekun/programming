@@ -50,6 +50,8 @@ namespace ConnectionApi
                 string content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 ResponseTest test = JsonSerializer.Deserialize<ResponseTest>(content);
 
+                string json = JsonSerializer.Serialize<ResponseTest>(test);
+
                 //var response = client.GetAsync("https://pokeapi.co/api/v2/pokemon/charmander").GetAwaiter().GetResult();
 
                 //string content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
