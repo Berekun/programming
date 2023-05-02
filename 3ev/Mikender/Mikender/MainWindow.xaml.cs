@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Cache;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,10 +21,23 @@ namespace Mikender
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<User> users = new List<User>();
         public MainWindow()
         {
             InitializeComponent();
-            Connection.Connect();
+
+            users = Connection.SearchUser("N", 0, 10);
+
+            ListViewProducts.ItemsSource = users;
+        }
+
+        public void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+            User u = (User)b.DataContext;
+            //MessageBox.Show(p.Description);
+            users.Add(new UserBuilder().SetName("Mike").SetAge(12).SetDescription("picha").Create());
+            ListViewProducts.ItemsSource = users;
         }
     }
 }
