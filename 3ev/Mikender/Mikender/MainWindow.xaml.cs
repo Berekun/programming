@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Cache;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,22 +23,105 @@ namespace Mikender
     public partial class MainWindow : Window
     {
         List<User> users = new List<User>();
+        List<User> usersList = new List<User>();
+        int idClientToRemove = 0;
         public MainWindow()
         {
+            Connection connection = new Connection();
             InitializeComponent();
-
-            users = Connection.SearchUser("N", 0, 10);
-
+            users = Connection.SearchUser("", 0, 10);
             ListViewProducts.ItemsSource = users;
         }
 
-        public void Button_Click(object sender, RoutedEventArgs e)
+        public void Mostrar_Click(object sender, RoutedEventArgs e)
         {
             Button b = (Button)sender;
-            User u = (User)b.DataContext;
-            //MessageBox.Show(p.Description);
-            users.Add(new UserBuilder().SetName("Mike").SetAge(12).SetDescription("picha").Create());
+            User user = (User)b.DataContext;
+            ShowInfoPage pageShowMain = new ShowInfoPage();
+            pageShowMain.DataContext = user;
+            Frame.Content = pageShowMain;
+        }
+
+        public void closeButton_Click(object sender, RoutedEventArgs e)
+        {
+           Close();
+        }
+
+        public void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            string content = tb.Text;
+            users = Connection.SearchUser(content, 0, 10);
             ListViewProducts.ItemsSource = users;
+        }
+
+        private void addButton_Click(object sender, RoutedEventArgs e)
+        {
+            Add.Visibility = Visibility.Hidden;
+            Confirm.Visibility = Visibility.Visible;
+            Cancel.Visibility = Visibility.Visible;
+            var pageAddMain = new AddUserPage();
+            Frame.Content = pageAddMain;
+        }
+
+        private void Confirm_Click(object sender, RoutedEventArgs e)
+        {
+            Confirm.Visibility = Visibility.Hidden;
+            Cancel.Visibility = Visibility.Hidden;
+
+            var content = Frame.Content;
+            if (content is AddUserPage)
+            {
+                var page = (AddUserPage)content;
+                User user = page.User;
+                Connection.AddUser(user);
+
+                Frame.Content = null;
+            }
+            else if (idClientToRemove != 0)
+            {
+                Connection.RemoveUser(idClientToRemove);
+                Add.Visibility = Visibility.Visible;
+            }
+            if (content is UpdateUserPage)
+            {
+                var page = (UpdateUserPage)content;
+                User user = page.user;
+                Connection.UpdateUser(user);
+                Frame.Content = null;
+                Add.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Content = null;
+            Confirm.Visibility = Visibility.Hidden;
+            Cancel.Visibility = Visibility.Hidden;
+            Add.Visibility = Visibility.Visible;
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Content = null;
+            Add.Visibility = Visibility.Hidden;
+            Confirm.Visibility = Visibility.Visible;
+            Cancel.Visibility = Visibility.Visible;
+            Button b = (Button)sender;
+            User user = (User)b.DataContext;
+            idClientToRemove = user.idClient;
+        }
+
+        private void Update_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Content = null;
+            Add.Visibility = Visibility.Hidden;
+            Confirm.Visibility = Visibility.Visible;
+            Cancel.Visibility = Visibility.Visible;
+            var pageRemoveMain = new UpdateUserPage();
+            Button b = (Button)sender;
+            pageRemoveMain.DataContext = (User)b.DataContext; ;
+            Frame.Content = pageRemoveMain;
         }
     }
 }

@@ -4,39 +4,52 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mikender"
+        xmlns:converters="clr-namespace:Mikender"
         mc:Ignorable="d"
-        Title="Mikender" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True">
 
-    <Grid Height="434" VerticalAlignment="Bottom">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition  Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+
+    <Grid Background="PapayaWhip" Margin="0,0,0,-6">
+
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"></ColumnDefinition>
+            <ColumnDefinition Width="50*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FF135861"/>
-                <GradientStop Color="#FFA8CDD2" Offset="1"/>
-                <GradientStop Color="#FF32BACC" Offset="0.052"/>
-                <GradientStop Color="#FF4CC2D2" Offset="0.252"/>
-                <GradientStop Color="#FF6DC6D2" Offset="0.652"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-        <ScrollViewer Background="#FF7B6BDC" Grid.Row="0"  Grid.Column="0">
-            <Grid Margin="0, 0, 0, 0" Background="Bisque"  Width="326" Height="410">
+        <!--<ItemsControl x:Name="ListViewProducts1" Grid.Column="1" Background="LightBlue" Height="225">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+
+        <Frame x:Name="Frame" Grid.Column="1" Background="LightBlue" Height="225" NavigationUIVisibility="Hidden"/>
+
+        <ScrollViewer Background="Blue" Grid.Column="0">
+            <Grid Margin="0,0,0,0">
+                <Grid.Background>
+                    <SolidColorBrush Color="White"/>
+                </Grid.Background>
                 <ItemsControl x:Name="ListViewProducts">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="10" Width="300" Height="100" OpacityMask="Black" BorderThickness="2,2,2,2" BorderBrush="Red">
-                                <StackPanel>
-                                    <TextBlock Margin="5 0" Text="{Binding image}" FontSize="15"/>
-                                    <TextBlock Margin="5 0" Text="{Binding name}" FontSize="15"/>
-                                    <TextBlock Margin="5" Text="{Binding age}" FontSize="17" FontFamily="Franklin Gothic Medium"/>
-                                    <Button Content="Hola mundo" Click="Button_Click"></Button>
+                            <Border Width="400" Height="120" OpacityMask="Black" BorderThickness="2,2,2,2" BorderBrush="Gainsboro">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Name="Avatar" Source="{Binding image}" Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <StackPanel Orientation="Vertical" Width="210">
+                                        <TextBlock Text="{Binding name}" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        <Button Content="Mostrar Info" Click="Mostrar_Click" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Width="50">
+                                        <Button x:Name="RemoveButton" Content="Remove" Click="Remove_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Visible" Height="20" Width="50"/>
+                                        <Button x:Name="UpdateButton" Content="Update" Click="Update_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Visible" Height="20" Width="50"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -49,8 +62,18 @@
                 </ItemsControl>
             </Grid>
         </ScrollViewer>
-        <Button x:Name="AddUser" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="176,359,0,0" VerticalAlignment="Top" Height="50" Width="66">
+        <Button x:Name="closeButton" Content="X" Click="closeButton_Click" Grid.Column="1" RenderTransformOrigin="0.584,0.519" BorderBrush="Black" FontSize="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="2,2,2,2" Margin="365,0,0,416">
+            <Button.Background>
+                <SolidColorBrush Color="White"/>
+            </Button.Background>
         </Button>
-        <TextBox x:Name="Information" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10,36,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="362" Height="243"/>
+        <TextBox x:Name="SearchBar" HorizontalAlignment="Left" Grid.Column="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="280" Height="28" BorderBrush="Black" FontSize="24" TextChanged="SearchBar_TextChanged" Margin="65,6,0,0">
+            <TextBox.Background>
+                <SolidColorBrush Color="White"/>
+            </TextBox.Background>
+        </TextBox>
+        <Button x:Name="Add" Content="Add" Click="addButton_Click" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Height="45" Width="72" Margin="20,357,0,0"/>
+        <Button x:Name="Confirm" Content="Confirmar" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Confirm_Click" Height="45" Width="72" Margin="0,357,0,0"/>
+        <Button x:Name="Cancel" Content="Cancelar" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Cancel_Click" Height="45" Width="72" Margin="310,357,0,0"/>
     </Grid>
 </Window>
