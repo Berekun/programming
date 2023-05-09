@@ -1,4 +1,6 @@
-﻿namespace Mikender
+﻿using System.Windows;
+
+namespace Mikender
 {
     public class User
     {
@@ -25,5 +27,11 @@
         public string description { get; set; }
         public string gender { get; set; }
         public int rating { get; set; }
+        public Visibility HasOneStar => rating > 1 ? Visibility.Visible : Visibility.Hidden;
+        public Visibility HasTwoStar => rating > 2 ? Visibility.Visible : Visibility.Hidden;
+        public Visibility HasThreeStar => rating > 3 ? Visibility.Visible : Visibility.Hidden;
+        public Visibility HasFourStar => rating > 4 ? Visibility.Visible : Visibility.Hidden;
+        public Visibility HasFiveStar => rating >= 5 ? Visibility.Visible : Visibility.Hidden;
+
     }
 }

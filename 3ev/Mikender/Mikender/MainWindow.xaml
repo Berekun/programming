@@ -45,6 +45,13 @@
                                     <StackPanel Orientation="Vertical" Width="210">
                                         <TextBlock Text="{Binding name}" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                         <Button Content="Mostrar Info" Click="Mostrar_Click" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        <StackPanel x:Name="Images" Orientation="Horizontal">
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasOneStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasTwoStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasThreeStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasFourStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasFiveStar}"></Image>
+                                        </StackPanel>
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Width="50">
                                         <Button x:Name="RemoveButton" Content="Remove" Click="Remove_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Visible" Height="20" Width="50"/>
@@ -73,7 +80,7 @@
             </TextBox.Background>
         </TextBox>
         <Button x:Name="Add" Content="Add" Click="addButton_Click" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Height="45" Width="72" Margin="20,357,0,0"/>
-        <Button x:Name="Confirm" Content="Confirmar" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Confirm_Click" Height="45" Width="72" Margin="0,357,0,0"/>
-        <Button x:Name="Cancel" Content="Cancelar" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Cancel_Click" Height="45" Width="72" Margin="310,357,0,0"/>
+        <Button x:Name="Confirm" Content="✓" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Confirm_Click" Height="45" Width="72" Margin="0,357,0,0" BorderBrush="Green" Foreground="Green"/>
+        <Button x:Name="Cancel" Content="X" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Cancel_Click" Height="45" Width="72" Margin="310,357,0,0" BorderBrush="red" Foreground="Red"/>
     </Grid>
 </Window>

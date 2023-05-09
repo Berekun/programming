@@ -35,7 +35,8 @@ namespace Mikender
         private void ageBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox tb = (TextBox)sender;
-            user.age = Convert.ToInt32(tb.Text);
+            if (int.TryParse(ageBox.Text, out int rating))
+                user.age = Convert.ToInt32(tb.Text);
         }
 
         private void descriptionBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -59,7 +60,8 @@ namespace Mikender
         private void ratingBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox tb = (TextBox)sender;
-            user.rating = Convert.ToInt32(tb.Text);
+            if (int.TryParse(ratingBox.Text, out int rating))
+                user.rating = Convert.ToInt32(tb.Text);
         }
 
         private void idBox_TextChanged(object sender, TextChangedEventArgs e)

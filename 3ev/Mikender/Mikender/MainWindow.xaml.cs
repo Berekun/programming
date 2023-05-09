@@ -23,7 +23,6 @@ namespace Mikender
     public partial class MainWindow : Window
     {
         List<User> users = new List<User>();
-        List<User> usersList = new List<User>();
         int idClientToRemove = 0;
         public MainWindow()
         {
@@ -74,8 +73,6 @@ namespace Mikender
                 var page = (AddUserPage)content;
                 User user = page.User;
                 Connection.AddUser(user);
-
-                Frame.Content = null;
             }
             else if (idClientToRemove != 0)
             {
@@ -87,9 +84,11 @@ namespace Mikender
                 var page = (UpdateUserPage)content;
                 User user = page.user;
                 Connection.UpdateUser(user);
-                Frame.Content = null;
                 Add.Visibility = Visibility.Visible;
             }
+
+            Frame.Content = null;
+            Add.Visibility = Visibility.Visible;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

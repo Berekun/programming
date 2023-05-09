@@ -12,6 +12,10 @@ namespace Mikender
 {
     public class Connection
     {
+        static string sentence4 = " SELECT * FROM dbo.GetFilteredUsers(@value, @offset, @limit);";
+        static string sentence2 = "EXEC addUsuario @value";
+        static string sentence1 = "EXEC RemoveUser @value";
+        static string sentence3 = "EXEC updateUser @value";
         public static List<User> SearchUser(string name, int offset, int limit)
         {
             List<User> users = new List<User>();
@@ -23,7 +27,6 @@ namespace Mikender
                     connection.Open();
                     User user = new UserBuilder().SetName(name).Create();
                     string json = JsonSerializer.Serialize<User>(user);
-                    string sentence4 = " SELECT * FROM dbo.GetFilteredUsers(@value, @offset, @limit);";
                     using (SqlCommand command = new SqlCommand(sentence4, connection))
                     {
                         command.Parameters.AddWithValue("@value", json);
@@ -68,7 +71,6 @@ namespace Mikender
                 {
                     connection.Open();
                     string json = JsonSerializer.Serialize<User>(user);
-                    string sentence2 = "EXEC addUsuario @value";
                     using (SqlCommand command = new SqlCommand(sentence2, connection))
                     {
                         command.Parameters.AddWithValue("@value", json);
@@ -90,8 +92,7 @@ namespace Mikender
                 using (SqlConnection connection = new SqlConnection("Data Source=192.168.56.101,1433;Initial Catalog=MIKENDER;User ID=sa;Password=SqlServer123;Connection Timeout=30"))
                 {
                     connection.Open();
-                    string sentence2 = "EXEC RemoveUser @value";
-                    using (SqlCommand command = new SqlCommand(sentence2, connection))
+                    using (SqlCommand command = new SqlCommand(sentence1, connection))
                     {
                         command.Parameters.AddWithValue("@value", id);
 
@@ -113,8 +114,7 @@ namespace Mikender
                 {
                     connection.Open();
                     string json = JsonSerializer.Serialize<User>(user);
-                    string sentence2 = "EXEC updateUser @value";
-                    using (SqlCommand command = new SqlCommand(sentence2, connection))
+                    using (SqlCommand command = new SqlCommand(sentence3, connection))
                     {
                         command.Parameters.AddWithValue("@value", json);
 
