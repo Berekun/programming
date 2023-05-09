@@ -27,7 +27,6 @@ namespace Mikender
         int idClientToRemove = 0;
         public MainWindow()
         {
-            Connection connection = new Connection();
             InitializeComponent();
             users = Connection.SearchUser("", 0, 10);
             ListViewProducts.ItemsSource = users;
