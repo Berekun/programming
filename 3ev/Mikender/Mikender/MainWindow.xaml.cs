@@ -38,6 +38,7 @@ namespace Mikender
             ShowInfoPage pageShowMain = new ShowInfoPage();
             pageShowMain.DataContext = user;
             Frame.Content = pageShowMain;
+            Cancel.Visibility = Visibility.Visible;
         }
 
         public void closeButton_Click(object sender, RoutedEventArgs e)
@@ -107,6 +108,9 @@ namespace Mikender
             Cancel.Visibility = Visibility.Visible;
             Button b = (Button)sender;
             User user = (User)b.DataContext;
+            ShowInfoPage pageShowMain = new ShowInfoPage();
+            pageShowMain.DataContext = user;
+            Frame.Content = pageShowMain;
             idClientToRemove = user.idClient;
         }
 

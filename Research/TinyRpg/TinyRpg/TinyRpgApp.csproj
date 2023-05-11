@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -15,5 +15,13 @@
     <PackageReference Include="OpenAL.Soft" Version="1.19.1" />
     <PackageReference Include="UDK" Version="1.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TinyRpgLib\TinyRpgLib.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProyectReference Include="../TinyRpgLib/TinyRpgLib.cs" />
+	</ItemGroup>
 
 </Project>
