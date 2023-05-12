@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using UDK;
@@ -37,115 +38,65 @@ namespace TinyRpgLib
             switch (identifier)
             {
                 case 0:
-                    for (int i = 2; i < 4; i++)
-                    {
-                        if (i == 2)
-                            portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }
+                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
                     break;
                 case 1:
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (i == 0)
-                            portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                        else if (i == 1)
-                            continue;
-                        else if (i == 2)
-                            portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }
+                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
                     break;
                 case 2:
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (i == 0)
-                            portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                        else if (i == 1 || i == 2)
-                            continue;
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }
+                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
                     break;
                 case 3:
-                    for (int i = 1; i < 4; i++)
-                    {
-                        if (i == 1)
-                            portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        else if (i == 2)
-                            portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }
+                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
                     break;
                 case 4:
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (i == 0)
-                            portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                        else if (i == 1)
-                            portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        else if (i == 2)
-                            portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }    
+                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
                     break;
                 case 5:
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (i == 0)
-                            portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                        else if (i == 1)
-                            portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        else if (i == 2)
-                            continue;
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }
+                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
                     break;
                 case 6:
-                    for (int i = 1; i < 3; i++)
-                    {
-                        if (i == 0)
-                            continue;
-                        else if (i == 1)
-                            portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        else if (i == 2)
-                            portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        else
-                            portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
-                    }   
+                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
                     break;
                 case 7:
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (i == 0)
-                            portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                        else if (i == 1)
-                            portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        else if (i == 2)
-                            portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        else
-                            continue;
-                    }
-                        
+                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
                     break;
                 case 8:
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (i == 0)
-                            portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                        else if (i == 1)
-                            portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        else if (i == 2)
-                            continue;
-                        else
-                            continue;
-                    }
+                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
                     break;
+            }
+        }
+
+
+        public void GeneratePortals1()
+        {
+            rect2d_f64[,] bi = new rect2d_f64[,] { };
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (i == 0)
+                    portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
+                else if (i == 1)
+                    portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
+                else if (i == 2)
+                    portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
+                else
+                    portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
             }
         }
     }

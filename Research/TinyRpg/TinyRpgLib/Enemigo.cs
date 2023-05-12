@@ -8,11 +8,12 @@ namespace TinyRpgLib
 {
     public class Enemigo : Personaje
     {
-        public int dropExp { get; set; } = 0;
+        public int pathingRoute { get; set; } = 0;
 
-        //public void Encuentro()
-        //{
-
-        //}
+        public Enemigo(int x, int y, int pathingRoute) : base(x, y)
+        {
+            position = new Position(x, y);
+            this.pathingRoute = pathingRoute;
+        }
     }
 }

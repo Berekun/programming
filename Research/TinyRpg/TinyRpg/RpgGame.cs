@@ -8,7 +8,8 @@ namespace TinyRpgApp
     {
         #region Atributos
         Personaje main = new Personaje(10,10);
-        List<Personaje> npcs = new List<Personaje>();
+        List<Enemigo> enemies = new List<Enemigo>();
+        List<Bala> bullets = new List<Bala>();
         World currentWorld;
         int[,] representativeWorld = new int[3, 3];
         int maxWorldWidth = 40;
@@ -46,6 +47,8 @@ namespace TinyRpgApp
             ChangeMoveStep += Time.deltaTime;
             circlePathing += Time.deltaTime;
             Move(gameEvent, keyboard, mouse);
+            Shoot(gameEvent, keyboard, mouse);
+            MoveBullets();
             RandomMoveNpcs();
 
             var pos = gameEvent.coordinateConversor.ViewToWorld(mouse.X, mouse.Y);
@@ -63,7 +66,7 @@ namespace TinyRpgApp
         {
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4);
             GenerateNpc();
-            GeneratePathing(npcs);
+            GeneratePathing(enemies);
             FillArrayRepresentative();
         }
 
@@ -74,22 +77,22 @@ namespace TinyRpgApp
 
         public void RandomMoveNpcs()
         {
-            foreach (Personaje p in npcs)
+            foreach (Enemigo e in enemies)
             {
-                if (p.pathingRoute == 1)
+                if (e.pathingRoute == 1)
                 {
-                    HorizontalPathing(p);
+                    HorizontalPathing(e);
                 }
-                else if (p.pathingRoute == 2)
+                else if (e.pathingRoute == 2)
                 {
-                    VerticalPathing(p);
+                    VerticalPathing(e);
                 }
-                else if (p.pathingRoute == 3)
+                else if (e.pathingRoute == 3)
                 {
-                    CircularPathing(p);
+                    CircularPathing(e);
                 }
 
-                LimitedWorld(p.position.x, p.position.y, p);
+                LimitedWorld(e.position.x, e.position.y, e);
             }
         }
 
@@ -120,6 +123,32 @@ namespace TinyRpgApp
             
 
             LimitedWorld(main.position.x, main.position.y, main);
+        }
+
+        public void MoveBullets()
+        {
+            foreach (Bala b in bullets)
+            {
+                if (b.direction == 0)
+                {
+                    b.position.x -= 1 * Time.deltaTime;
+                }
+
+                if (b.direction == 1)
+                {
+                    b.position.y += 1 * Time.deltaTime;
+                }
+
+                if (b.direction == 2)
+                {
+                    b.position.x += 1 * Time.deltaTime;
+                }
+
+                if (b.direction == 3)
+                {
+                    b.position.y -= 1 * Time.deltaTime;
+                }
+            }
         }
 
         public void LimitedWorld(double x, double y, Personaje p)
@@ -163,34 +192,17 @@ namespace TinyRpgApp
 
         public void DetectedChangeWorld(double x, double y) //Mejorable sabes como
         {
+            Position[] positions = new Position[] { new Position(maxWorldWidth - 2, main.position.y), new Position(main.position.x, minWorldHeight + 2), new Position(minWorldWidth + 2, main.position.y), new Position(main.position.x, maxWorldHeight - 2) };
+
             int portalTouched = WhatPortalMainCharacterIs();
 
-            if (portalTouched == 0)
+            if (portalTouched != -1)
             {
                 currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
-                main.position.x = maxWorldWidth - 2;
-                IsTransitionDone= false;
-            }
-            else if (portalTouched == 1)
-            {
-                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
-                main.position.y = minWorldHeight + 2;
+                main.position = positions[portalTouched];
+                GenerateNpc();
                 IsTransitionDone = false;
             }
-            else if (portalTouched == 2)
-            {
-                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
-                main.position.x = minWorldWidth + 2;
-                IsTransitionDone = false;
-            }
-            else if (portalTouched == 3)
-            {
-                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
-                main.position.y = maxWorldHeight - 2;
-                IsTransitionDone = false;
-            }
-
-
         }
 
         public int WhatPortalMainCharacterIs()
@@ -226,9 +238,11 @@ namespace TinyRpgApp
 
         public void GenerateNpc()
         {
+            enemies.Clear();
+
             for (int i = 0; i < Tools.GetRandomInt(1, 4); i++)
             {
-                npcs.Add(new Personaje(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
+                enemies.Add(new Enemigo(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
             }
         }
 
@@ -254,7 +268,7 @@ namespace TinyRpgApp
 
         public void RenderPersonajes(ICanvas canvas)
         {
-            foreach (Personaje p in npcs)
+            foreach (Personaje p in enemies)
             {
                 canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
                 canvas.Transform.SetTranslation(p.position.x, p.position.y);
@@ -264,12 +278,12 @@ namespace TinyRpgApp
             }
         }
 
-        public void GeneratePathing(List<Personaje> npcs)
+        public void GeneratePathing(List<Enemigo> enemies)
         {
-            foreach (Personaje p in npcs)
+            foreach (Enemigo e in enemies)
             {
                 int random = Tools.GetRandomInt(1, 4);
-                p.pathingRoute = random;
+                e.pathingRoute = random;
             }
         }
 
@@ -336,6 +350,21 @@ namespace TinyRpgApp
             }
 
             return -1;
+        }
+
+        public void Shoot(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
+        {
+            if (keyboard.IsKeyDown(Keys.A))
+                bullets.Add(new Bala(main.position.x, main.position.y, 0));
+
+            if (keyboard.IsKeyDown(Keys.W))
+                bullets.Add(new Bala(main.position.x, main.position.y, 1));
+
+            if (keyboard.IsKeyDown(Keys.D))
+                bullets.Add(new Bala(main.position.x, main.position.y, 2));
+
+            if (keyboard.IsKeyDown(Keys.S))
+                bullets.Add(new Bala(main.position.x, main.position.y, 3));
         }
     }
 }

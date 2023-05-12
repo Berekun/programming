@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace TinyRpgLib
 {
-    public class Equipo
+    internal class Protagonista : Personaje
     {
-        List<Aliado> lista;
     }
 }
