@@ -7,18 +7,17 @@ namespace TinyRpgApp
     public class RpgGame : IGameDelegate
     {
         #region Atributos
-        Personaje main = new Personaje(0,0);
+        Personaje main = new Personaje(10,10);
         List<Personaje> npcs = new List<Personaje>();
         World currentWorld;
+        int[,] representativeWorld = new int[3, 3];
         int maxWorldWidth = 40;
         int maxWorldHeight = 40;
         int minWorldWidth = 0;
         int minWorldHeight = 0;
         double transitiondelay = 0;
-        double moveStep = 0;
         double ChangeMoveStep = 0;
         double circlePathing = 0;
-        bool oneStepAfterChangeWorld = false;
         bool IsTransitionDone = true;
         bool isTransitioning = false;
         #endregion
@@ -28,17 +27,10 @@ namespace TinyRpgApp
             canvas.Clear(new rgba_f64(0.5, 0.3, 0.1, 1));
             canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + main.position.x, -10 + main.position.y, 10 + main.position.x, 10 + main.position.y), true);
 
-            DetectedChangeWorld(main.position.x, main.position.y);         
+            DetectedChangeWorld(main.position.x, main.position.y);
 
-            if (currentWorld.ideidentifier == 5)
-            {
-                RenderWorld(canvas, currentWorld);
-            }
-            else if (currentWorld.ideidentifier == 4)
-            {
-                RenderWorld(canvas, currentWorld);
-            }
-
+            RenderWorld(canvas, currentWorld);
+            RenderPortal(canvas);
             RenderProta(canvas);
             RenderPersonajes(canvas);
             
@@ -62,13 +54,17 @@ namespace TinyRpgApp
 
             int x = (int)pos.x;
             int y = (int)pos.y;
+
+            if(keyboard.IsKeyPressed(Keys.Escape))
+                gameEvent.window.Close();
         }
 
         public void OnLoad(GameDelegateEvent gameEvent)
         {
-            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 5);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4);
             GenerateNpc();
             GeneratePathing(npcs);
+            FillArrayRepresentative();
         }
 
         public void OnUnload(GameDelegateEvent gameEvent)
@@ -95,8 +91,6 @@ namespace TinyRpgApp
 
                 LimitedWorld(p.position.x, p.position.y, p);
             }
-
-            moveStep = 0;
         }
 
         public void Move(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
@@ -105,26 +99,22 @@ namespace TinyRpgApp
             {
                 if (keyboard.IsKeyDown(Keys.Right))
                 {
-                    main.position.x += 0.05;
-                    oneStepAfterChangeWorld = true;
+                    main.position.x += 20 * Time.deltaTime;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Left))
                 {
-                    main.position.x -= 0.05;
-                    oneStepAfterChangeWorld = true;
+                    main.position.x -= 20 * Time.deltaTime;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Up))
                 {
-                    main.position.y += 0.05;
-                    oneStepAfterChangeWorld = true;
+                    main.position.y += 20 * Time.deltaTime;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Down))
                 {
-                    main.position.y -= 0.05;
-                    oneStepAfterChangeWorld = true;
+                    main.position.y -= 20 * Time.deltaTime;
                 }
             }
             
@@ -157,13 +147,13 @@ namespace TinyRpgApp
 
         public void RenderWorld(ICanvas canvas, World world)
         {
-            if (world.ideidentifier == 5)
+            if (world.ideidentifier == 4)
             {
                 canvas.FillShader.SetColor(new rgba_f64(0.0, 0.56, 0.22, 1.0));
                 canvas.Transform.SetTranslation(0, 0);
                 canvas.DrawRectangle(new rect2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
             }
-            else if (world.ideidentifier == 4)
+            else
             {
                 canvas.FillShader.SetColor(new rgba_f64(0.5, 0.56, 0.22, 1.0));
                 canvas.Transform.SetTranslation(0, 0);
@@ -171,27 +161,52 @@ namespace TinyRpgApp
             }
         }
 
-        public void DetectedChangeWorld(double x, double y)
+        public void DetectedChangeWorld(double x, double y) //Mejorable sabes como
         {
-            if (oneStepAfterChangeWorld)
+            int portalTouched = WhatPortalMainCharacterIs();
+
+            if (portalTouched == 0)
             {
-                if ((y >= 15 && 25 >= y) && x == 0 && currentWorld.ideidentifier == 5)
+                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
+                main.position.x = maxWorldWidth - 2;
+                IsTransitionDone= false;
+            }
+            else if (portalTouched == 1)
+            {
+                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
+                main.position.y = minWorldHeight + 2;
+                IsTransitionDone = false;
+            }
+            else if (portalTouched == 2)
+            {
+                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
+                main.position.x = minWorldWidth + 2;
+                IsTransitionDone = false;
+            }
+            else if (portalTouched == 3)
+            {
+                currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
+                main.position.y = maxWorldHeight - 2;
+                IsTransitionDone = false;
+            }
+
+
+        }
+
+        public int WhatPortalMainCharacterIs()
+        {
+            foreach (Portal p in currentWorld.portals)
+            {
+                if (main.position.x >= p.aabb.x && p.aabb.MaxX >= main.position.x)
                 {
-                    currentWorld = null;
-                    currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4);
-                    IsTransitionDone = false;
-                    oneStepAfterChangeWorld = false;
-                    main.position.x = maxWorldHeight - 1;
-                }
-                else if ((y >= 15 && 25 >= y) && x == maxWorldWidth - 1 && currentWorld.ideidentifier == 4)
-                {
-                    currentWorld = null;
-                    currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 5);
-                    IsTransitionDone = false;
-                    oneStepAfterChangeWorld = false;
-                    main.position.x = 0;
+                    if (main.position.y >= p.aabb.y && p.aabb.MaxY >= main.position.y)
+                    {
+                        return p.id;
+                    }
                 }
             }
+
+            return -1;
         }
 
         public void Transition(ICanvas canvas)
@@ -214,6 +229,17 @@ namespace TinyRpgApp
             for (int i = 0; i < Tools.GetRandomInt(1, 4); i++)
             {
                 npcs.Add(new Personaje(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
+            }
+        }
+
+        public void RenderPortal(ICanvas canvas)
+        {
+            foreach (Portal p in currentWorld.portals)
+            {
+                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
+                canvas.Transform.SetTranslation(0, 0);
+                canvas.DrawRectangle(p.aabb);
+                
             }
         }
 
@@ -279,6 +305,37 @@ namespace TinyRpgApp
                 p.position.y -= 10 * Time.deltaTime;
             else
                 circlePathing = 0;
+        }
+
+        public void FillArrayRepresentative()
+        {
+            int count = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    representativeWorld[j, i] = count;
+                    count++;
+                }
+            }
+        }
+
+        public int SelectWorld(int id)
+        {
+            Position[] positions;
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    positions = new Position[] { new Position(j - 1, i), new Position(j, i - 1), new Position(j + 1, i), new Position(j, i + 1) };
+
+                    if (representativeWorld[j, i] == currentWorld.ideidentifier)
+                        return representativeWorld[(int)positions[id].x, (int)positions[id].y];
+                }
+            }
+
+            return -1;
         }
     }
 }
