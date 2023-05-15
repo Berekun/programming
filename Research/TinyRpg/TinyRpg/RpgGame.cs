@@ -1,4 +1,5 @@
 ﻿using OpenTK.Core;
+using System.Runtime.Serialization;
 using TinyRpgLib;
 using UDK;
 
@@ -19,6 +20,7 @@ namespace TinyRpgApp
         double transitiondelay = 0;
         double ChangeMoveStep = 0;
         double circlePathing = 0;
+        double shootDelay = 0;
         bool IsTransitionDone = true;
         bool isTransitioning = false;
         #endregion
@@ -26,15 +28,16 @@ namespace TinyRpgApp
         {
             Time.UpdateDeltaTime();
             canvas.Clear(new rgba_f64(0.5, 0.3, 0.1, 1));
-            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + main.position.x, -10 + main.position.y, 10 + main.position.x, 10 + main.position.y), true);
+            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + main.position.X, -10 + main.position.Y, 10 + main.position.X, 10 + main.position.Y), true);
 
-            DetectedChangeWorld(main.position.x, main.position.y);
+            DetectedChangeWorld(main.position.X, main.position.Y);
 
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
             RenderProta(canvas);
-            RenderPersonajes(canvas);
-            
+            RenderEnemies(canvas);
+            KillEnemies(bullets,enemies);
+            RenderBullets(canvas);
 
             if (!IsTransitionDone)
             {
@@ -46,9 +49,12 @@ namespace TinyRpgApp
         {
             ChangeMoveStep += Time.deltaTime;
             circlePathing += Time.deltaTime;
+            shootDelay += Time.deltaTime;
             Move(gameEvent, keyboard, mouse);
             Shoot(gameEvent, keyboard, mouse);
+
             MoveBullets();
+            RemoveBullet(bullets);
             RandomMoveNpcs();
 
             var pos = gameEvent.coordinateConversor.ViewToWorld(mouse.X, mouse.Y);
@@ -65,7 +71,7 @@ namespace TinyRpgApp
         public void OnLoad(GameDelegateEvent gameEvent)
         {
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4);
-            GenerateNpc();
+            GenerateEnemies();
             GeneratePathing(enemies);
             FillArrayRepresentative();
         }
@@ -92,7 +98,7 @@ namespace TinyRpgApp
                     CircularPathing(e);
                 }
 
-                LimitedWorld(e.position.x, e.position.y, e);
+                LimitedWorld(e.position.X, e.position.Y, e);
             }
         }
 
@@ -102,27 +108,27 @@ namespace TinyRpgApp
             {
                 if (keyboard.IsKeyDown(Keys.Right))
                 {
-                    main.position.x += 20 * Time.deltaTime;
+                    main.position.X += 8 * Time.deltaTime;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Left))
                 {
-                    main.position.x -= 20 * Time.deltaTime;
+                    main.position.X -= 8 * Time.deltaTime;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Up))
                 {
-                    main.position.y += 20 * Time.deltaTime;
+                    main.position.Y += 8 * Time.deltaTime;
                 }
 
                 if (keyboard.IsKeyDown(Keys.Down))
                 {
-                    main.position.y -= 20 * Time.deltaTime;
+                    main.position.Y -= 8 * Time.deltaTime;
                 }
             }
             
 
-            LimitedWorld(main.position.x, main.position.y, main);
+            LimitedWorld(main.position.X, main.position.Y, main);
         }
 
         public void MoveBullets()
@@ -131,22 +137,22 @@ namespace TinyRpgApp
             {
                 if (b.direction == 0)
                 {
-                    b.position.x -= 1 * Time.deltaTime;
+                    b.position.X -= 12 * Time.deltaTime;
                 }
 
                 if (b.direction == 1)
                 {
-                    b.position.y += 1 * Time.deltaTime;
+                    b.position.Y += 12 * Time.deltaTime;
                 }
 
                 if (b.direction == 2)
                 {
-                    b.position.x += 1 * Time.deltaTime;
+                    b.position.X += 12 * Time.deltaTime;
                 }
 
                 if (b.direction == 3)
                 {
-                    b.position.y -= 1 * Time.deltaTime;
+                    b.position.Y -= 12 * Time.deltaTime;
                 }
             }
         }
@@ -155,22 +161,22 @@ namespace TinyRpgApp
         {
             if (x < minWorldWidth)
             {
-                p.position.x = minWorldWidth;
+                p.position.X = minWorldWidth;
             }
             
             if (x > maxWorldWidth - 1)
             {
-                p.position.x = maxWorldWidth - 1;
+                p.position.X = maxWorldWidth - 1;
             }
             
             if(y < minWorldHeight)
             {
-                p.position.y = minWorldHeight;
+                p.position.Y = minWorldHeight;
             }
             
             if (y > maxWorldHeight - 1)
             {
-                p.position.y = maxWorldHeight - 1;
+                p.position.Y = maxWorldHeight - 1;
             }
         }
 
@@ -192,7 +198,7 @@ namespace TinyRpgApp
 
         public void DetectedChangeWorld(double x, double y) //Mejorable sabes como
         {
-            Position[] positions = new Position[] { new Position(maxWorldWidth - 2, main.position.y), new Position(main.position.x, minWorldHeight + 2), new Position(minWorldWidth + 2, main.position.y), new Position(main.position.x, maxWorldHeight - 2) };
+            Position[] positions = new Position[] { new Position(maxWorldWidth - 2, main.position.Y), new Position(main.position.X, minWorldHeight + 2), new Position(minWorldWidth + 2, main.position.Y), new Position(main.position.X, maxWorldHeight - 2) };
 
             int portalTouched = WhatPortalMainCharacterIs();
 
@@ -200,7 +206,8 @@ namespace TinyRpgApp
             {
                 currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
                 main.position = positions[portalTouched];
-                GenerateNpc();
+                GenerateEnemies();
+                bullets.Clear();
                 IsTransitionDone = false;
             }
         }
@@ -209,9 +216,9 @@ namespace TinyRpgApp
         {
             foreach (Portal p in currentWorld.portals)
             {
-                if (main.position.x >= p.aabb.x && p.aabb.MaxX >= main.position.x)
+                if (main.position.X >= p.aabb.x && p.aabb.MaxX >= main.position.X)
                 {
-                    if (main.position.y >= p.aabb.y && p.aabb.MaxY >= main.position.y)
+                    if (main.position.Y >= p.aabb.y && p.aabb.MaxY >= main.position.Y)
                     {
                         return p.id;
                     }
@@ -236,11 +243,11 @@ namespace TinyRpgApp
                 
         }
 
-        public void GenerateNpc()
+        public void GenerateEnemies()
         {
             enemies.Clear();
 
-            for (int i = 0; i < Tools.GetRandomInt(1, 4); i++)
+            for (int i = 0; i < Tools.GetRandomInt(1, 10); i++)
             {
                 enemies.Add(new Enemigo(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
             }
@@ -260,21 +267,31 @@ namespace TinyRpgApp
         public void RenderProta(ICanvas canvas)
         {
             canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
-            canvas.Transform.SetTranslation(main.position.x, main.position.y);
+            canvas.Transform.SetTranslation(main.position.X, main.position.Y);
             canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1, 1));
             canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1, 1));
             canvas.Mask.Pop();
         }
 
-        public void RenderPersonajes(ICanvas canvas)
+        public void RenderEnemies(ICanvas canvas)
         {
             foreach (Personaje p in enemies)
             {
                 canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
-                canvas.Transform.SetTranslation(p.position.x, p.position.y);
+                canvas.Transform.SetTranslation(p.position.X, p.position.Y);
                 canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1, 1));
                 canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1, 1));
                 canvas.Mask.Pop();
+            }
+        }
+
+        public void RenderBullets(ICanvas canvas)
+        {
+            foreach (Bala b in bullets)
+            {
+                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
+                canvas.Transform.SetTranslation(b.position.X, b.position.Y);
+                canvas.DrawRectangle(new rect2d_f64(0.25, 0.25, 0.5, 0.5));
             }
         }
 
@@ -290,9 +307,9 @@ namespace TinyRpgApp
         public void HorizontalPathing(Personaje p)
         {
             if (ChangeMoveStep < 2)
-                p.position.x += 10 * Time.deltaTime;
+                p.position.X += 10 * Time.deltaTime;
             else if (ChangeMoveStep < 4)
-                p.position.x -= 10 * Time.deltaTime;
+                p.position.X -= 10 * Time.deltaTime;
             else
                 ChangeMoveStep = 0;
         }
@@ -300,9 +317,9 @@ namespace TinyRpgApp
         public void VerticalPathing(Personaje p)
         {
             if (ChangeMoveStep < 2)
-                p.position.y += 10 * Time.deltaTime;
+                p.position.Y += 10 * Time.deltaTime;
             else if (ChangeMoveStep < 4)
-                p.position.y -= 10 * Time.deltaTime;
+                p.position.Y -= 10 * Time.deltaTime;
             else
                 ChangeMoveStep = 0;
         }
@@ -310,13 +327,13 @@ namespace TinyRpgApp
         public void CircularPathing(Personaje p)
         {
             if (circlePathing < 1)
-                p.position.x += 10 * Time.deltaTime;
+                p.position.X += 10 * Time.deltaTime;
             else if (circlePathing < 2)
-                p.position.y += 10 * Time.deltaTime;
+                p.position.Y += 10 * Time.deltaTime;
             else if (circlePathing < 3)
-                p.position.x -= 10 * Time.deltaTime;
+                p.position.X -= 10 * Time.deltaTime;
             else if (circlePathing < 4)
-                p.position.y -= 10 * Time.deltaTime;
+                p.position.Y -= 10 * Time.deltaTime;
             else
                 circlePathing = 0;
         }
@@ -345,7 +362,7 @@ namespace TinyRpgApp
                     positions = new Position[] { new Position(j - 1, i), new Position(j, i - 1), new Position(j + 1, i), new Position(j, i + 1) };
 
                     if (representativeWorld[j, i] == currentWorld.ideidentifier)
-                        return representativeWorld[(int)positions[id].x, (int)positions[id].y];
+                        return representativeWorld[(int)positions[id].X, (int)positions[id].Y];
                 }
             }
 
@@ -354,17 +371,57 @@ namespace TinyRpgApp
 
         public void Shoot(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
         {
-            if (keyboard.IsKeyDown(Keys.A))
-                bullets.Add(new Bala(main.position.x, main.position.y, 0));
+            if (shootDelay > 0.5)
+            {
+                if (keyboard.IsKeyDown(Keys.A))
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 0));
+                
+                if (keyboard.IsKeyDown(Keys.W))
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 1));
 
-            if (keyboard.IsKeyDown(Keys.W))
-                bullets.Add(new Bala(main.position.x, main.position.y, 1));
+                if (keyboard.IsKeyDown(Keys.D))
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 2));
 
-            if (keyboard.IsKeyDown(Keys.D))
-                bullets.Add(new Bala(main.position.x, main.position.y, 2));
+                if (keyboard.IsKeyDown(Keys.S))
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 3));
 
-            if (keyboard.IsKeyDown(Keys.S))
-                bullets.Add(new Bala(main.position.x, main.position.y, 3));
+                shootDelay = 0;
+            }    
+        }
+
+        public void RemoveBullet(List<Bala> bullets)
+        {
+            for(int i = 0; i < bullets.Count; i++)
+            {
+                if (bullets[i].position.X < minWorldWidth)
+                {
+                    bullets.Remove(bullets[i]);
+                }
+                else if (bullets[i].position.X > maxWorldWidth - 1)
+                {
+                    bullets.Remove(bullets[i]);
+                }
+                else if (bullets[i].position.Y < minWorldHeight)
+                {
+                    bullets.Remove(bullets[i]);
+                }
+                else if (bullets[i].position.Y > maxWorldHeight - 1)
+                {
+                    bullets.Remove(bullets[i]);
+                }
+            }  
+        }
+
+        public void KillEnemies(List<Bala> balas, List<Enemigo> enemigos)
+        {
+            for (int i = 0; i < balas.Count; i++)
+            {
+                for (int j = 0; j < enemigos.Count; j++)
+                {
+                    if (balas[i].position.X >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X && balas[i].position.Y >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y)
+                            enemigos.Remove(enemigos[j]);
+                }       
+            }
         }
     }
 }

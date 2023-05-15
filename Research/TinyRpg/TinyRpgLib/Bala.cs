@@ -14,8 +14,7 @@ namespace TinyRpgLib
 
         public Bala(double x, double y, int direction)
         {
-            position.x = x;
-            position.y = y;
+            position = new Position(x, y);
             this.direction = direction;
         }
     }

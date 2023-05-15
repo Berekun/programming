@@ -8,5 +8,8 @@ namespace TinyRpgLib
 {
     internal class Protagonista : Personaje
     {
+        public int dinero { get; set; }
+
+
     }
 }

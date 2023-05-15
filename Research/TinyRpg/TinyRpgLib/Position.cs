@@ -15,8 +15,30 @@ namespace TinyRpgLib
 
             return new Position(pos1.x + pos2.x, pos1.y + pos2.y);
         }
-        public double x { get; set; } = 0;
-        public double y { get; set; } = 0;
+        private double x;
+        public double X
+        {
+            get => x;
+            set
+            {
+                x = value;
+                maxX = x + 1;
+            }
+        }
+
+        private double y;
+
+        public double Y
+        {
+            get => y;
+            set
+            {
+                y = value;
+                maxY = y + 1;
+            }
+        }
+        public double maxX { get; set; }
+        public double maxY { get; set; }
 
         public Position()
         {
@@ -27,6 +49,8 @@ namespace TinyRpgLib
         {
             this.x = x;
             this.y = y;
+            maxX = x + 1;
+            maxY = y + 1;
         }
     }
 }
