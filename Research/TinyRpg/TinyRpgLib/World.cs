@@ -18,6 +18,9 @@ namespace TinyRpgLib
 
         public List<Portal> portals = new List<Portal>();
 
+        public bool IsWorldClear { get; set; } = false;
+        public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
+
         public World(int minX,int minY,int maxX, int maxY, int ideidentifier)
         {
             this.minX = minX;

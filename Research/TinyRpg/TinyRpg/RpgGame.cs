@@ -9,7 +9,6 @@ namespace TinyRpgApp
     {
         #region Atributos
         Personaje main = new Personaje(10,10);
-        List<Enemigo> enemies = new List<Enemigo>();
         List<Bala> bullets = new List<Bala>();
         World currentWorld;
         int[,] representativeWorld = new int[3, 3];
@@ -36,7 +35,7 @@ namespace TinyRpgApp
             RenderPortal(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
-            KillEnemies(bullets,enemies);
+            KillEnemies(bullets,currentWorld.enemies);
             RenderBullets(canvas);
 
             if (!IsTransitionDone)
@@ -71,8 +70,7 @@ namespace TinyRpgApp
         public void OnLoad(GameDelegateEvent gameEvent)
         {
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4);
-            GenerateEnemies();
-            GeneratePathing(enemies);
+            GeneratePathing(currentWorld.enemies);
             FillArrayRepresentative();
         }
 
@@ -83,7 +81,7 @@ namespace TinyRpgApp
 
         public void RandomMoveNpcs()
         {
-            foreach (Enemigo e in enemies)
+            foreach (Enemigo e in currentWorld.enemies)
             {
                 if (e.pathingRoute == 1)
                 {
@@ -206,7 +204,8 @@ namespace TinyRpgApp
             {
                 currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
                 main.position = positions[portalTouched];
-                GenerateEnemies();
+                if(!currentWorld.IsWorldClear)
+                    GenerateEnemies();
                 bullets.Clear();
                 IsTransitionDone = false;
             }
@@ -216,9 +215,9 @@ namespace TinyRpgApp
         {
             foreach (Portal p in currentWorld.portals)
             {
-                if (main.position.X >= p.aabb.x && p.aabb.MaxX >= main.position.X)
+                if (main.position.X + 0.5 >= p.aabb.x && p.aabb.MaxX >= main.position.X + 0.5)
                 {
-                    if (main.position.Y >= p.aabb.y && p.aabb.MaxY >= main.position.Y)
+                    if (main.position.Y + 0.5 >= p.aabb.y && p.aabb.MaxY >= main.position.Y + 0.5)
                     {
                         return p.id;
                     }
@@ -245,11 +244,11 @@ namespace TinyRpgApp
 
         public void GenerateEnemies()
         {
-            enemies.Clear();
+            currentWorld.enemies.Clear();
 
             for (int i = 0; i < Tools.GetRandomInt(1, 10); i++)
             {
-                enemies.Add(new Enemigo(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
+                currentWorld.enemies.Add(new Enemigo(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
             }
         }
 
@@ -275,7 +274,7 @@ namespace TinyRpgApp
 
         public void RenderEnemies(ICanvas canvas)
         {
-            foreach (Personaje p in enemies)
+            foreach (Personaje p in currentWorld.enemies)
             {
                 canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
                 canvas.Transform.SetTranslation(p.position.X, p.position.Y);
@@ -418,9 +417,18 @@ namespace TinyRpgApp
             {
                 for (int j = 0; j < enemigos.Count; j++)
                 {
-                    if (balas[i].position.X >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X && balas[i].position.Y >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y)
+                    if (balas[i].position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X + 0.5 && balas[i].position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y + 0.5)
                             enemigos.Remove(enemigos[j]);
                 }       
+            }
+        }
+
+        public void HitEnemieToMainCharacter(List<Enemigo> enemigos)
+        {
+            for (int j = 0; j < enemigos.Count; j++)
+            {
+                if (main.position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= main.position.X + 0.5 && main.position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= main.position.Y + 0.5)
+                    enemigos.Remove(enemigos[j]);
             }
         }
     }
