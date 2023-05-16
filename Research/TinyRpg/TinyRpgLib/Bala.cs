@@ -3,19 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UDK;
 
 namespace TinyRpgLib
 {
+    public enum Shooter
+    {
+        MAIN, ENEMIE
+    }
+
     public class Bala
     {
         public Position position { get; set; }
 
-        public int direction { get; set; }
+        public vec2d_f64 direction { get; set; }
 
-        public Bala(double x, double y, int direction)
+        public Shooter shooter { get; set; }
+
+        public Bala(double x, double y, vec2d_f64 direction, Shooter shooter)
         {
             position = new Position(x, y);
             this.direction = direction;
+            this.shooter = shooter;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UDK;
 
 namespace TinyRpgLib
 {
@@ -37,6 +38,7 @@ namespace TinyRpgLib
                 maxY = y + 1;
             }
         }
+    
         public double maxX { get; set; }
         public double maxY { get; set; }
 

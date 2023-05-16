@@ -20,6 +20,7 @@ namespace TinyRpgApp
         double ChangeMoveStep = 0;
         double circlePathing = 0;
         double shootDelay = 0;
+        double shootEnemieDelay = 0;
         bool IsTransitionDone = true;
         bool isTransitioning = false;
         #endregion
@@ -44,13 +45,20 @@ namespace TinyRpgApp
             }
         }
 
+        public void OnAnimate(GameDelegateEvent gameEvent)
+        {
+
+        }
+
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
         {
             ChangeMoveStep += Time.deltaTime;
             circlePathing += Time.deltaTime;
             shootDelay += Time.deltaTime;
+            shootEnemieDelay += Time.deltaTime;
             Move(gameEvent, keyboard, mouse);
             Shoot(gameEvent, keyboard, mouse);
+            EnemieShoot();
 
             MoveBullets();
             RemoveBullet(bullets);
@@ -63,7 +71,9 @@ namespace TinyRpgApp
             int x = (int)pos.x;
             int y = (int)pos.y;
 
-            if(keyboard.IsKeyPressed(Keys.Escape))
+            HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
+
+            if (keyboard.IsKeyPressed(Keys.Escape))
                 gameEvent.window.Close();
         }
 
@@ -373,20 +383,32 @@ namespace TinyRpgApp
             if (shootDelay > 0.5)
             {
                 if (keyboard.IsKeyDown(Keys.A))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, 0));
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 0, Shooter.MAIN));
                 
                 if (keyboard.IsKeyDown(Keys.W))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, 1));
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 1, Shooter.MAIN));
 
                 if (keyboard.IsKeyDown(Keys.D))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, 2));
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 2, Shooter.MAIN));
 
                 if (keyboard.IsKeyDown(Keys.S))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, 3));
+                    bullets.Add(new Bala(main.position.X, main.position.Y, 3, Shooter.MAIN));
 
                 shootDelay = 0;
             }    
         }
+
+        public void EnemieShoot()
+        {
+            if (shootEnemieDelay > 1)
+            {
+                foreach (Enemigo e in currentWorld.enemies)
+                    bullets.Add(new Bala(e.position.X, e.position.Y, 0, Shooter.ENEMIE));
+
+                shootEnemieDelay = 0;
+            }
+        }
+
 
         public void RemoveBullet(List<Bala> bullets)
         {
@@ -417,18 +439,24 @@ namespace TinyRpgApp
             {
                 for (int j = 0; j < enemigos.Count; j++)
                 {
-                    if (balas[i].position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X + 0.5 && balas[i].position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y + 0.5)
+                    if (balas[i].shooter == Shooter.MAIN)
+                    {
+                        if (balas[i].position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X + 0.5 && balas[i].position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y + 0.5)
                             enemigos.Remove(enemigos[j]);
+                    }
                 }       
             }
         }
 
-        public void HitEnemieToMainCharacter(List<Enemigo> enemigos)
+        public void HitEnemieToMainCharacter(List<Enemigo> enemigos, GameDelegateEvent gameDelegate)
         {
             for (int j = 0; j < enemigos.Count; j++)
             {
                 if (main.position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= main.position.X + 0.5 && main.position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= main.position.Y + 0.5)
-                    enemigos.Remove(enemigos[j]);
+                {
+                    gameDelegate.window.Close();
+                    break;
+                }    
             }
         }
     }
