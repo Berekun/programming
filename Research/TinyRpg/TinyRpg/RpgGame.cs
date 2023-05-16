@@ -143,25 +143,8 @@ namespace TinyRpgApp
         {
             foreach (Bala b in bullets)
             {
-                if (b.direction == 0)
-                {
-                    b.position.X -= 12 * Time.deltaTime;
-                }
-
-                if (b.direction == 1)
-                {
-                    b.position.Y += 12 * Time.deltaTime;
-                }
-
-                if (b.direction == 2)
-                {
-                    b.position.X += 12 * Time.deltaTime;
-                }
-
-                if (b.direction == 3)
-                {
-                    b.position.Y -= 12 * Time.deltaTime;
-                }
+                b.position.X += b.direction.x * Time.deltaTime;
+                b.position.Y += b.direction.y * Time.deltaTime;
             }
         }
 
@@ -383,7 +366,7 @@ namespace TinyRpgApp
             if (shootDelay > 0.5)
             {
                 if (keyboard.IsKeyDown(Keys.A))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, 0, Shooter.MAIN));
+                    bullets.Add(new Bala(main.position.X, main.position.Y, new vec2d_f64(-1, 0) * 0.001, Shooter.MAIN));
                 
                 if (keyboard.IsKeyDown(Keys.W))
                     bullets.Add(new Bala(main.position.X, main.position.Y, 1, Shooter.MAIN));
@@ -402,9 +385,15 @@ namespace TinyRpgApp
         {
             if (shootEnemieDelay > 1)
             {
-                foreach (Enemigo e in currentWorld.enemies)
-                    bullets.Add(new Bala(e.position.X, e.position.Y, 0, Shooter.ENEMIE));
-
+                vec2d_f64 main_pos = new vec2d_f64(main.position.x, main.position.y);
+                
+                foreach (Enemigo e in currentWorld.enemies) {
+                    vec2d_f64 enemy_pos = new vec2d_f64(e.position.x, e.position.y);
+                    vec2d_f64 vec = main_pos - enemy_pos;
+                    vec2d_f64 normlaized_vec = vec.normalized();
+                    vec2d_f64 final_vec = normlaized_vec * 0.001;
+                    bullets.Add(new Bala(e.position.X, e.position.Y, final_vec, Shooter.ENEMIE));   
+                }
                 shootEnemieDelay = 0;
             }
         }
