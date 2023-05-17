@@ -7,10 +7,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="resources/**" CopyToOutputDirectory="PreserveNewest" />
-	</ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="OpenAL.Soft" Version="1.19.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
@@ -24,9 +20,13 @@
 	<ItemGroup>
 		<ProyectReference Include="../TinyRpgLib/TinyRpgLib.cs" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="resouces\" />
+	
+    <ItemGroup>
+		<None Include="resources/**" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
+	
+    <ItemGroup>
+      <Folder Include="resources\" />
+    </ItemGroup>
 
 </Project>

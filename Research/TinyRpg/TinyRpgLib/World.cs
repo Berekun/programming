@@ -10,7 +10,7 @@ namespace TinyRpgLib
 {
     public class World
     {
-        public int ideidentifier { get; set; } = 5;
+        public int ideidentifier { get; set; }
         public double minX { get; set; }
         public double minY { get; set; }
         public double maxX { get; set; }
@@ -20,19 +20,22 @@ namespace TinyRpgLib
         public bool IsWorldClear { get; set; } = false;
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
 
-        public World(int minX,int minY,int maxX, int maxY, int ideidentifier)
+        public World(int minX,int minY,int maxX, int maxY, int ideidentifier, bool isWorldClear)
         {
             this.minX = minX;
             this.minY = minY;
             this.maxX = maxX;
             this.maxY = maxY;
             this.ideidentifier = ideidentifier;
+            this.IsWorldClear = isWorldClear;
             GeneratePortals(this.ideidentifier);
+            GenerateEnemies();
+            GeneratePathing();
         }
 
         public World()
         {
-            GeneratePortals(this.ideidentifier);
+
         }
 
         public void IsWorldClearFuncion()
@@ -87,6 +90,26 @@ namespace TinyRpgLib
                         portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
                         portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
                     break;
+            }
+        }
+
+        public void GenerateEnemies()
+        {
+            if (!IsWorldClear)
+            {
+                for (int i = 0; i < Tools.GetRandomInt(1, 10); i++)
+                {
+                    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), Tools.GetRandomInt(1, 4)));
+                }
+            }
+        }
+
+        public void GeneratePathing()
+        {
+            foreach (Enemigo e in enemies)
+            {
+                int random = Tools.GetRandomInt(1, 4);
+                e.pathingRoute = random;
             }
         }
     }

@@ -1,44 +1,52 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Nodes;
 using TinyRpgLib;
 using UDK;
-using static UDK.RoomRT;
 
 namespace TinyRpgApp
 {
-    public class RpgGame : IGameDelegate, IRpgGame
+    public class RpgGame : IGameDelegate
     {
         #region Atributos
-        Personaje main = new Personaje(10, 10);
+        Personaje mainCharacter = new Personaje(20, 20);
+        KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
+        KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
         World currentWorld;
-        string path = @"D:\\Documentos\\Deberes de Dani\\Programacion\\programminga\\programming\\Research\\TinyRpg\\TinyRpg\\resouces\\";
+        string path = "resources/worlds.json";
         int[,] representativeWorld = new int[3, 3];
+        #region WorldSizes
         int maxWorldWidth = 40;
         int maxWorldHeight = 40;
         int minWorldWidth = 0;
         int minWorldHeight = 0;
+        #endregion
+        #region Timers
         double transitiondelay = 0;
-        double ChangeMoveStep = 0;
-        double circlePathing = 0;
-        double shootDelay = 0;
+        double enemyChangeMoveStep = 0;
+        double enemycirclePathing = 0;
+        double shootMainCharacterDelay = 0;
         double shootEnemieDelay = 0;
+        #endregion
+        #region Booleans
+        bool IsOneStepDoing = false;
         bool IsTransitionDone = true;
         bool isTransitioning = false;
+        #endregion
         #endregion
         public void OnDraw(GameDelegateEvent gameEvent, ICanvas canvas)
         {
             Time.UpdateDeltaTime();
             canvas.Clear(new rgba_f64(0.5, 0.3, 0.1, 1));
-            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + main.position.X, -10 + main.position.Y, 10 + main.position.X, 10 + main.position.Y), true);
+            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + mainCharacter.position.X, -10 + mainCharacter.position.Y, 10 + mainCharacter.position.X, 10 + mainCharacter.position.Y), true);
 
-            DetectedChangeWorld(main.position.X, main.position.Y);
+            DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
 
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
             KillEnemies(bullets, currentWorld.enemies);
+            currentWorld.IsWorldClearFuncion();
             RenderBullets(canvas);
 
             if (!IsTransitionDone)
@@ -54,17 +62,13 @@ namespace TinyRpgApp
 
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
         {
-            ChangeMoveStep += Time.deltaTime;
-            circlePathing += Time.deltaTime;
-            shootDelay += Time.deltaTime;
-            shootEnemieDelay += Time.deltaTime;
+            UpdateTimers();
             Move(gameEvent, keyboard, mouse);
+            RandomMoveNpcs();
             Shoot(gameEvent, keyboard, mouse);
             EnemieShoot();
-
             MoveBullets();
             RemoveBullet(bullets);
-            RandomMoveNpcs();
 
             var pos = gameEvent.coordinateConversor.ViewToWorld(mouse.X, mouse.Y);
             if (pos.x < 0.0 || pos.y < 0.0)
@@ -82,18 +86,18 @@ namespace TinyRpgApp
 
         public void OnLoad(GameDelegateEvent gameEvent)
         {
-            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4);
-            GeneratePathing(currentWorld.enemies);
+            if(File.Exists(path))
+                File.Delete(path);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4, true);
             FillArrayRepresentative();
         }
 
         public void OnUnload(GameDelegateEvent gameEvent)
         {
-            string voidjson = "";
 
-            File.WriteAllText(path + "world.json", voidjson);
         }
-
+       
+        #region Movements
         public void RandomMoveNpcs()
         {
             foreach (Enemigo e in currentWorld.enemies)
@@ -119,29 +123,50 @@ namespace TinyRpgApp
         {
             if (!isTransitioning)
             {
-                if (keyboard.IsKeyDown(Keys.Right))
-                {
-                    main.position.X += 8 * Time.deltaTime;
-                }
+                var state = joystickMovement.Update(keyboard);
 
-                if (keyboard.IsKeyDown(Keys.Left))
+                switch (state)
                 {
-                    main.position.X -= 8 * Time.deltaTime;
-                }
-
-                if (keyboard.IsKeyDown(Keys.Up))
-                {
-                    main.position.Y += 8 * Time.deltaTime;
-                }
-
-                if (keyboard.IsKeyDown(Keys.Down))
-                {
-                    main.position.Y -= 8 * Time.deltaTime;
+                    case KeyboardJoystick8.State.UP:
+                        mainCharacter.position.Y += 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.DOWN:
+                        mainCharacter.position.Y -= 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.UP_LEFT:
+                        mainCharacter.position.X -= 8 * Time.deltaTime;
+                        mainCharacter.position.Y += 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.DOWN_LEFT:
+                        mainCharacter.position.X -= 8 * Time.deltaTime;
+                        mainCharacter.position.Y -= 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.LEFT:
+                        mainCharacter.position.X -= 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.UP_RIGHT:
+                        mainCharacter.position.X += 8 * Time.deltaTime;
+                        mainCharacter.position.Y += 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.DOWN_RIGHT:
+                        mainCharacter.position.X += 8 * Time.deltaTime;
+                        mainCharacter.position.Y -= 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.RIGHT:
+                        mainCharacter.position.X += 8 * Time.deltaTime;
+                        IsOneStepDoing = true;
+                        break;
                 }
             }
 
-
-            LimitedWorld(main.position.X, main.position.Y, main);
+            LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
         }
 
         public void MoveBullets()
@@ -152,7 +177,7 @@ namespace TinyRpgApp
                 b.position.Y += b.direction.y * Time.deltaTime;
             }
 
-            LimitedWorld(main.position.X, main.position.Y, main);
+            LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
         }
 
         public void LimitedWorld(double x, double y, Personaje p)
@@ -178,6 +203,42 @@ namespace TinyRpgApp
             }
         }
 
+        public void HorizontalPathing(Personaje p)
+        {
+            if (enemyChangeMoveStep < 2)
+                p.position.X += 10 * Time.deltaTime;
+            else if (enemyChangeMoveStep < 4)
+                p.position.X -= 10 * Time.deltaTime;
+            else
+                enemyChangeMoveStep = 0;
+        }
+
+        public void VerticalPathing(Personaje p)
+        {
+            if (enemyChangeMoveStep < 2)
+                p.position.Y += 10 * Time.deltaTime;
+            else if (enemyChangeMoveStep < 4)
+                p.position.Y -= 10 * Time.deltaTime;
+            else
+                enemyChangeMoveStep = 0;
+        }
+
+        public void CircularPathing(Personaje p)
+        {
+            if (enemycirclePathing < 1)
+                p.position.X += 10 * Time.deltaTime;
+            else if (enemycirclePathing < 2)
+                p.position.Y += 10 * Time.deltaTime;
+            else if (enemycirclePathing < 3)
+                p.position.X -= 10 * Time.deltaTime;
+            else if (enemycirclePathing < 4)
+                p.position.Y -= 10 * Time.deltaTime;
+            else
+                enemycirclePathing = 0;
+        }
+        #endregion
+
+        #region Renders
         public void RenderWorld(ICanvas canvas, World world)
         {
             if (world.ideidentifier == 4)
@@ -191,104 +252,6 @@ namespace TinyRpgApp
                 canvas.FillShader.SetColor(new rgba_f64(0.5, 0.56, 0.22, 1.0));
                 canvas.Transform.SetTranslation(0, 0);
                 canvas.DrawRectangle(new rect2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
-            }
-        }
-
-        public void DetectedChangeWorld(double x, double y) //Mejorable sabes como
-        {
-            Position[] positions = new Position[] { new Position(maxWorldWidth - 2, main.position.Y), new Position(main.position.X, minWorldHeight + 2), new Position(minWorldWidth + 2, main.position.Y), new Position(main.position.X, maxWorldHeight - 2) };
-
-            int portalTouched = WhatPortalMainCharacterIs();
-
-            if (currentWorld.enemies.Count <= 0)
-            {
-                if (portalTouched != -1)
-                {
-                    string worldsJson = File.ReadAllText(path + "world.json");
-
-                    if (worldsJson != "")
-                    {
-                        List<World> worlds = new List<World>();
-
-                        try
-                        {
-                            worlds = JsonSerializer.Deserialize<List<World>>(worldsJson);
-                        }
-                        catch (Exception)
-                        {
-                            worlds.Add(JsonSerializer.Deserialize<World>(worldsJson));
-                        }
-
-                        for (int i = 0; i < worlds.Count; i++)
-                        {
-                            if (worlds[i].ideidentifier == SelectWorld(portalTouched))
-                            {
-                                currentWorld.IsWorldClearFuncion();
-                                SerializerJsonWorld(currentWorld);
-                                currentWorld = worlds[i];
-                                currentWorld.GeneratePortals(currentWorld.ideidentifier);
-                                main.position = positions[portalTouched];
-                                if (!currentWorld.IsWorldClear)
-                                    GenerateEnemies();
-                                bullets.Clear();
-                                IsTransitionDone = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        currentWorld.IsWorldClearFuncion();
-                        SerializerJsonWorld(currentWorld);
-                        currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched));
-                        main.position = positions[portalTouched];
-                        if (!currentWorld.IsWorldClear)
-                            GenerateEnemies();
-                        bullets.Clear();
-                        IsTransitionDone = false;
-                        
-                    }
-                }
-            }
-        }
-
-        public int WhatPortalMainCharacterIs()
-        {
-            foreach (Portal p in currentWorld.portals)
-            {
-                if (main.position.X + 0.5 >= p.aabb.x && p.aabb.MaxX >= main.position.X + 0.5)
-                {
-                    if (main.position.Y + 0.5 >= p.aabb.y && p.aabb.MaxY >= main.position.Y + 0.5)
-                    {
-                        return p.id;
-                    }
-                }
-            }
-
-            return -1;
-        }
-
-        public void Transition(ICanvas canvas)
-        {
-            isTransitioning = true;
-            transitiondelay += Time.deltaTime;
-            if (transitiondelay < 0.2)
-                canvas.Clear(new rgba_f64(0, 0, 0, 1));
-            else
-            {
-                IsTransitionDone = true;
-                isTransitioning = false;
-                transitiondelay = 0;
-            }
-
-        }
-
-        public void GenerateEnemies()
-        {
-            currentWorld.enemies.Clear();
-
-            for (int i = 0; i < Tools.GetRandomInt(1, 10); i++)
-            {
-                currentWorld.enemies.Add(new Enemigo(Tools.GetRandomInt(minWorldWidth, maxWorldWidth), Tools.GetRandomInt(minWorldHeight, maxWorldHeight), Tools.GetRandomInt(1, 4)));
             }
         }
 
@@ -306,7 +269,7 @@ namespace TinyRpgApp
         public void RenderProta(ICanvas canvas)
         {
             canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
-            canvas.Transform.SetTranslation(main.position.X, main.position.Y);
+            canvas.Transform.SetTranslation(mainCharacter.position.X, mainCharacter.position.Y);
             canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1, 1));
             canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1, 1));
             canvas.Mask.Pop();
@@ -344,60 +307,61 @@ namespace TinyRpgApp
             }
         }
 
-        public void GeneratePathing(List<Enemigo> enemies)
+        #endregion
+
+        #region WorldChange
+        public void DetectedChangeWorld(double x, double y)
         {
-            foreach (Enemigo e in enemies)
+            Position[] positions = new Position[] { new Position(maxWorldWidth - 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, minWorldHeight + 2), new Position(minWorldWidth + 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, maxWorldHeight - 2) };
+
+            int portalTouched = WhatPortalMainCharacterIs();
+
+            string worldsJson = "";
+
+            if (IsOneStepDoing && currentWorld.IsWorldClear)
             {
-                int random = Tools.GetRandomInt(1, 4);
-                e.pathingRoute = random;
-            }
-        }
-
-        public void HorizontalPathing(Personaje p)
-        {
-            if (ChangeMoveStep < 2)
-                p.position.X += 10 * Time.deltaTime;
-            else if (ChangeMoveStep < 4)
-                p.position.X -= 10 * Time.deltaTime;
-            else
-                ChangeMoveStep = 0;
-        }
-
-        public void VerticalPathing(Personaje p)
-        {
-            if (ChangeMoveStep < 2)
-                p.position.Y += 10 * Time.deltaTime;
-            else if (ChangeMoveStep < 4)
-                p.position.Y -= 10 * Time.deltaTime;
-            else
-                ChangeMoveStep = 0;
-        }
-
-        public void CircularPathing(Personaje p)
-        {
-            if (circlePathing < 1)
-                p.position.X += 10 * Time.deltaTime;
-            else if (circlePathing < 2)
-                p.position.Y += 10 * Time.deltaTime;
-            else if (circlePathing < 3)
-                p.position.X -= 10 * Time.deltaTime;
-            else if (circlePathing < 4)
-                p.position.Y -= 10 * Time.deltaTime;
-            else
-                circlePathing = 0;
-        }
-
-        public void FillArrayRepresentative()
-        {
-            int count = 0;
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
+                if (portalTouched != -1)
                 {
-                    representativeWorld[j, i] = count;
-                    count++;
+                    if(File.Exists(path))
+                        worldsJson = File.ReadAllText(path);
+
+                    if (worldsJson != "")
+                    {
+                        Dictionary<int, World> worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(worldsJson);
+
+                        if (!worlds.ContainsKey(SelectWorld(portalTouched)))
+                            GenerateWorld(positions, portalTouched);
+                        else
+                        {
+                            foreach (var world in worlds)
+                            {
+                                World newWorld = world.Value;
+
+                                if (newWorld.ideidentifier == SelectWorld(portalTouched))
+                                    ReplaceWorld(positions, portalTouched, newWorld);
+                            }
+                        }  
+                    }
+                    else
+                        GenerateWorld(positions, portalTouched);
                 }
             }
+        }
+
+        public int WhatPortalMainCharacterIs()
+        {
+            foreach (Portal p in currentWorld.portals)
+            {
+                if (mainCharacter.position.X + 0.5 >= p.aabb.x && p.aabb.MaxX >= mainCharacter.position.X + 0.5)
+                {
+                    if (mainCharacter.position.Y + 0.5 >= p.aabb.y && p.aabb.MaxY >= mainCharacter.position.Y + 0.5)
+                    {
+                        return p.id;
+                    }
+                }
+            }
+
+            return -1;
         }
 
         public int SelectWorld(int id)
@@ -418,23 +382,79 @@ namespace TinyRpgApp
             return -1;
         }
 
+        public void GenerateWorld(Position[] positions, int portalTouched)
+        {
+            SerializerJsonWorld(currentWorld);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched), false);
+            mainCharacter.position = positions[portalTouched];
+            bullets.Clear();
+            IsTransitionDone = false;
+            IsOneStepDoing = false;
+        }
+
+        public void ReplaceWorld(Position[] positions, int portalTouched, World newWorld)
+        {
+            SerializerJsonWorld(currentWorld);
+            currentWorld = newWorld;
+            currentWorld.GeneratePortals(currentWorld.ideidentifier);
+            mainCharacter.position = positions[portalTouched];
+            bullets.Clear();
+            IsTransitionDone = false;
+            IsOneStepDoing = false;
+        }
+
+        public void Transition(ICanvas canvas)
+        {
+            isTransitioning = true;
+            transitiondelay += Time.deltaTime;
+            if (transitiondelay < 0.2)
+                canvas.Clear(new rgba_f64(0, 0, 0, 1));
+            else
+            {
+                IsTransitionDone = true;
+                isTransitioning = false;
+                transitiondelay = 0;
+            }
+
+        }
+        #endregion
+
+        #region ThingsWithBullets
         public void Shoot(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
         {
-            if (shootDelay > 0.5)
+            if (shootMainCharacterDelay > 0.5)
             {
-                if (keyboard.IsKeyDown(Keys.A))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, new vec2d_f64(-1, 0) * 10, Shooter.MAIN));
+                var state = joystickShoot.Update(keyboard);
 
-                if (keyboard.IsKeyDown(Keys.W))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, new vec2d_f64(0, 1) * 10, Shooter.MAIN));
+                switch (state)
+                {
+                    case KeyboardJoystick8.State.UP:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(0, 1) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.DOWN:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(0, -1) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.UP_LEFT:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(-1, 1) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.DOWN_LEFT:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(-1, -1) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.LEFT:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(-1, 0) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.UP_RIGHT:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(1, 1) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.DOWN_RIGHT:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(1, -1) * 10, Shooter.MAIN));
+                        break;
+                    case KeyboardJoystick8.State.RIGHT:
+                        bullets.Add(new Bala(mainCharacter.position.X, mainCharacter.position.Y, new vec2d_f64(1, 0) * 10, Shooter.MAIN));
+                        break;
+                }
 
-                if (keyboard.IsKeyDown(Keys.D))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, new vec2d_f64(1, 0) * 10, Shooter.MAIN));
-
-                if (keyboard.IsKeyDown(Keys.S))
-                    bullets.Add(new Bala(main.position.X, main.position.Y, new vec2d_f64(0, -1) * 10, Shooter.MAIN));
-
-                shootDelay = 0;
+                shootMainCharacterDelay = 0;
             }
         }
 
@@ -442,7 +462,7 @@ namespace TinyRpgApp
         {
             if (shootEnemieDelay > 1)
             {
-                vec2d_f64 main_pos = new vec2d_f64(main.position.X, main.position.Y);
+                vec2d_f64 main_pos = new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y);
 
                 foreach (Enemigo e in currentWorld.enemies)
                 {
@@ -479,7 +499,9 @@ namespace TinyRpgApp
                 }
             }
         }
+        #endregion
 
+        #region ThingsWithCharacters
         public void KillEnemies(List<Bala> balas, List<Enemigo> enemigos)
         {
             for (int i = 0; i < balas.Count; i++)
@@ -499,7 +521,7 @@ namespace TinyRpgApp
         {
             for (int j = 0; j < enemigos.Count; j++)
             {
-                if (main.position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= main.position.X + 0.5 && main.position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= main.position.Y + 0.5)
+                if (mainCharacter.position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= mainCharacter.position.X + 0.5 && mainCharacter.position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= mainCharacter.position.Y + 0.5)
                 {
                     gameDelegate.window.Close();
                     break;
@@ -513,7 +535,7 @@ namespace TinyRpgApp
             {
                 if (balas[i].shooter == Shooter.ENEMIE)
                 {
-                    if (main.position.X + 0.5 >= balas[i].position.X && balas[i].position.maxX >= main.position.X + 0.5 && main.position.Y + 0.5 >= balas[i].position.Y && balas[i].position.maxY >= main.position.Y + 0.5)
+                    if (mainCharacter.position.X + 0.5 >= balas[i].position.X && balas[i].position.maxX >= mainCharacter.position.X + 0.5 && mainCharacter.position.Y + 0.5 >= balas[i].position.Y && balas[i].position.maxY >= mainCharacter.position.Y + 0.5)
                     {
                         gameDelegate.window.Close();
                         break;
@@ -521,14 +543,49 @@ namespace TinyRpgApp
                 }
             }
         }
+        #endregion
 
+        #region JsonFunctions
         public void SerializerJsonWorld(World world)
         {
-            string worldsJson = File.ReadAllText(path + "world.json");
+            Dictionary<int, World>? worlds = null;
 
-            string json = JsonSerializer.Serialize<World>(currentWorld);
+            if (File.Exists(path))
+            {
+                string jsonIfNotExistFile = File.ReadAllText(path);
+                worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(jsonIfNotExistFile);
+            }
+            if (worlds == null)
+                worlds = new Dictionary<int, World>();
 
-            File.WriteAllText(path + "world.json",worldsJson + json);
+            worlds[world.ideidentifier] = world;
+
+            string json = JsonSerializer.Serialize(worlds);
+            File.WriteAllText(path, json);
         }
+        #endregion
+
+        #region ToolsFunctions
+        public void UpdateTimers()
+        {
+            enemyChangeMoveStep += Time.deltaTime;
+            enemycirclePathing += Time.deltaTime;
+            shootMainCharacterDelay += Time.deltaTime;
+            shootEnemieDelay += Time.deltaTime;
+        }
+
+        public void FillArrayRepresentative()
+        {
+            int count = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    representativeWorld[j, i] = count;
+                    count++;
+                }
+            }
+        }
+        #endregion
     }
 }
