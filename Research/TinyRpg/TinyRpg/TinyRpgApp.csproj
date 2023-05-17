@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="OpenAL.Soft" Version="1.19.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="UDK" Version="1.0.0" />
   </ItemGroup>
 
@@ -22,6 +23,10 @@
 
 	<ItemGroup>
 		<ProyectReference Include="../TinyRpgLib/TinyRpgLib.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="resouces\" />
 	</ItemGroup>
 
 </Project>

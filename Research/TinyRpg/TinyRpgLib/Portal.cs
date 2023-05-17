@@ -10,7 +10,8 @@ namespace TinyRpgLib
     public class Portal
     {
         public int id { get; set; }
-        public rect2d_f64 aabb = new rect2d_f64();
+
+        public rect2d_f64 aabb  = new rect2d_f64();
 
         public Portal()
         {

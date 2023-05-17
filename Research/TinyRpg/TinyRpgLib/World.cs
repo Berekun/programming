@@ -16,8 +16,7 @@ namespace TinyRpgLib
         public double maxX { get; set; }
         public double maxY { get; set; }
 
-        public List<Portal> portals = new List<Portal>();
-
+        public List<Portal> portals { get; set; } = new List<Portal>();
         public bool IsWorldClear { get; set; } = false;
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
 
@@ -34,6 +33,12 @@ namespace TinyRpgLib
         public World()
         {
             GeneratePortals(this.ideidentifier);
+        }
+
+        public void IsWorldClearFuncion()
+        {
+            if(enemies.Count <= 0)
+                IsWorldClear = true;
         }
 
         public void GeneratePortals(int identifier) //Optimizable
@@ -82,24 +87,6 @@ namespace TinyRpgLib
                         portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
                         portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
                     break;
-            }
-        }
-
-
-        public void GeneratePortals1()
-        {
-            rect2d_f64[,] bi = new rect2d_f64[,] { };
-
-            for (int i = 0; i < 4; i++)
-            {
-                if (i == 0)
-                    portals.Add(new Portal(i, new rect2d_f64(minX, 15, 1, 10)));
-                else if (i == 1)
-                    portals.Add(new Portal(i, new rect2d_f64(15, maxX - 1, 10, 1)));
-                else if (i == 2)
-                    portals.Add(new Portal(i, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                else
-                    portals.Add(new Portal(i, new rect2d_f64(15, minY, 10, 1)));
             }
         }
     }
