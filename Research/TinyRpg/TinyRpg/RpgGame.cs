@@ -24,7 +24,7 @@ namespace TinyRpgApp
         SpriteSet? spriteSet;
         SpriteInstance? prota;
         Personaje mainCharacter = new Personaje(20, 20);
-        TileWorld tileWorld = new TileWorld(1, 1, new aabb2d_f64(0, 0, 10, 10));
+        TileWorld tileWorld = new TileWorld(40, 20, new aabb2d_f64(0.0, 0.0, 30.0, 20.0));
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
@@ -277,10 +277,6 @@ namespace TinyRpgApp
         public void RenderWorld(ICanvas canvas, World world)
         {
             if (world.ideidentifier == 4)
-            {
-                tileWorld?.Draw(canvas, 0.0, 0.0);
-            }
-            else
             {
                 tileWorld?.Draw(canvas, 0.0, 0.0);
             }

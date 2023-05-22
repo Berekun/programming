@@ -1,8 +1,8 @@
 {
   "sources": {
     "tiles": {
-      "image": "tiles.png",
-      "hcount": 10,
+      "image": "Prota.png",
+      "hcount": 8,
       "vcount": 8
     }
   },
