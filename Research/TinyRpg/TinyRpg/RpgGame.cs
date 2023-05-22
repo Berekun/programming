@@ -12,6 +12,7 @@ namespace TinyRpgApp
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
         World currentWorld;
+        MagicNumbers magic = new MagicNumbers();
         string path = "resources/worlds.json";
         int[,] representativeWorld = new int[3, 3];
         #region WorldSizes
@@ -41,13 +42,17 @@ namespace TinyRpgApp
 
             DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
 
+            RandomMoveNpcs();
+            MoveBullets();
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
+            RenderBullets(canvas);
+            EnemieShoot();
             KillEnemies(bullets, currentWorld.enemies);
             currentWorld.IsWorldClearFuncion();
-            RenderBullets(canvas);
+            RemoveBullet(bullets);
 
             if (!IsTransitionDone)
             {
@@ -64,11 +69,7 @@ namespace TinyRpgApp
         {
             UpdateTimers();
             Move(gameEvent, keyboard, mouse);
-            RandomMoveNpcs();
             Shoot(gameEvent, keyboard, mouse);
-            EnemieShoot();
-            MoveBullets();
-            RemoveBullet(bullets);
 
             var pos = gameEvent.coordinateConversor.ViewToWorld(mouse.X, mouse.Y);
             if (pos.x < 0.0 || pos.y < 0.0)
@@ -281,9 +282,7 @@ namespace TinyRpgApp
             {
                 canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
                 canvas.Transform.SetTranslation(p.position.X, p.position.Y);
-                canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1, 1));
-                canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1, 1));
-                canvas.Mask.Pop();
+                canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
             }
         }
 
@@ -504,13 +503,19 @@ namespace TinyRpgApp
         #region ThingsWithCharacters
         public void KillEnemies(List<Bala> balas, List<Enemigo> enemigos)
         {
-            for (int i = 0; i < balas.Count; i++)
+            for (int i = 0; i < balas.Count - 1; i++)
             {
                 for (int j = 0; j < enemigos.Count; j++)
                 {
                     if (balas[i].shooter == Shooter.MAIN)
                     {
                         if (balas[i].position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X + 0.5 && balas[i].position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y + 0.5)
+                        {
+                            enemigos[j].vida -= magic.bulletDamage;
+                            bullets.Remove(balas[i]);
+                        }
+                        
+                        if (enemigos[j].vida <= 0)
                             enemigos.Remove(enemigos[j]);
                     }
                 }

@@ -10,10 +10,11 @@ namespace TinyRpgLib
     {
         public int pathingRoute { get; set; } = 0;
 
-        public Enemigo(int x, int y, int pathingRoute) : base(x, y)
+        public Enemigo(int x, int y, int pathingRoute, int vida) : base(x, y)
         {
             position = new Position(x, y);
             this.pathingRoute = pathingRoute;
+            this.vida = vida;
         }
     }
 }
