@@ -8,6 +8,8 @@ namespace TinyRpgLib
 {
     public class MagicNumbers
     {
-        public int bulletDamage = 5;
+        public const int bulletDamage = 5;
+        public const double middleSprite = 1.0;
+        public const double numberToCalculateMaxXorY = 2;
     }
 }

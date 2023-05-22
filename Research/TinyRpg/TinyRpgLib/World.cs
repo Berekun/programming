@@ -15,7 +15,6 @@ namespace TinyRpgLib
         public double minY { get; set; }
         public double maxX { get; set; }
         public double maxY { get; set; }
-
         public List<Portal> portals { get; set; } = new List<Portal>();
         public bool IsWorldClear { get; set; } = false;
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
@@ -97,7 +96,7 @@ namespace TinyRpgLib
         {
             if (!IsWorldClear)
             {
-                for (int i = 0; i < Tools.GetRandomInt(1, 10); i++)
+                for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
                 {
                     enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), Tools.GetRandomInt(1, 4), 20));
                 }

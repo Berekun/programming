@@ -7,12 +7,28 @@ namespace TinyRpgApp
     public class RpgGame : IGameDelegate
     {
         #region Atributos
+        enum ProtaStates
+        {
+            STAY_FRONT, STAY_BACK, STAY_LEFT, STAY_RIGHT
+        }
+        enum SpriteClass
+        {
+            UNKNOWN, GRASS_CLAIR, GRASS_DARK
+        }
+        enum TileStates
+        {
+            GRASS_DARK, IN_GRASS_CLAIR_OUT_GRASS_DARK
+        }
+
+        ImageDatabase? database;
+        SpriteSet? spriteSet;
+        SpriteInstance? prota;
         Personaje mainCharacter = new Personaje(20, 20);
+        TileWorld tileWorld = new TileWorld(1, 1, new aabb2d_f64(0, 0, 10, 10));
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
         World currentWorld;
-        MagicNumbers magic = new MagicNumbers();
         string path = "resources/worlds.json";
         int[,] representativeWorld = new int[3, 3];
         #region WorldSizes
@@ -36,6 +52,9 @@ namespace TinyRpgApp
         #endregion
         public void OnDraw(GameDelegateEvent gameEvent, ICanvas canvas)
         {
+            if (prota == null)
+                return;
+
             Time.UpdateDeltaTime();
             canvas.Clear(new rgba_f64(0.5, 0.3, 0.1, 1));
             canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + mainCharacter.position.X, -10 + mainCharacter.position.Y, 10 + mainCharacter.position.X, 10 + mainCharacter.position.Y), true);
@@ -62,7 +81,8 @@ namespace TinyRpgApp
 
         public void OnAnimate(GameDelegateEvent gameEvent)
         {
-
+            prota?.Animate(gameEvent.animationEngine);
+            tileWorld?.Animate(gameEvent.animationEngine);
         }
 
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
@@ -91,6 +111,12 @@ namespace TinyRpgApp
                 File.Delete(path);
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4, true);
             FillArrayRepresentative();
+            database = new ImageDatabase(gameEvent.canvasContext);
+            spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/movement_set.json", database, typeof(ProtaStates));
+            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map_set.json", database, typeof(TileStates));
+            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            prota = new SpriteInstance(spriteSet, (int)ProtaStates.STAY_FRONT, 0, -1);
+            tileWorld.AddLayer(layer, 0, 0);
         }
 
         public void OnUnload(GameDelegateEvent gameEvent)
@@ -129,38 +155,46 @@ namespace TinyRpgApp
                 switch (state)
                 {
                     case KeyboardJoystick8.State.UP:
+                        prota?.SetSequence((int)ProtaStates.STAY_BACK);
                         mainCharacter.position.Y += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.DOWN:
+                        prota?.SetSequence((int)ProtaStates.STAY_FRONT);
                         mainCharacter.position.Y -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.UP_LEFT:
+                        prota?.SetSequence((int)ProtaStates.STAY_LEFT);
                         mainCharacter.position.X -= 8 * Time.deltaTime;
                         mainCharacter.position.Y += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.DOWN_LEFT:
+                        prota?.SetSequence((int)ProtaStates.STAY_LEFT);
                         mainCharacter.position.X -= 8 * Time.deltaTime;
                         mainCharacter.position.Y -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.LEFT:
+                        prota?.SetSequence((int)ProtaStates.STAY_LEFT);
                         mainCharacter.position.X -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.UP_RIGHT:
+                        prota?.SetSequence((int)ProtaStates.STAY_RIGHT);
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         mainCharacter.position.Y += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.DOWN_RIGHT:
+                        prota?.SetSequence((int)ProtaStates.STAY_RIGHT);
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         mainCharacter.position.Y -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.RIGHT:
+                        prota?.SetSequence((int)ProtaStates.STAY_RIGHT);
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
@@ -244,15 +278,11 @@ namespace TinyRpgApp
         {
             if (world.ideidentifier == 4)
             {
-                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.56, 0.22, 1.0));
-                canvas.Transform.SetTranslation(0, 0);
-                canvas.DrawRectangle(new rect2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
+                tileWorld?.Draw(canvas, 0.0, 0.0);
             }
             else
             {
-                canvas.FillShader.SetColor(new rgba_f64(0.5, 0.56, 0.22, 1.0));
-                canvas.Transform.SetTranslation(0, 0);
-                canvas.DrawRectangle(new rect2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
+                tileWorld?.Draw(canvas, 0.0, 0.0);
             }
         }
 
@@ -269,20 +299,14 @@ namespace TinyRpgApp
 
         public void RenderProta(ICanvas canvas)
         {
-            canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
-            canvas.Transform.SetTranslation(mainCharacter.position.X, mainCharacter.position.Y);
-            canvas.Mask.PushCircle(new rect2d_f64(0.0, 0.0, 1, 1));
-            canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 1, 1));
-            canvas.Mask.Pop();
+            prota?.Draw(canvas, mainCharacter.position.X, mainCharacter.position.Y, 2.0, 2.0);
         }
 
         public void RenderEnemies(ICanvas canvas)
         {
             foreach (Personaje p in currentWorld.enemies)
             {
-                canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
-                canvas.Transform.SetTranslation(p.position.X, p.position.Y);
-                canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
+                prota?.Draw(canvas, p.position.X, p.position.Y, 2.0, 2.0);
             }
         }
 
@@ -511,7 +535,7 @@ namespace TinyRpgApp
                     {
                         if (balas[i].position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X + 0.5 && balas[i].position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y + 0.5)
                         {
-                            enemigos[j].vida -= magic.bulletDamage;
+                            enemigos[j].vida -= MagicNumbers.bulletDamage;
                             bullets.Remove(balas[i]);
                         }
                         
@@ -526,7 +550,7 @@ namespace TinyRpgApp
         {
             for (int j = 0; j < enemigos.Count; j++)
             {
-                if (mainCharacter.position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= mainCharacter.position.X + 0.5 && mainCharacter.position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= mainCharacter.position.Y + 0.5)
+                if (mainCharacter.position.X + MagicNumbers.middleSprite >= enemigos[j].position.X && enemigos[j].position.maxX >= mainCharacter.position.X + MagicNumbers.middleSprite && mainCharacter.position.Y + MagicNumbers.middleSprite >= enemigos[j].position.Y && enemigos[j].position.maxY >= mainCharacter.position.Y + MagicNumbers.middleSprite)
                 {
                     gameDelegate.window.Close();
                     break;
@@ -540,7 +564,7 @@ namespace TinyRpgApp
             {
                 if (balas[i].shooter == Shooter.ENEMIE)
                 {
-                    if (mainCharacter.position.X + 0.5 >= balas[i].position.X && balas[i].position.maxX >= mainCharacter.position.X + 0.5 && mainCharacter.position.Y + 0.5 >= balas[i].position.Y && balas[i].position.maxY >= mainCharacter.position.Y + 0.5)
+                    if (mainCharacter.position.X + MagicNumbers.middleSprite >= balas[i].position.X && balas[i].position.maxX >= mainCharacter.position.X + MagicNumbers.middleSprite && mainCharacter.position.Y + MagicNumbers.middleSprite >= balas[i].position.Y && balas[i].position.maxY >= mainCharacter.position.Y + MagicNumbers.middleSprite)
                     {
                         gameDelegate.window.Close();
                         break;
@@ -553,6 +577,9 @@ namespace TinyRpgApp
         #region JsonFunctions
         public void SerializerJsonWorld(World world)
         {
+            if (File.Exists(path))
+                File.Delete(path);
+
             Dictionary<int, World>? worlds = null;
 
             if (File.Exists(path))
