@@ -9,7 +9,8 @@ namespace TinyRpgApp
         #region Atributos
         enum ProtaStates
         {
-            STAY_FRONT, STAY_BACK, STAY_LEFT, STAY_RIGHT
+            STAY_FRONT, STAY_BACK, STAY_LEFT, STAY_RIGHT,
+            MOVE_FRONT, MOVE_BACK, MOVE_LEFT, MOVE_RIGHT
         }
         enum SpriteClass
         {
@@ -155,46 +156,70 @@ namespace TinyRpgApp
                 switch (state)
                 {
                     case KeyboardJoystick8.State.UP:
-                        prota?.SetSequence((int)ProtaStates.STAY_BACK);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_BACK)
+                        {
+                            EndId = (int)ProtaStates.STAY_BACK
+                        });
                         mainCharacter.position.Y += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.DOWN:
-                        prota?.SetSequence((int)ProtaStates.STAY_FRONT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_FRONT)
+                        {
+                            EndId = (int)ProtaStates.STAY_FRONT
+                        });
                         mainCharacter.position.Y -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.UP_LEFT:
-                        prota?.SetSequence((int)ProtaStates.STAY_LEFT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                        {
+                            EndId = (int)ProtaStates.STAY_LEFT
+                        });
                         mainCharacter.position.X -= 8 * Time.deltaTime;
                         mainCharacter.position.Y += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.DOWN_LEFT:
-                        prota?.SetSequence((int)ProtaStates.STAY_LEFT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                        {
+                            EndId = (int)ProtaStates.STAY_LEFT
+                        });
                         mainCharacter.position.X -= 8 * Time.deltaTime;
                         mainCharacter.position.Y -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.LEFT:
-                        prota?.SetSequence((int)ProtaStates.STAY_LEFT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                        {
+                            EndId = (int)ProtaStates.STAY_LEFT
+                        });
                         mainCharacter.position.X -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.UP_RIGHT:
-                        prota?.SetSequence((int)ProtaStates.STAY_RIGHT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                        {
+                            EndId = (int)ProtaStates.STAY_RIGHT
+                        });
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         mainCharacter.position.Y += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.DOWN_RIGHT:
-                        prota?.SetSequence((int)ProtaStates.STAY_RIGHT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                        {
+                            EndId = (int)ProtaStates.STAY_RIGHT
+                        });
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         mainCharacter.position.Y -= 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
                     case KeyboardJoystick8.State.RIGHT:
-                        prota?.SetSequence((int)ProtaStates.STAY_RIGHT);
+                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                        {
+                            EndId = (int)ProtaStates.STAY_RIGHT
+                        });
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
                         break;
