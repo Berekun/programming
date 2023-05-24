@@ -71,6 +71,8 @@ namespace TinyRpgApp
             RenderBullets(canvas);
             EnemieShoot();
             KillEnemies(currentWorld.enemies);
+            HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
+            HitBulletToMainCharacter(bullets, gameEvent);
             currentWorld.IsWorldClearFuncion();
             RemoveBullet(bullets);
 
@@ -98,9 +100,6 @@ namespace TinyRpgApp
 
             int x = (int)pos.x;
             int y = (int)pos.y;
-
-            HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
-            HitBulletToMainCharacter(bullets, gameEvent);
 
             if (keyboard.IsKeyPressed(Keys.Escape))
                 gameEvent.window.Close();
