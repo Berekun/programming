@@ -11,5 +11,6 @@ namespace TinyRpgLib
         public const int bulletDamage = 5;
         public const double middleSprite = 0.5;
         public const double numberToCalculateMaxXorY = 1;
+        public const double size = 10.0;
     }
 }

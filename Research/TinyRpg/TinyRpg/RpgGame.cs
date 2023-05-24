@@ -25,7 +25,6 @@ namespace TinyRpgApp
         SpriteSet? spriteSet;
         SpriteInstance? prota;
         Personaje mainCharacter = new Personaje(20, 20);
-        TileWorld tileWorld = new TileWorld(40, 20, new aabb2d_f64(0.0, 0.0, 30.0, 20.0));
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
@@ -58,12 +57,13 @@ namespace TinyRpgApp
 
             Time.UpdateDeltaTime();
             canvas.Clear(new rgba_f64(0.5, 0.3, 0.1, 1));
-            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-10 + mainCharacter.position.X, -10 + mainCharacter.position.Y, 10 + mainCharacter.position.X, 10 + mainCharacter.position.Y), true);
+            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-MagicNumbers.size + mainCharacter.position.X, -MagicNumbers.size + mainCharacter.position.Y, MagicNumbers.size + mainCharacter.position.X, MagicNumbers.size + mainCharacter.position.Y), true);
 
             DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
 
             RandomMoveNpcs();
             MoveBullets();
+
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
             RenderProta(canvas);
@@ -85,7 +85,7 @@ namespace TinyRpgApp
         public void OnAnimate(GameDelegateEvent gameEvent)
         {
             prota?.Animate(gameEvent.animationEngine);
-            tileWorld?.Animate(gameEvent.animationEngine);
+            currentWorld.tileWorld?.Animate(gameEvent.animationEngine);
         }
 
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
@@ -113,10 +113,11 @@ namespace TinyRpgApp
             FillArrayRepresentative();
             database = new ImageDatabase(gameEvent.canvasContext);
             spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/movement_set.json", database, typeof(ProtaStates));
+            
             var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map_set.json", database, typeof(TileStates));
             var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
             prota = new SpriteInstance(spriteSet, (int)ProtaStates.STAY_FRONT, 0, -1);
-            tileWorld.AddLayer(layer, 0, 0);
+            currentWorld.tileWorld.AddLayer(layer, 0, 0);
         }
 
         public void OnUnload(GameDelegateEvent gameEvent)
@@ -300,10 +301,7 @@ namespace TinyRpgApp
         #region Renders
         public void RenderWorld(ICanvas canvas, World world)
         {
-            if (world.ideidentifier == 4)
-            {
-                tileWorld?.Draw(canvas, 0.0, 0.0);
-            }
+            currentWorld.tileWorld?.Draw(canvas, 0.0, 0.0);
         }
 
         public void RenderPortal(ICanvas canvas)

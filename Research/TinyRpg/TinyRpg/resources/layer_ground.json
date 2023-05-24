@@ -5,7 +5,7 @@
       "mask_filter": ".",
       "clazz": "GRASS_DARK",
       "sprite_filler": "sprite",
-      "sequence": "grass_dark"
+      "sequence": "GRASS_DARK"
     },
     {
       "mask_file": "map.txt",

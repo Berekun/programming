@@ -15,6 +15,8 @@ namespace TinyRpgLib
         public double minY { get; set; }
         public double maxX { get; set; }
         public double maxY { get; set; }
+
+        public TileWorld tileWorld { get; set; } = new TileWorld(20, 20, new aabb2d_f64(0.0, 0.0, 20.0, 20.0));
         public List<Portal> portals { get; set; } = new List<Portal>();
         public bool IsWorldClear { get; set; } = false;
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
