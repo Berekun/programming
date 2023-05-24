@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace TinyRpgLib
 {
+    public enum EnemyType
+    {
+        GOLEM, WOLF, DARK_WIZZARD
+    }
+
     public class Enemigo : Personaje
     {
         public int pathingRoute { get; set; } = 0;

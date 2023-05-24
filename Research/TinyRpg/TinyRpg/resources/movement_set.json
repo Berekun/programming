@@ -119,7 +119,7 @@
 
     "MOVE_FRONT": {
       "source": "tiles",
-      "frame_duration": 0.1,
+      "frame_duration": 0.2,
       "poses_file": {
         "file": "move_down.txt",
         "incluse_reverse": false
@@ -128,7 +128,7 @@
 
     "MOVE_BACK": {
       "source": "tiles",
-      "frame_duration": 0.1,
+      "frame_duration": 0.2,
       "poses_file": {
         "file": "move_up.txt",
         "incluse_reverse": false
@@ -137,7 +137,7 @@
 
     "MOVE_LEFT": {
       "source": "tiles",
-      "frame_duration": 0.035,
+      "frame_duration": 0.125,
       "poses_file": {
         "file": "move_left.txt",
         "incluse_reverse": false
@@ -146,7 +146,7 @@
 
     "MOVE_RIGHT": {
       "source": "tiles",
-      "frame_duration": 0.035,
+      "frame_duration": 0.125,
       "poses_file": {
         "file": "move_right.txt",
         "incluse_reverse": false

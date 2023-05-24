@@ -70,7 +70,7 @@ namespace TinyRpgApp
             RenderEnemies(canvas);
             RenderBullets(canvas);
             EnemieShoot();
-            KillEnemies(bullets, currentWorld.enemies);
+            KillEnemies(currentWorld.enemies);
             currentWorld.IsWorldClearFuncion();
             RemoveBullet(bullets);
 
@@ -320,14 +320,18 @@ namespace TinyRpgApp
 
         public void RenderProta(ICanvas canvas)
         {
-            prota?.Draw(canvas, mainCharacter.position.X, mainCharacter.position.Y, 2.0, 2.0);
+            prota?.Draw(canvas, mainCharacter.position.X - MagicNumbers.middleSprite, mainCharacter.position.Y - MagicNumbers.middleSprite, 2.0, 2.0);
         }
 
         public void RenderEnemies(ICanvas canvas)
         {
             foreach (Personaje p in currentWorld.enemies)
             {
-                prota?.Draw(canvas, p.position.X, p.position.Y, 2.0, 2.0);
+                //prota?.Draw(canvas, p.position.X - MagicNumbers.middleSprite, p.position.Y - MagicNumbers.middleSprite, 2.0, 2.0);
+
+                canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
+                canvas.Transform.SetTranslation(p.position.X, p.position.Y);
+                canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
             }
         }
 
@@ -546,18 +550,18 @@ namespace TinyRpgApp
         #endregion
 
         #region ThingsWithCharacters
-        public void KillEnemies(List<Bala> balas, List<Enemigo> enemigos)
+        public void KillEnemies(List<Enemigo> enemigos)
         {
-            for (int i = 0; i < balas.Count - 1; i++)
+            for (int i = 0; i < bullets.Count - 1; i++)
             {
                 for (int j = 0; j < enemigos.Count; j++)
                 {
-                    if (balas[i].shooter == Shooter.MAIN)
+                    if (bullets[i].shooter == Shooter.MAIN)
                     {
-                        if (balas[i].position.X + 0.5 >= enemigos[j].position.X && enemigos[j].position.maxX >= balas[i].position.X + 0.5 && balas[i].position.Y + 0.5 >= enemigos[j].position.Y && enemigos[j].position.maxY >= balas[i].position.Y + 0.5)
+                        if (enemigos[j].position.X + MagicNumbers.middleSprite >= bullets[i].position.X && bullets[i].position.maxX >= enemigos[j].position.X + MagicNumbers.middleSprite && enemigos[j].position.Y + MagicNumbers.middleSprite >= bullets[i].position.Y && bullets[i].position.maxY >= enemigos[j].position.Y + MagicNumbers.middleSprite)
                         {
                             enemigos[j].vida -= MagicNumbers.bulletDamage;
-                            bullets.Remove(balas[i]);
+                            bullets.Remove(bullets[i]);
                         }
                         
                         if (enemigos[j].vida <= 0)
@@ -598,9 +602,6 @@ namespace TinyRpgApp
         #region JsonFunctions
         public void SerializerJsonWorld(World world)
         {
-            if (File.Exists(path))
-                File.Delete(path);
-
             Dictionary<int, World>? worlds = null;
 
             if (File.Exists(path))
@@ -610,6 +611,12 @@ namespace TinyRpgApp
             }
             if (worlds == null)
                 worlds = new Dictionary<int, World>();
+
+            if (worlds.ContainsKey(world.ideidentifier))
+            {
+                File.Delete(path);
+            }
+
 
             worlds[world.ideidentifier] = world;
 
