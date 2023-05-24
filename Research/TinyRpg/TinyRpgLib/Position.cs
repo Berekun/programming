@@ -23,7 +23,7 @@ namespace TinyRpgLib
             set
             {
                 x = value;
-                maxX = x + MagicNumbers.numberToCalculateMaxXorY;
+                maxX = x + Constants.numberToCalculateMaxXorY;
             }
         }
 
@@ -35,7 +35,7 @@ namespace TinyRpgLib
             set
             {
                 y = value;
-                maxY = y + MagicNumbers.numberToCalculateMaxXorY;
+                maxY = y + Constants.numberToCalculateMaxXorY;
             }
         }
     

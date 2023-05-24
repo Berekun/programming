@@ -24,7 +24,7 @@ namespace TinyRpgApp
         ImageDatabase? database;
         SpriteSet? spriteSet;
         SpriteInstance? prota;
-        Personaje mainCharacter = new Personaje(20, 20);
+        Personaje mainCharacter = new Personaje(Constants.spawnMainCharacterX, Constants.spawnMainCharacterX, 20);
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
@@ -56,19 +56,26 @@ namespace TinyRpgApp
                 return;
 
             Time.UpdateDeltaTime();
-            canvas.Clear(new rgba_f64(0.5, 0.3, 0.1, 1));
-            canvas.Camera.SetRect(rect2d_f64.FromMinMax(-MagicNumbers.size + mainCharacter.position.X, -MagicNumbers.size + mainCharacter.position.Y, MagicNumbers.size + mainCharacter.position.X, MagicNumbers.size + mainCharacter.position.Y), true);
-
-            DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
-
-            RandomMoveNpcs();
-            MoveBullets();
+            canvas.Clear(new rgba_f64(0.5, 0.3 * mainCharacter.transparency, 0.1 * mainCharacter.transparency, 1.0));
+            currentWorld.tileWorld.SetupCamera(canvas, new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y), Constants.radiusViewWorld, 0.0, 0.0, true);
 
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
             RenderBullets(canvas);
+
+            if (!IsTransitionDone)                
+                Transition(canvas);
+        }
+
+        public void OnAnimate(GameDelegateEvent gameEvent)
+        {
+            DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
+
+            RandomMoveNpcs();
+            MoveBullets();
+
             EnemieShoot();
             KillEnemies(currentWorld.enemies);
             HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
@@ -76,14 +83,6 @@ namespace TinyRpgApp
             currentWorld.IsWorldClearFuncion();
             RemoveBullet(bullets);
 
-            if (!IsTransitionDone)
-            {
-                Transition(canvas);
-            }
-        }
-
-        public void OnAnimate(GameDelegateEvent gameEvent)
-        {
             prota?.Animate(gameEvent.animationEngine);
             currentWorld.tileWorld?.Animate(gameEvent.animationEngine);
         }
@@ -114,8 +113,8 @@ namespace TinyRpgApp
             database = new ImageDatabase(gameEvent.canvasContext);
             spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/movement_set.json", database, typeof(ProtaStates));
             
-            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map_set.json", database, typeof(TileStates));
-            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
+            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
             prota = new SpriteInstance(spriteSet, (int)ProtaStates.STAY_FRONT, 0, -1);
             currentWorld.tileWorld.AddLayer(layer, 0, 0);
         }
@@ -152,6 +151,7 @@ namespace TinyRpgApp
             if (!isTransitioning)
             {
                 var state = joystickMovement.Update(keyboard);
+                var lastState = joystickMovement.Last;
 
                 switch (state)
                 {
@@ -222,6 +222,9 @@ namespace TinyRpgApp
                         });
                         mainCharacter.position.X += 8 * Time.deltaTime;
                         IsOneStepDoing = true;
+                        break;
+                    case KeyboardJoystick8.State.RELEASED:
+
                         break;
                 }
             }
@@ -317,7 +320,9 @@ namespace TinyRpgApp
 
         public void RenderProta(ICanvas canvas)
         {
-            prota?.Draw(canvas, mainCharacter.position.X - MagicNumbers.middleSprite, mainCharacter.position.Y - MagicNumbers.middleSprite, 2.0, 2.0);
+            //double transparency = 1.0;
+            //prota?.Color = vec4d_f64(1.0, 1.0, 1.0, transparency);
+            prota?.Draw(canvas, mainCharacter.position.X - Constants.middleSprite, mainCharacter.position.Y - Constants.middleSprite, 2.0, 2.0);
         }
 
         public void RenderEnemies(ICanvas canvas)
@@ -547,17 +552,33 @@ namespace TinyRpgApp
         #endregion
 
         #region ThingsWithCharacters
+
+        public bool DoesIntersectEnemyWithBullet(Position pos1, double enemySize, Position pos2, double bulleSize)
+        {
+            if (pos1.X > pos2.maxX)
+                return false;
+            if (pos2.X > pos1.maxX)
+                return false;
+
+            if (pos1.Y > pos2.maxY)
+                return false;
+            if (pos2.Y > pos1.maxY)
+                return false;
+
+            return true;
+        }
+
         public void KillEnemies(List<Enemigo> enemigos)
         {
-            for (int i = 0; i < bullets.Count - 1; i++)
+            for (int i = 0; i < bullets.Count; i++)
             {
                 for (int j = 0; j < enemigos.Count; j++)
                 {
                     if (bullets[i].shooter == Shooter.MAIN)
                     {
-                        if (enemigos[j].position.X + MagicNumbers.middleSprite >= bullets[i].position.X && bullets[i].position.maxX >= enemigos[j].position.X + MagicNumbers.middleSprite && enemigos[j].position.Y + MagicNumbers.middleSprite >= bullets[i].position.Y && bullets[i].position.maxY >= enemigos[j].position.Y + MagicNumbers.middleSprite)
+                        if (DoesIntersectEnemyWithBullet(enemigos[j].position, 1.0, bullets[i].position, 0.25))
                         {
-                            enemigos[j].vida -= MagicNumbers.bulletDamage;
+                            enemigos[j].vida -= Constants.mainBulletDamage;
                             bullets.Remove(bullets[i]);
                         }
                         
@@ -572,13 +593,27 @@ namespace TinyRpgApp
         {
             for (int j = 0; j < enemigos.Count; j++)
             {
-                if (mainCharacter.position.X + MagicNumbers.middleSprite >= enemigos[j].position.X && enemigos[j].position.maxX >= mainCharacter.position.X + MagicNumbers.middleSprite && mainCharacter.position.Y + MagicNumbers.middleSprite >= enemigos[j].position.Y && enemigos[j].position.maxY >= mainCharacter.position.Y + MagicNumbers.middleSprite)
+                if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, enemigos[j].position, 1.0))
                 {
-                    gameDelegate.window.Close();
-                    break;
+                    gameDelegate.animationEngine.Add(new AnimationOptions()
+                    {
+                        Duration = 0.1
+                    },
+                    (in AnimationEvent ae, ref AnimationAction action) =>
+                    {
+                        var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
+                        mainCharacter.transparency = transparency;
+                        if (ae.u == 1.0)
+                            mainCharacter.transparency = 1.0;
+                    }
+                    );
+                    mainCharacter.vida -= Constants.enemyBulletDamage;
                 }
+
+                if (mainCharacter.vida <= 0)
+                    gameDelegate.window.Close();
             }
-        }
+        } 
 
         public void HitBulletToMainCharacter(List<Bala> balas, GameDelegateEvent gameDelegate)
         {
@@ -586,11 +621,26 @@ namespace TinyRpgApp
             {
                 if (balas[i].shooter == Shooter.ENEMIE)
                 {
-                    if (mainCharacter.position.X + MagicNumbers.middleSprite >= balas[i].position.X && balas[i].position.maxX >= mainCharacter.position.X + MagicNumbers.middleSprite && mainCharacter.position.Y + MagicNumbers.middleSprite >= balas[i].position.Y && balas[i].position.maxY >= mainCharacter.position.Y + MagicNumbers.middleSprite)
+                    if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, bullets[i].position, 0.25))
                     {
-                        gameDelegate.window.Close();
-                        break;
+                        gameDelegate.animationEngine.Add(new AnimationOptions()
+                            {
+                                Duration = 0.1
+                            },
+                        (in AnimationEvent ae, ref AnimationAction action) =>
+                            {
+                                var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
+                                mainCharacter.transparency = transparency;
+                                if (ae.u == 1.0)
+                                    mainCharacter.transparency = 1.0;
+                            }
+                        );
+                        mainCharacter.vida -= Constants.enemyBulletDamage;
+                        bullets.Remove(bullets[i]);
                     }
+
+                    if (mainCharacter.vida <= 0)
+                        gameDelegate.window.Close();
                 }
             }
         }

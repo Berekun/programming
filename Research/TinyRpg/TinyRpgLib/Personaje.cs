@@ -11,15 +11,15 @@ namespace TinyRpgLib
         public Position position { get; set; }
         public int vida { get; set; } = 0;
 
+        public double transparency { get; set; } = 1;
         public Personaje()
         {
 
         }
-        public Personaje(double x, double y)
+        public Personaje(double x, double y, int vida)
         {
             position = new Position(x, y);
+            this.vida = vida;
         }
-
-        //Sprites Spites de animacions de personajes y de ataques
     }
 }

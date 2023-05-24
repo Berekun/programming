@@ -16,13 +16,14 @@ namespace TinyRpgLib
         public double maxX { get; set; }
         public double maxY { get; set; }
 
-        public TileWorld tileWorld { get; set; } = new TileWorld(20, 20, new aabb2d_f64(0.0, 0.0, 20.0, 20.0));
+        public TileWorld tileWorld;
         public List<Portal> portals { get; set; } = new List<Portal>();
         public bool IsWorldClear { get; set; } = false;
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
 
         public World(int minX,int minY,int maxX, int maxY, int ideidentifier, bool isWorldClear)
         {
+            tileWorld = new TileWorld(20, 20, new aabb2d_f64(minX, minY, maxX, maxY));
             this.minX = minX;
             this.minY = minY;
             this.maxX = maxX;
