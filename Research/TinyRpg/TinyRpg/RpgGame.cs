@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Reflection.Emit;
+using System.Text.Json;
 using TinyRpgLib;
 using UDK;
+using static UDK.KeyboardJoystick8;
 
 namespace TinyRpgApp
 {
@@ -45,7 +47,6 @@ namespace TinyRpgApp
         double shootEnemieDelay = 0;
         #endregion
         #region Booleans
-        bool IsOneStepDoing = false;
         bool IsTransitionDone = true;
         bool isTransitioning = false;
         #endregion
@@ -153,85 +154,132 @@ namespace TinyRpgApp
                 var state = joystickMovement.Update(keyboard);
                 var lastState = joystickMovement.Last;
 
-                switch (state)
-                {
-                    case KeyboardJoystick8.State.UP:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_BACK)
-                        {
-                            EndId = (int)ProtaStates.STAY_BACK
-                        });
-                        mainCharacter.position.Y += 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.DOWN:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_FRONT)
-                        {
-                            EndId = (int)ProtaStates.STAY_FRONT
-                        });
-                        mainCharacter.position.Y -= 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.UP_LEFT:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
-                        {
-                            EndId = (int)ProtaStates.STAY_LEFT
-                        });
-                        mainCharacter.position.X -= 8 * Time.deltaTime;
-                        mainCharacter.position.Y += 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.DOWN_LEFT:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
-                        {
-                            EndId = (int)ProtaStates.STAY_LEFT
-                        });
-                        mainCharacter.position.X -= 8 * Time.deltaTime;
-                        mainCharacter.position.Y -= 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.LEFT:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
-                        {
-                            EndId = (int)ProtaStates.STAY_LEFT
-                        });
-                        mainCharacter.position.X -= 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.UP_RIGHT:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
-                        {
-                            EndId = (int)ProtaStates.STAY_RIGHT
-                        });
-                        mainCharacter.position.X += 8 * Time.deltaTime;
-                        mainCharacter.position.Y += 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.DOWN_RIGHT:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
-                        {
-                            EndId = (int)ProtaStates.STAY_RIGHT
-                        });
-                        mainCharacter.position.X += 8 * Time.deltaTime;
-                        mainCharacter.position.Y -= 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.RIGHT:
-                        prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
-                        {
-                            EndId = (int)ProtaStates.STAY_RIGHT
-                        });
-                        mainCharacter.position.X += 8 * Time.deltaTime;
-                        IsOneStepDoing = true;
-                        break;
-                    case KeyboardJoystick8.State.RELEASED:
+                if (state == KeyboardJoystick8.State.UP)
+                    SetSequenceUpOrDown(state);
 
-                        break;
-                }
+                if (state == KeyboardJoystick8.State.DOWN)
+                    SetSequenceUpOrDown(state);
+
+                if (state == KeyboardJoystick8.State.LEFT || state == KeyboardJoystick8.State.DOWN_LEFT || state == KeyboardJoystick8.State.UP_LEFT)
+                    SetSequenceLeft(state);
+
+                if (state == KeyboardJoystick8.State.RIGHT || state == KeyboardJoystick8.State.DOWN_RIGHT || state == KeyboardJoystick8.State.UP_RIGHT)
+                    SetSequenceRight(state);
+
+                if (state == KeyboardJoystick8.State.RELEASED)
+                    SetSequenceReleased(lastState);
             }
 
             LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
         }
 
+        public void SetSequenceRight(KeyboardJoystick8.State state)
+        {
+            if (state == KeyboardJoystick8.State.RIGHT)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                {
+                    EndId = (int)ProtaStates.STAY_RIGHT
+                });
+
+                mainCharacter.position.X += 8 * Time.deltaTime;
+            }
+
+            if (state == KeyboardJoystick8.State.DOWN_RIGHT)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                {
+                    EndId = (int)ProtaStates.STAY_RIGHT
+                });
+
+                mainCharacter.position.X += 8 * Time.deltaTime;
+                mainCharacter.position.Y -= 8 * Time.deltaTime;
+            }
+
+            if (state == KeyboardJoystick8.State.UP_RIGHT)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                {
+                    EndId = (int)ProtaStates.STAY_RIGHT
+                });
+
+                mainCharacter.position.X += 8 * Time.deltaTime;
+                mainCharacter.position.Y += 8 * Time.deltaTime;
+            }
+        }
+
+        public void SetSequenceLeft(KeyboardJoystick8.State state)
+        {
+            if (state == KeyboardJoystick8.State.LEFT)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                {
+                    EndId = (int)ProtaStates.STAY_LEFT
+                });
+
+                mainCharacter.position.X -= 8 * Time.deltaTime;
+            }
+
+            if (state == KeyboardJoystick8.State.DOWN_LEFT)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                {
+                    EndId = (int)ProtaStates.STAY_LEFT
+                });
+
+                mainCharacter.position.X -= 8 * Time.deltaTime;
+                mainCharacter.position.Y -= 8 * Time.deltaTime;
+            }
+
+            if (state == KeyboardJoystick8.State.UP_LEFT)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                {
+                    EndId = (int)ProtaStates.STAY_LEFT
+                });
+
+                mainCharacter.position.X -= 8 * Time.deltaTime;
+                mainCharacter.position.Y += 8 * Time.deltaTime;
+            }
+
+        }
+
+        public void SetSequenceUpOrDown(KeyboardJoystick8.State state)
+        {
+            if (state == KeyboardJoystick8.State.DOWN)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_FRONT)
+                {
+                    EndId = (int)ProtaStates.STAY_FRONT
+                });
+                mainCharacter.position.Y -= 8 * Time.deltaTime;
+            }
+
+            if (state == KeyboardJoystick8.State.UP)
+            {
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_BACK)
+                {
+                    EndId = (int)ProtaStates.STAY_BACK
+                });
+                mainCharacter.position.Y += 8 * Time.deltaTime;
+            }
+            
+        }
+
+        public void SetSequenceReleased(KeyboardJoystick8.State lastState)
+        {
+            if (lastState == KeyboardJoystick8.State.UP)
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_BACK));
+
+            if (lastState == KeyboardJoystick8.State.DOWN)
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_FRONT));
+
+            if (lastState == KeyboardJoystick8.State.LEFT || lastState == KeyboardJoystick8.State.DOWN_LEFT || lastState == KeyboardJoystick8.State.UP_LEFT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_LEFT));
+
+            if (lastState == KeyboardJoystick8.State.RIGHT || lastState == KeyboardJoystick8.State.DOWN_RIGHT || lastState == KeyboardJoystick8.State.UP_RIGHT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_RIGHT));
+        }
         public void MoveBullets()
         {
             foreach (Bala b in bullets)
@@ -368,7 +416,7 @@ namespace TinyRpgApp
 
             string worldsJson = "";
 
-            if (IsOneStepDoing && currentWorld.IsWorldClear)
+            if (currentWorld.IsWorldClear)
             {
                 if (portalTouched != -1)
                 {
@@ -436,10 +484,10 @@ namespace TinyRpgApp
         {
             SerializerJsonWorld(currentWorld);
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched), false);
+            SelectMap(currentWorld.ideidentifier);
             mainCharacter.position = positions[portalTouched];
             bullets.Clear();
             IsTransitionDone = false;
-            IsOneStepDoing = false;
         }
 
         public void ReplaceWorld(Position[] positions, int portalTouched, World newWorld)
@@ -447,10 +495,18 @@ namespace TinyRpgApp
             SerializerJsonWorld(currentWorld);
             currentWorld = newWorld;
             currentWorld.GeneratePortals(currentWorld.ideidentifier);
+            SelectMap(newWorld.ideidentifier);
             mainCharacter.position = positions[portalTouched];
             bullets.Clear();
             IsTransitionDone = false;
-            IsOneStepDoing = false;
+        }
+
+        public void SelectMap(int id)
+        {
+            currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
+            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/mapstxt/" + id + ".json", database, typeof(TileStates));
+            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            currentWorld.tileWorld.AddLayer(layer, 0, 0);
         }
 
         public void Transition(ICanvas canvas)

@@ -10,7 +10,6 @@ namespace TinyRpgLib
     {
         public Position position { get; set; }
         public int vida { get; set; } = 0;
-
         public double transparency { get; set; } = 1;
         public Personaje()
         {
