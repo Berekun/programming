@@ -101,7 +101,7 @@ namespace TinyRpgLib
             {
                 for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
                 {
-                    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), Tools.GetRandomInt(1, 4), 20, EnemyType.DARK_WIZZARD));
+                    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, Tools.GetRandomInt(1, 4), 20, EnemyType.DARK_WIZZARD));
                 }
 
                 //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)

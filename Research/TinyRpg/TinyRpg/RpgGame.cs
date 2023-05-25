@@ -147,18 +147,39 @@ namespace TinyRpgApp
             {
                 if (e.enemyType == EnemyType.DARK_WIZZARD)
                 {
-                    if (e.pathingRoute == 1)
+                    vec2d_f64 main_pos = new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y);
+                    vec2d_f64 enemy_pos = new vec2d_f64(e.position.X, e.position.Y);
+                    vec2d_f64 vec = main_pos - enemy_pos;
+                    if (vec.x < 11 && vec.y < 11)
                     {
-                        HorizontalPathing(e);
+                        vec.x = vec.x * -1;
+                        vec.y = vec.y * -1;
                     }
-                    else if (e.pathingRoute == 2)
+
+                    if (vec.x > 10 && vec.y < 11)
                     {
-                        VerticalPathing(e);
+                        vec.x = 0;
+                        vec.y = 0;
                     }
-                    else if (e.pathingRoute == 3)
-                    {
-                        CircularPathing(e);
-                    }
+
+                    vec2d_f64 normlaized_vec = vec.normalized();
+                    vec2d_f64 final_vec = normlaized_vec * 6;
+
+                    e.position.X += final_vec.x * Time.deltaTime;
+                    e.position.Y += final_vec.y * Time.deltaTime;
+
+                    //if (e.pathingRoute == 1)
+                    //{
+                    //    HorizontalPathing(e);
+                    //}
+                    //else if (e.pathingRoute == 2)
+                    //{
+                    //    VerticalPathing(e);
+                    //}
+                    //else if (e.pathingRoute == 3)
+                    //{
+                    //    CircularPathing(e);
+                    //}
 
                     LimitedWorld(e.position.X, e.position.Y, e);
                 }
@@ -397,63 +418,63 @@ namespace TinyRpgApp
             }
         }
 
-        public void HorizontalPathing(Personaje p)
-        {
-            if (enemyChangeMoveStep < 2)
-            {
-                p.position.X += 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
-            }
-            else if (enemyChangeMoveStep < 4)
-            {
-                p.position.X -= 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
-            }
-            else
-                enemyChangeMoveStep = 0;
-        }
+        //public void HorizontalPathing(Personaje p)
+        //{
+        //    if (enemyChangeMoveStep < 2)
+        //    {
+        //        p.position.X += 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+        //    }
+        //    else if (enemyChangeMoveStep < 4)
+        //    {
+        //        p.position.X -= 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
+        //    }
+        //    else
+        //        enemyChangeMoveStep = 0;
+        //}
 
-        public void VerticalPathing(Personaje p)
-        {
-            if (enemyChangeMoveStep < 2)
-            {
-                p.position.Y += 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
-            }
-            else if (enemyChangeMoveStep < 4)
-            {
-                p.position.Y -= 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
-            }
-            else
-                enemyChangeMoveStep = 0;
-        }
+        //public void VerticalPathing(Personaje p)
+        //{
+        //    if (enemyChangeMoveStep < 2)
+        //    {
+        //        p.position.Y += 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
+        //    }
+        //    else if (enemyChangeMoveStep < 4)
+        //    {
+        //        p.position.Y -= 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+        //    }
+        //    else
+        //        enemyChangeMoveStep = 0;
+        //}
 
-        public void CircularPathing(Personaje p)
-        {
-            if (enemycirclePathing < 1)
-            {
-                p.position.X += 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
-            }
-            else if (enemycirclePathing < 2)
-            {
-                p.position.Y += 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
-            }
-            else if (enemycirclePathing < 3)
-            {
-                p.position.X -= 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
-            }
-            else if (enemycirclePathing < 4)
-            {
-                p.position.Y -= 10 * Time.deltaTime;
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
-            }
-            else
-                enemycirclePathing = 0;
-        }
+        //public void CircularPathing(Personaje p)
+        //{
+        //    if (enemycirclePathing < 1)
+        //    {
+        //        p.position.X += 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+        //    }
+        //    else if (enemycirclePathing < 2)
+        //    {
+        //        p.position.Y += 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
+        //    }
+        //    else if (enemycirclePathing < 3)
+        //    {
+        //        p.position.X -= 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
+        //    }
+        //    else if (enemycirclePathing < 4)
+        //    {
+        //        p.position.Y -= 10 * Time.deltaTime;
+        //        DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+        //    }
+        //    else
+        //        enemycirclePathing = 0;
+        //}
 
         #endregion
 
