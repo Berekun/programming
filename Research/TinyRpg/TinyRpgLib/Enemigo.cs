@@ -8,18 +8,20 @@ namespace TinyRpgLib
 {
     public enum EnemyType
     {
-        GOLEM, WOLF, DARK_WIZZARD
+        GOLEM, MINI_GOLEM, WOLF, DARK_WIZZARD
     }
 
     public class Enemigo : Personaje
     {
         public int pathingRoute { get; set; } = 0;
+        public EnemyType enemyType { get; set; }  
 
-        public Enemigo(int x, int y, int pathingRoute, int vida) : base(x, y, vida)
+        public Enemigo(double x, double y, int pathingRoute, int vida, EnemyType enemyType) : base(x, y, vida)
         {
             position = new Position(x, y);
             this.pathingRoute = pathingRoute;
             this.vida = vida;
+            this.enemyType = enemyType;
         }
     }
 }

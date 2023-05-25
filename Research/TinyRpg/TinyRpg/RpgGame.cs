@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Text.Json;
 using TinyRpgLib;
 using UDK;
@@ -9,7 +10,7 @@ namespace TinyRpgApp
     public class RpgGame : IGameDelegate
     {
         #region Atributos
-        enum ProtaStates
+        enum PersonajeStates
         {
             STAY_FRONT, STAY_BACK, STAY_LEFT, STAY_RIGHT,
             MOVE_FRONT, MOVE_BACK, MOVE_LEFT, MOVE_RIGHT
@@ -26,6 +27,7 @@ namespace TinyRpgApp
         ImageDatabase? database;
         SpriteSet? spriteSet;
         SpriteInstance? prota;
+        SpriteInstance? DarkWizzard;
         Personaje mainCharacter = new Personaje(Constants.spawnMainCharacterX, Constants.spawnMainCharacterX, 20);
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
@@ -74,11 +76,10 @@ namespace TinyRpgApp
         {
             DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
 
-            RandomMoveNpcs();
-            MoveBullets();
+            MoveEnemies();
 
-            EnemieShoot();
-            KillEnemies(currentWorld.enemies);
+            //EnemieShoot();
+            KillEnemies(currentWorld.enemies, bullets);
             HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
             HitBulletToMainCharacter(bullets, gameEvent);
             currentWorld.IsWorldClearFuncion();
@@ -86,6 +87,7 @@ namespace TinyRpgApp
 
             prota?.Animate(gameEvent.animationEngine);
             currentWorld.tileWorld?.Animate(gameEvent.animationEngine);
+            DarkWizzard?.Animate(gameEvent.animationEngine);
         }
 
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
@@ -103,6 +105,9 @@ namespace TinyRpgApp
 
             if (keyboard.IsKeyPressed(Keys.Escape))
                 gameEvent.window.Close();
+
+            if (keyboard.IsKeyPressed(Keys.F11) || keyboard.IsKeyPressed(Keys.F))
+                gameEvent.window.ToggleFullscreen();
         }
 
         public void OnLoad(GameDelegateEvent gameEvent)
@@ -112,11 +117,10 @@ namespace TinyRpgApp
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4, true);
             FillArrayRepresentative();
             database = new ImageDatabase(gameEvent.canvasContext);
-            spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/movement_set.json", database, typeof(ProtaStates));
-            
+            spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/prota_movetxt/movement_set.json", database, typeof(PersonajeStates));
             var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
-            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
-            prota = new SpriteInstance(spriteSet, (int)ProtaStates.STAY_FRONT, 0, -1);
+            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            prota = new SpriteInstance(spriteSet, (int)PersonajeStates.STAY_FRONT, 0, -1);
             currentWorld.tileWorld.AddLayer(layer, 0, 0);
         }
 
@@ -124,26 +128,100 @@ namespace TinyRpgApp
         {
 
         }
-       
+
         #region Movements
-        public void RandomMoveNpcs()
+
+        #region Move
+
+        public void MoveEnemies()
+        {
+            MoveDarkWizzards();
+            MoveBullets();
+            MoveWolfs();
+            MoveGolems();
+            MoveMiniGolems();
+        }
+        public void MoveDarkWizzards()
         {
             foreach (Enemigo e in currentWorld.enemies)
             {
-                if (e.pathingRoute == 1)
+                if (e.enemyType == EnemyType.DARK_WIZZARD)
                 {
-                    HorizontalPathing(e);
-                }
-                else if (e.pathingRoute == 2)
-                {
-                    VerticalPathing(e);
-                }
-                else if (e.pathingRoute == 3)
-                {
-                    CircularPathing(e);
-                }
+                    if (e.pathingRoute == 1)
+                    {
+                        HorizontalPathing(e);
+                    }
+                    else if (e.pathingRoute == 2)
+                    {
+                        VerticalPathing(e);
+                    }
+                    else if (e.pathingRoute == 3)
+                    {
+                        CircularPathing(e);
+                    }
 
-                LimitedWorld(e.position.X, e.position.Y, e);
+                    LimitedWorld(e.position.X, e.position.Y, e);
+                }
+            }
+        }
+
+        public void MoveWolfs()
+        {
+            foreach (Enemigo e in currentWorld.enemies)
+            {
+                if (e.enemyType == EnemyType.WOLF)
+                {
+                    vec2d_f64 main_pos = new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y);
+                    vec2d_f64 enemy_pos = new vec2d_f64(e.position.X, e.position.Y);
+                    vec2d_f64 vec = main_pos - enemy_pos;
+                    vec2d_f64 normlaized_vec = vec.normalized();
+                    vec2d_f64 final_vec = normlaized_vec * 6;
+
+                    e.position.X += final_vec.x * Time.deltaTime;
+                    e.position.Y += final_vec.y * Time.deltaTime;
+
+                    LimitedWorld(e.position.X, e.position.Y, e);
+                }
+            }
+        }
+
+        public void MoveGolems()
+        {
+            foreach (Enemigo e in currentWorld.enemies)
+            {
+                if (e.enemyType == EnemyType.GOLEM)
+                {
+                    vec2d_f64 main_pos = new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y);
+                    vec2d_f64 enemy_pos = new vec2d_f64(e.position.X, e.position.Y);
+                    vec2d_f64 vec = main_pos - enemy_pos;
+                    vec2d_f64 normlaized_vec = vec.normalized();
+                    vec2d_f64 final_vec = normlaized_vec * 3;
+
+                    e.position.X += final_vec.x * Time.deltaTime;
+                    e.position.Y += final_vec.y * Time.deltaTime;
+
+                    LimitedWorld(e.position.X, e.position.Y, e);
+                }
+            }
+        }
+
+        public void MoveMiniGolems()
+        {
+            foreach (Enemigo e in currentWorld.enemies)
+            {
+                if (e.enemyType == EnemyType.MINI_GOLEM)
+                {
+                    vec2d_f64 main_pos = new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y);
+                    vec2d_f64 enemy_pos = new vec2d_f64(e.position.X, e.position.Y);
+                    vec2d_f64 vec = main_pos - enemy_pos;
+                    vec2d_f64 normlaized_vec = vec.normalized();
+                    vec2d_f64 final_vec = normlaized_vec * 8;
+
+                    e.position.X += final_vec.x * Time.deltaTime;
+                    e.position.Y += final_vec.y * Time.deltaTime;
+
+                    LimitedWorld(e.position.X, e.position.Y, e);
+                }
             }
         }
 
@@ -173,13 +251,28 @@ namespace TinyRpgApp
             LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
         }
 
+        public void MoveBullets()
+        {
+            foreach (Bala b in bullets)
+            {
+                b.position.X += b.direction.x * Time.deltaTime;
+                b.position.Y += b.direction.y * Time.deltaTime;
+            }
+
+            LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
+        }
+
+        #endregion
+
+        #region MoveTools
+
         public void SetSequenceRight(KeyboardJoystick8.State state)
         {
             if (state == KeyboardJoystick8.State.RIGHT)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT)
                 {
-                    EndId = (int)ProtaStates.STAY_RIGHT
+                    EndId = (int)PersonajeStates.STAY_RIGHT
                 });
 
                 mainCharacter.position.X += 8 * Time.deltaTime;
@@ -187,9 +280,9 @@ namespace TinyRpgApp
 
             if (state == KeyboardJoystick8.State.DOWN_RIGHT)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT)
                 {
-                    EndId = (int)ProtaStates.STAY_RIGHT
+                    EndId = (int)PersonajeStates.STAY_RIGHT
                 });
 
                 mainCharacter.position.X += 8 * Time.deltaTime;
@@ -198,9 +291,9 @@ namespace TinyRpgApp
 
             if (state == KeyboardJoystick8.State.UP_RIGHT)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_RIGHT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT)
                 {
-                    EndId = (int)ProtaStates.STAY_RIGHT
+                    EndId = (int)PersonajeStates.STAY_RIGHT
                 });
 
                 mainCharacter.position.X += 8 * Time.deltaTime;
@@ -212,9 +305,9 @@ namespace TinyRpgApp
         {
             if (state == KeyboardJoystick8.State.LEFT)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT)
                 {
-                    EndId = (int)ProtaStates.STAY_LEFT
+                    EndId = (int)PersonajeStates.STAY_LEFT
                 });
 
                 mainCharacter.position.X -= 8 * Time.deltaTime;
@@ -222,9 +315,9 @@ namespace TinyRpgApp
 
             if (state == KeyboardJoystick8.State.DOWN_LEFT)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT)
                 {
-                    EndId = (int)ProtaStates.STAY_LEFT
+                    EndId = (int)PersonajeStates.STAY_LEFT
                 });
 
                 mainCharacter.position.X -= 8 * Time.deltaTime;
@@ -233,9 +326,9 @@ namespace TinyRpgApp
 
             if (state == KeyboardJoystick8.State.UP_LEFT)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_LEFT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT)
                 {
-                    EndId = (int)ProtaStates.STAY_LEFT
+                    EndId = (int)PersonajeStates.STAY_LEFT
                 });
 
                 mainCharacter.position.X -= 8 * Time.deltaTime;
@@ -248,18 +341,18 @@ namespace TinyRpgApp
         {
             if (state == KeyboardJoystick8.State.DOWN)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_FRONT)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT)
                 {
-                    EndId = (int)ProtaStates.STAY_FRONT
+                    EndId = (int)PersonajeStates.STAY_FRONT
                 });
                 mainCharacter.position.Y -= 8 * Time.deltaTime;
             }
 
             if (state == KeyboardJoystick8.State.UP)
             {
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.MOVE_BACK)
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK)
                 {
-                    EndId = (int)ProtaStates.STAY_BACK
+                    EndId = (int)PersonajeStates.STAY_BACK
                 });
                 mainCharacter.position.Y += 8 * Time.deltaTime;
             }
@@ -269,26 +362,16 @@ namespace TinyRpgApp
         public void SetSequenceReleased(KeyboardJoystick8.State lastState)
         {
             if (lastState == KeyboardJoystick8.State.UP)
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_BACK));
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.STAY_BACK));
 
             if (lastState == KeyboardJoystick8.State.DOWN)
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_FRONT));
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.STAY_FRONT));
 
             if (lastState == KeyboardJoystick8.State.LEFT || lastState == KeyboardJoystick8.State.DOWN_LEFT || lastState == KeyboardJoystick8.State.UP_LEFT)
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_LEFT));
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.STAY_LEFT));
 
             if (lastState == KeyboardJoystick8.State.RIGHT || lastState == KeyboardJoystick8.State.DOWN_RIGHT || lastState == KeyboardJoystick8.State.UP_RIGHT)
-                prota?.SetSequence(new SpriteSequenceSelector((int)ProtaStates.STAY_RIGHT));
-        }
-        public void MoveBullets()
-        {
-            foreach (Bala b in bullets)
-            {
-                b.position.X += b.direction.x * Time.deltaTime;
-                b.position.Y += b.direction.y * Time.deltaTime;
-            }
-
-            LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
+                prota?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.STAY_RIGHT));
         }
 
         public void LimitedWorld(double x, double y, Personaje p)
@@ -317,9 +400,15 @@ namespace TinyRpgApp
         public void HorizontalPathing(Personaje p)
         {
             if (enemyChangeMoveStep < 2)
+            {
                 p.position.X += 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+            }
             else if (enemyChangeMoveStep < 4)
+            {
                 p.position.X -= 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
+            }
             else
                 enemyChangeMoveStep = 0;
         }
@@ -327,9 +416,15 @@ namespace TinyRpgApp
         public void VerticalPathing(Personaje p)
         {
             if (enemyChangeMoveStep < 2)
+            {
                 p.position.Y += 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
+            }
             else if (enemyChangeMoveStep < 4)
+            {
                 p.position.Y -= 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+            }
             else
                 enemyChangeMoveStep = 0;
         }
@@ -337,16 +432,31 @@ namespace TinyRpgApp
         public void CircularPathing(Personaje p)
         {
             if (enemycirclePathing < 1)
+            {
                 p.position.X += 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+            }
             else if (enemycirclePathing < 2)
+            {
                 p.position.Y += 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
+            }
             else if (enemycirclePathing < 3)
+            {
                 p.position.X -= 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
+            }
             else if (enemycirclePathing < 4)
+            {
                 p.position.Y -= 10 * Time.deltaTime;
+                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+            }
             else
                 enemycirclePathing = 0;
         }
+
+        #endregion
+
         #endregion
 
         #region Renders
@@ -375,13 +485,16 @@ namespace TinyRpgApp
 
         public void RenderEnemies(ICanvas canvas)
         {
-            foreach (Personaje p in currentWorld.enemies)
+            foreach (Enemigo e in currentWorld.enemies)
             {
-                //prota?.Draw(canvas, p.position.X - MagicNumbers.middleSprite, p.position.Y - MagicNumbers.middleSprite, 2.0, 2.0);
-
-                canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
-                canvas.Transform.SetTranslation(p.position.X, p.position.Y);
-                canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
+                if(e.enemyType == EnemyType.DARK_WIZZARD)
+                    DarkWizzard?.Draw(canvas, e.position.X - Constants.middleSprite, e.position.Y - Constants.middleSprite, 2.0, 2.0);
+                else
+                {
+                    canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
+                    canvas.Transform.SetTranslation(e.position.X, e.position.Y);
+                    canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
+                }
             }
         }
 
@@ -485,6 +598,7 @@ namespace TinyRpgApp
             SerializerJsonWorld(currentWorld);
             currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched), false);
             SelectMap(currentWorld.ideidentifier);
+            SetSpriteToEnemys();
             mainCharacter.position = positions[portalTouched];
             bullets.Clear();
             IsTransitionDone = false;
@@ -497,6 +611,7 @@ namespace TinyRpgApp
             currentWorld.GeneratePortals(currentWorld.ideidentifier);
             SelectMap(newWorld.ideidentifier);
             mainCharacter.position = positions[portalTouched];
+            SetSpriteToEnemys();
             bullets.Clear();
             IsTransitionDone = false;
         }
@@ -504,9 +619,15 @@ namespace TinyRpgApp
         public void SelectMap(int id)
         {
             currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
-            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/mapstxt/" + id + ".json", database, typeof(TileStates));
-            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layer_ground.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
+            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground" + id + ".json", mapSet, typeof(TileStates), typeof(SpriteClass));
             currentWorld.tileWorld.AddLayer(layer, 0, 0);
+        }
+
+        public void SetSpriteToEnemys()
+        {
+            spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/enemy_movetxt/enemy_movement_set.json", database, typeof(PersonajeStates));
+            DarkWizzard = new SpriteInstance(spriteSet, (int)PersonajeStates.MOVE_FRONT, 0, -1);
         }
 
         public void Transition(ICanvas canvas)
@@ -572,11 +693,14 @@ namespace TinyRpgApp
 
                 foreach (Enemigo e in currentWorld.enemies)
                 {
-                    vec2d_f64 enemy_pos = new vec2d_f64(e.position.X, e.position.Y);
-                    vec2d_f64 vec = main_pos - enemy_pos;
-                    vec2d_f64 normlaized_vec = vec.normalized();
-                    vec2d_f64 final_vec = normlaized_vec * 7;
-                    bullets.Add(new Bala(e.position.X, e.position.Y, final_vec, Shooter.ENEMIE));
+                    if (e.enemyType == EnemyType.DARK_WIZZARD)
+                    {
+                        vec2d_f64 enemy_pos = new vec2d_f64(e.position.X, e.position.Y);
+                        vec2d_f64 vec = main_pos - enemy_pos;
+                        vec2d_f64 normlaized_vec = vec.normalized();
+                        vec2d_f64 final_vec = normlaized_vec * 7;
+                        bullets.Add(new Bala(e.position.X, e.position.Y, final_vec, Shooter.ENEMIE));
+                    }
                 }
                 shootEnemieDelay = 0;
             }
@@ -624,8 +748,10 @@ namespace TinyRpgApp
             return true;
         }
 
-        public void KillEnemies(List<Enemigo> enemigos)
+        public void KillEnemies(List<Enemigo> enemigos, List<Bala> bullets)
         {
+            bool IsThisBulletGoingToRemove = false;
+
             for (int i = 0; i < bullets.Count; i++)
             {
                 for (int j = 0; j < enemigos.Count; j++)
@@ -635,13 +761,21 @@ namespace TinyRpgApp
                         if (DoesIntersectEnemyWithBullet(enemigos[j].position, 1.0, bullets[i].position, 0.25))
                         {
                             enemigos[j].vida -= Constants.mainBulletDamage;
-                            bullets.Remove(bullets[i]);
+                            IsThisBulletGoingToRemove = true;
                         }
                         
                         if (enemigos[j].vida <= 0)
+                        {
+                            if (enemigos[j].enemyType == EnemyType.GOLEM)
+                                GenerateMiniGolems();
+
                             enemigos.Remove(enemigos[j]);
+                        }
                     }
                 }
+
+                if(IsThisBulletGoingToRemove)
+                    bullets.RemoveAt(i);
             }
         }
 
@@ -700,6 +834,25 @@ namespace TinyRpgApp
                 }
             }
         }
+
+        public void GenerateMiniGolems()
+        {
+            for(int j = 0; j < currentWorld.enemies.Count; j++)
+            {
+                Enemigo e = currentWorld.enemies[j];
+
+                Position[] positions = new Position[] { new Position(e.position.X - 1, e.position.Y + 1), new Position(e.position.X + 1, e.position.Y + 1), new Position(e.position.X - 1, e.position.Y - 1), new Position(e.position.X + 1, e.position.Y - 1) };
+
+                if (currentWorld.enemies[j].enemyType == EnemyType.GOLEM && currentWorld.enemies[j].vida <= 0)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        currentWorld.enemies.Add(new Enemigo(positions[i].X, positions[i].Y, -1, 10, EnemyType.MINI_GOLEM));
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region JsonFunctions

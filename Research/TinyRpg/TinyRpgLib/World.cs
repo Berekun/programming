@@ -101,8 +101,18 @@ namespace TinyRpgLib
             {
                 for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
                 {
-                    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), Tools.GetRandomInt(1, 4), 20));
+                    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), Tools.GetRandomInt(1, 4), 20, EnemyType.DARK_WIZZARD));
                 }
+
+                //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
+                //{
+                //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), -1, 10, EnemyType.WOLF));
+                //}
+
+                //for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
+                //{
+                //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), -1, 60, EnemyType.GOLEM));
+                //}
             }
         }
 
