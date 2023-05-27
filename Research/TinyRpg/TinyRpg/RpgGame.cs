@@ -78,7 +78,7 @@ namespace TinyRpgApp
 
             MoveEnemies();
 
-            //EnemieShoot();
+            EnemieShoot();
             KillEnemies(currentWorld.enemies, bullets);
             HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
             HitBulletToMainCharacter(bullets, gameEvent);
@@ -745,7 +745,7 @@ namespace TinyRpgApp
 
         public void KillEnemies(List<Enemigo> enemigos, List<Bala> bullets)
         {
-            bool IsThisBulletGoingToRemove = false;
+            bool RemoveBullet = false;
 
             for (int i = 0; i < bullets.Count; i++)
             {
@@ -756,7 +756,7 @@ namespace TinyRpgApp
                         if (DoesIntersectEnemyWithBullet(enemigos[j].position, 1.0, bullets[i].position, 0.25))
                         {
                             enemigos[j].vida -= Constants.mainBulletDamage;
-                            IsThisBulletGoingToRemove = true;
+                            RemoveBullet = true;
                         }
                         
                         if (enemigos[j].vida <= 0)
@@ -769,8 +769,11 @@ namespace TinyRpgApp
                     }
                 }
 
-                if(IsThisBulletGoingToRemove)
+                if (RemoveBullet)
+                {
                     bullets.RemoveAt(i);
+                    RemoveBullet = false;
+                }   
             }
         }
 
@@ -842,7 +845,7 @@ namespace TinyRpgApp
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        currentWorld.enemies.Add(new Enemigo(positions[i].X, positions[i].Y, -1, 10, EnemyType.MINI_GOLEM));
+                        currentWorld.enemies.Add(new Enemigo(positions[i].X, positions[i].Y, 10, EnemyType.MINI_GOLEM));
                     }
                 }
             }
