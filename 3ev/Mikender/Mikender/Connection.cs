@@ -22,6 +22,7 @@ namespace Mikender
 
             try
             {
+                // Javi: No deberías guardar este string en un string? ....
                 using (SqlConnection connection = new SqlConnection("Data Source=192.168.56.101,1433;Initial Catalog=MIKENDER;User ID=sa;Password=SqlServer123;Connection Timeout=30"))
                 {
                     connection.Open();
