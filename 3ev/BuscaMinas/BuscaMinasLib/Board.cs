@@ -74,6 +74,7 @@
             }
         }
 
+        // Javi: O property o función, ...
         public int BombsCount()
         {
             return _bombs.Count;
