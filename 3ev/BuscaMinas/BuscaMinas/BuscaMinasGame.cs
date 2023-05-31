@@ -5,6 +5,7 @@ namespace BuscaMinasApp
 {
     internal class BuscaMinasGame : IGameDelegate
     {
+        // Javi: No entiendo esta lista
         private List<IBuffer>? _buffers = new List<IBuffer>();
         private IBoard _board = new BoardArray();
         private bool _firstClick = false;
@@ -60,6 +61,7 @@ namespace BuscaMinasApp
 
         public void DrawBorad(ICanvas canvas)
         {
+            // Javi: Este aux lo manejas mal
             bool aux = true;
             for (int i = 0; i < _board.GetHeight(); i++)
             {
@@ -85,6 +87,7 @@ namespace BuscaMinasApp
                 spawnBombDelay = 0;
             }
 
+            // Javi: habría que hacer que este for ocupara menos
             for (int i = 0; i < _board.GetHeight(); i++)
             {
                 for (int j = 0; j < _board.GetWidth(); j++)
@@ -148,6 +151,7 @@ namespace BuscaMinasApp
             }
         }
 
+        // Javi: Un solo return
         public bool IsTimePassed(float spawnBombDelay, float timeTopass)
         {
             if (spawnBombDelay >= timeTopass)
@@ -179,6 +183,7 @@ namespace BuscaMinasApp
             {
                 for (int j = -1; j < 2; j++)
                 {
+                    // Javi: Este if ....
                     if (!_board.IsOpen(j + x, i + y) && !_board.IsFlagAt(j + x, i + y) && _board.GetBombProximity(j + x, i + y) > 0 && Utils.IsValueOnRange(j + x, i + y, _board))
                         _board.OpenCell(j + x, i + y);
                 }
@@ -286,6 +291,7 @@ namespace BuscaMinasApp
                 gameEvent.window.Close();
         }
 
+        // Javi: Esta función la pondría en Utils
         public rgba_f64 GetColorForNumbers(int number)
         {
             switch (number)
@@ -312,6 +318,7 @@ namespace BuscaMinasApp
             }
         }
 
+        // Javi: Esta función ya la tienes hecha
         public bool Contains(int x, int y, List<Position> list)
         {
             if (list == null)
