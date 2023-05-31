@@ -36,6 +36,7 @@
             if (!Utils.IsValueOnRange(x, y, this))
                 return;
 
+            // Javi: Posible optimización
             if (_cells[PositionToIndexArray(x, y)].IsFlag)
                 _cells[PositionToIndexArray(x, y)].SetFlag(false);
         }
@@ -81,6 +82,7 @@
             if (!Utils.IsValueOnRange(x, y, this))
                 return false;
 
+            // Javi: bueno, ...
             if (_cells[PositionToIndexArray(x, y)].IsOpen)
                 return true;
             return false;
