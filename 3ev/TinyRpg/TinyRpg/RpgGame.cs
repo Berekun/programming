@@ -24,6 +24,7 @@ namespace TinyRpgApp
             GRASS_DARK, IN_GRASS_CLAIR_OUT_GRASS_DARK
         }
 
+        // Javi: Intenta utilizar la misma guia de estilo para todas las variables
         ImageDatabase? database;
         SpriteSet? spriteSet;
         SpriteInstance? prota;
