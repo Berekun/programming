@@ -24,7 +24,7 @@ namespace BuscaMinasLib
             return random.NextDouble() * (max - min) + min;
         }
 
-
+        // Javi: Yo no hubiese llamado a esta función CreateBombs, es más general
         public static void CreateBombs(int bombsCount,int width,int height, SetBombDelegate bombdelegate)
         {
             if (bombsCount > width * height)
@@ -41,6 +41,7 @@ namespace BuscaMinasLib
             }
         }   
 
+        // Javi: Muy bien hecho!!!!
         public static bool IsElementAt(List<Position> list, int x, int y)
         {
             Position position = new Position(x, y);
