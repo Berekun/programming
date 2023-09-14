@@ -32,9 +32,9 @@ namespace ImageFilters
 
         static void Test2()
         {
-            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
-            string in_path = path + "foto_asta.jpg";
-            string out_path = path + "bw.jpg";
+            string path = "D:\\Documentos\\Deberes de Dani\\Programacion\\programminga\\programming\\3ev\\TinyRpg\\TinyRpg\\resources\\map\\";
+            string in_path = path + "world.png";
+            string out_path = path + "world2.png";
             Image img = new Image();
             img.Load(in_path);
             Paintools.Changecolor(img);
@@ -43,12 +43,12 @@ namespace ImageFilters
 
         static void Test3()
         {
-            string path = "C:\\Users\\danberinf\\Desktop\\Images\\";
-            string in_path = path + "foto_asta.jpg";
-            string out_path = path + "multiply.jpg";
+            string path = "D:\\Documentos\\Deberes de Dani\\Programacion\\programminga\\programming\\3ev\\TinyRpg\\TinyRpg\\resources\\map\\";
+            string in_path = path + "world.png";
+            string out_path = path + "world2.png";
             Image img = new Image();
             img.Load(in_path);
-            Paintools.MultiplyPixel(img,0,0,1,1);
+            Paintools.MultiplyPixel(img,1,0,0,1);
             img.Save(out_path);
         }
 
@@ -120,7 +120,7 @@ namespace ImageFilters
 
         static void Main(string[] args)
         {
-            Test6();
+            Test3();
         }
 
 

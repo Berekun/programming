@@ -24,15 +24,23 @@ namespace TinyRpgApp
             GRASS_DARK, IN_GRASS_CLAIR_OUT_GRASS_DARK
         }
 
-        // Javi: Intenta utilizar la misma guia de estilo para todas las variables
+        enum HeartStates
+        {
+            FULL_HEART, MID_HEART, VOID_HEART
+        }
+
         ImageDatabase? database;
         SpriteSet? spriteSet;
+        SpriteSet? hudSet;
+        SpriteSet? mapSet;
+        TileMap? layer;
         SpriteInstance? prota;
-        SpriteInstance? DarkWizzard;
+        SpriteInstance? darkWizzard;
         Personaje mainCharacter = new Personaje(Constants.spawnMainCharacterX, Constants.spawnMainCharacterX, 20);
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
+        List<SpriteInstance> hearts = new List<SpriteInstance>();
         World currentWorld;
         string path = "resources/worlds.json";
         int[,] representativeWorld = new int[3, 3];
@@ -43,15 +51,16 @@ namespace TinyRpgApp
         int minWorldHeight = 0;
         #endregion
         #region Timers
-        double transitiondelay = 0;
-        double enemyChangeMoveStep = 0;
-        double enemycirclePathing = 0;
+        double transitionTimer = 0;
         double shootMainCharacterDelay = 0;
         double shootEnemieDelay = 0;
+        double protaHitDelay = 0;
+        double protaHurtsTimer = 0;
         #endregion
         #region Booleans
-        bool IsTransitionDone = true;
+        bool isTransitionDone = true;
         bool isTransitioning = false;
+        bool isPlayerHurt = false;
         #endregion
         #endregion
         public void OnDraw(GameDelegateEvent gameEvent, ICanvas canvas)
@@ -65,30 +74,33 @@ namespace TinyRpgApp
 
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
+            RenderHearts(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
             RenderBullets(canvas);
 
-            if (!IsTransitionDone)                
+            if (!isTransitionDone)                
                 Transition(canvas);
+
+            if (protaHurtsTimer > Constants.hurtsDelay)
+                ChangeColorWorld();
         }
 
         public void OnAnimate(GameDelegateEvent gameEvent)
         {
             DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
-
+            CreateHearts();
             MoveEnemies();
 
             EnemieShoot();
             KillEnemies(currentWorld.enemies, bullets);
-            HitEnemieToMainCharacter(currentWorld.enemies, gameEvent);
-            HitBulletToMainCharacter(bullets, gameEvent);
+            HitToProta(currentWorld.enemies, bullets, gameEvent);
             currentWorld.IsWorldClearFuncion();
             RemoveBullet(bullets);
 
             prota?.Animate(gameEvent.animationEngine);
             currentWorld.tileWorld?.Animate(gameEvent.animationEngine);
-            DarkWizzard?.Animate(gameEvent.animationEngine);
+            darkWizzard?.Animate(gameEvent.animationEngine);
         }
 
         public void OnKeyboard(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
@@ -119,10 +131,12 @@ namespace TinyRpgApp
             FillArrayRepresentative();
             database = new ImageDatabase(gameEvent.canvasContext);
             spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/prota_movetxt/movement_set.json", database, typeof(PersonajeStates));
-            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
-            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            hudSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/hud/hud_set.json", database, typeof(HeartStates));
+            mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
+            layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
             prota = new SpriteInstance(spriteSet, (int)PersonajeStates.STAY_FRONT, 0, -1);
             currentWorld.tileWorld.AddLayer(layer, 0, 0);
+            CreateHearts();
         }
 
         public void OnUnload(GameDelegateEvent gameEvent)
@@ -433,22 +447,26 @@ namespace TinyRpgApp
         public void SetSequenceDarkWizzard(vec2d_f64 final_vec, vec2d_f64 main_pos, vec2d_f64 enemy_pos)
         {
             if (final_vec.x > 0 && final_vec.x > final_vec.y)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
             else if (final_vec.x < 0 && final_vec.x < final_vec.y)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
             else if (final_vec.x == 0 && final_vec.y == 0 && main_pos.x > enemy_pos.x)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
             else if (final_vec.x == 0 && final_vec.y == 0 && main_pos.x < enemy_pos.x)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
-
-            if (final_vec.y > 0 && final_vec.y > final_vec.x)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
+            else if (final_vec.y > 0 && final_vec.y > final_vec.x)
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
             else if (final_vec.y < 0 && final_vec.y < final_vec.x)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
-            else if (final_vec.y == 0 && final_vec.x == 0 && main_pos.y > enemy_pos.y)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
-            else if (final_vec.y == 0 && final_vec.x == 0 && main_pos.y < enemy_pos.y)
-                DarkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+
+            if (final_vec.y == 0  && (main_pos.y > enemy_pos.y))
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_BACK));
+            else if (final_vec.y == 0 && (main_pos.y < enemy_pos.y))
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_FRONT));
+            else if (final_vec.x == 0 && (main_pos.x > enemy_pos.x))
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_RIGHT));
+            else if (final_vec.x == 0 && (main_pos.x < enemy_pos.x))
+                darkWizzard?.SetSequence(new SpriteSequenceSelector((int)PersonajeStates.MOVE_LEFT));
         }
 
         #endregion
@@ -472,6 +490,16 @@ namespace TinyRpgApp
             }
         }
 
+        public void RenderHearts(ICanvas canvas)
+        {
+            double distanceHearts = 0;
+            foreach (SpriteInstance sprite in hearts)
+            {
+                sprite.Draw(canvas, mainCharacter.position.X - 0.65 + distanceHearts, mainCharacter.position.Y + 2, 1, 1);
+                distanceHearts += 1.25;
+            }
+        }
+
         public void RenderProta(ICanvas canvas)
         {
             //double transparency = 1.0;
@@ -484,7 +512,7 @@ namespace TinyRpgApp
             foreach (Enemigo e in currentWorld.enemies)
             {
                 if(e.enemyType == EnemyType.DARK_WIZZARD)
-                    DarkWizzard?.Draw(canvas, e.position.X - Constants.middleSprite, e.position.Y - Constants.middleSprite, 2.0, 2.0);
+                    darkWizzard?.Draw(canvas, e.position.X - Constants.middleSprite, e.position.Y - Constants.middleSprite, 2.0, 2.0);
                 else
                 {
                     canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
@@ -597,7 +625,7 @@ namespace TinyRpgApp
             SetSpriteToEnemys();
             mainCharacter.position = positions[portalTouched];
             bullets.Clear();
-            IsTransitionDone = false;
+            isTransitionDone = false;
         }
 
         public void ReplaceWorld(Position[] positions, int portalTouched, World newWorld)
@@ -609,7 +637,7 @@ namespace TinyRpgApp
             mainCharacter.position = positions[portalTouched];
             SetSpriteToEnemys();
             bullets.Clear();
-            IsTransitionDone = false;
+            isTransitionDone = false;
         }
 
         public void SelectMap(int id)
@@ -623,20 +651,20 @@ namespace TinyRpgApp
         public void SetSpriteToEnemys()
         {
             spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/enemy_movetxt/enemy_movement_set.json", database, typeof(PersonajeStates));
-            DarkWizzard = new SpriteInstance(spriteSet, (int)PersonajeStates.MOVE_FRONT, 0, -1);
+            darkWizzard = new SpriteInstance(spriteSet, (int)PersonajeStates.MOVE_FRONT, 0, -1);
         }
 
         public void Transition(ICanvas canvas)
         {
             isTransitioning = true;
-            transitiondelay += Time.deltaTime;
-            if (transitiondelay < 0.2)
+            transitionTimer += Time.deltaTime;
+            if (transitionTimer < 0.2)
                 canvas.Clear(new rgba_f64(0, 0, 0, 1));
             else
             {
-                IsTransitionDone = true;
+                isTransitionDone = true;
                 isTransitioning = false;
-                transitiondelay = 0;
+                transitionTimer = 0;
             }
 
         }
@@ -778,25 +806,37 @@ namespace TinyRpgApp
             }
         }
 
+        public void HitToProta(List<Enemigo> enemigos, List<Bala> balas, GameDelegateEvent gameDelegate)
+        {
+            if (protaHitDelay > 0)
+            {
+                HitEnemieToMainCharacter(enemigos, gameDelegate);
+                HitBulletToMainCharacter(balas, gameDelegate);
+                protaHitDelay = 0;
+            }
+        }
+
         public void HitEnemieToMainCharacter(List<Enemigo> enemigos, GameDelegateEvent gameDelegate)
         {
             for (int j = 0; j < enemigos.Count; j++)
             {
                 if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, enemigos[j].position, 1.0))
                 {
-                    gameDelegate.animationEngine.Add(new AnimationOptions()
-                    {
-                        Duration = 0.1
-                    },
-                    (in AnimationEvent ae, ref AnimationAction action) =>
-                    {
-                        var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
-                        mainCharacter.transparency = transparency;
-                        if (ae.u == 1.0)
-                            mainCharacter.transparency = 1.0;
-                    }
-                    );
+                    protaHurtsTimer = 0;
+                    //gameDelegate.animationEngine.Add(new AnimationOptions()
+                    //{
+                    //    Duration = 0.1
+                    //},
+                    //(in AnimationEvent ae, ref AnimationAction action) =>
+                    //{
+                    //    var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
+                    //    mainCharacter.transparency = transparency;
+                    //    if (ae.u == 1.0)
+                    //        mainCharacter.transparency = 1.0;
+                    //}
+                    //);
                     mainCharacter.vida -= Constants.enemyBulletDamage;
+                    ChangeColorWorld();
                 }
 
                 if (mainCharacter.vida <= 0)
@@ -812,19 +852,21 @@ namespace TinyRpgApp
                 {
                     if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, bullets[i].position, 0.25))
                     {
-                        gameDelegate.animationEngine.Add(new AnimationOptions()
-                            {
-                                Duration = 0.1
-                            },
-                        (in AnimationEvent ae, ref AnimationAction action) =>
-                            {
-                                var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
-                                mainCharacter.transparency = transparency;
-                                if (ae.u == 1.0)
-                                    mainCharacter.transparency = 1.0;
-                            }
-                        );
+                        protaHurtsTimer = 0;
+                        //gameDelegate.animationEngine.Add(new AnimationOptions()
+                        //    {
+                        //        Duration = 0.1
+                        //    },
+                        //(in AnimationEvent ae, ref AnimationAction action) =>
+                        //    {
+                        //        var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
+                        //        mainCharacter.transparency = transparency;
+                        //        if (ae.u == 1.0)
+                        //            mainCharacter.transparency = 1.0;
+                        //    }
+                        //);
                         mainCharacter.vida -= Constants.enemyBulletDamage;
+                        ChangeColorWorld();
                         bullets.Remove(bullets[i]);
                     }
 
@@ -852,6 +894,40 @@ namespace TinyRpgApp
             }
         }
 
+        public void ChangeColorWorld()
+        {
+            if (protaHurtsTimer < Constants.hurtsDelay)
+            {
+                currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
+                mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set_2.json", database, typeof(TileStates));
+                layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+                currentWorld.tileWorld.AddLayer(layer, 0, 0);
+            }
+            else
+            {
+                currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
+                mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
+                layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+                currentWorld.tileWorld.AddLayer(layer, 0, 0);
+            }
+        }
+
+        public void CreateHearts()
+        {
+            hearts.Clear();
+            double vida = mainCharacter.vida / 10.0;
+
+            while (vida >= 1)
+            {
+                hearts.Add(new SpriteInstance(hudSet, (int)HeartStates.FULL_HEART, 0, -1));
+                vida--;
+            }
+                
+            
+            if(vida > 0)
+                hearts.Add(new SpriteInstance(hudSet, (int)HeartStates.MID_HEART, 0, -1));
+
+        }
         #endregion
 
         #region JsonFunctions
@@ -883,10 +959,10 @@ namespace TinyRpgApp
         #region ToolsFunctions
         public void UpdateTimers()
         {
-            enemyChangeMoveStep += Time.deltaTime;
-            enemycirclePathing += Time.deltaTime;
             shootMainCharacterDelay += Time.deltaTime;
             shootEnemieDelay += Time.deltaTime;
+            protaHitDelay += Time.deltaTime;
+            protaHurtsTimer += Time.deltaTime;
         }
 
         public void FillArrayRepresentative()
