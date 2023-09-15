@@ -54,7 +54,7 @@ namespace TinyRpgApp
         double transitionTimer = 0;
         double shootMainCharacterDelay = 0;
         double shootEnemieDelay = 0;
-        double protaHitDelay = 0;
+        double protaHitDelay = 1;
         double protaHurtsTimer = 0;
         #endregion
         #region Booleans
@@ -808,11 +808,10 @@ namespace TinyRpgApp
 
         public void HitToProta(List<Enemigo> enemigos, List<Bala> balas, GameDelegateEvent gameDelegate)
         {
-            if (protaHitDelay > 0)
+            if (protaHitDelay > 1)
             {
                 HitEnemieToMainCharacter(enemigos, gameDelegate);
                 HitBulletToMainCharacter(balas, gameDelegate);
-                protaHitDelay = 0;
             }
         }
 
@@ -823,19 +822,8 @@ namespace TinyRpgApp
                 if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, enemigos[j].position, 1.0))
                 {
                     protaHurtsTimer = 0;
-                    //gameDelegate.animationEngine.Add(new AnimationOptions()
-                    //{
-                    //    Duration = 0.1
-                    //},
-                    //(in AnimationEvent ae, ref AnimationAction action) =>
-                    //{
-                    //    var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
-                    //    mainCharacter.transparency = transparency;
-                    //    if (ae.u == 1.0)
-                    //        mainCharacter.transparency = 1.0;
-                    //}
-                    //);
                     mainCharacter.vida -= Constants.enemyBulletDamage;
+                    protaHitDelay = 0;
                     ChangeColorWorld();
                 }
 
@@ -853,19 +841,8 @@ namespace TinyRpgApp
                     if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, bullets[i].position, 0.25))
                     {
                         protaHurtsTimer = 0;
-                        //gameDelegate.animationEngine.Add(new AnimationOptions()
-                        //    {
-                        //        Duration = 0.1
-                        //    },
-                        //(in AnimationEvent ae, ref AnimationAction action) =>
-                        //    {
-                        //        var transparency = Math.Cos(ae.u * 5.0) * 0.5 + 0.5;
-                        //        mainCharacter.transparency = transparency;
-                        //        if (ae.u == 1.0)
-                        //            mainCharacter.transparency = 1.0;
-                        //    }
-                        //);
                         mainCharacter.vida -= Constants.enemyBulletDamage;
+                        protaHitDelay = 0;
                         ChangeColorWorld();
                         bullets.Remove(bullets[i]);
                     }
