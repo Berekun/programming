@@ -97,20 +97,20 @@ namespace TinyRpgLib
 
         public void GenerateEnemies()
         {
-                //for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
-                //{
-                //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD));
-                //}
+            //for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
+            //{
+            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD));
+            //}
 
-                //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
-                //{
-                //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF));
-                //}
+            //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
+            //{
+            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF));
+            //}
 
-                //for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
-                //{
-                //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM));
-                //}
+            //for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
+            //{
+            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM));
+            //}
         }
 
         public void GenerateObstacle()
@@ -128,7 +128,7 @@ namespace TinyRpgLib
 
         public void GenerateObstacleOcean()
         {
-            for (int i = 0; i < Tools.GetRandomInt(1,5); i++)
+            for (int i = 0; i < Tools.GetRandomInt(2,5); i++)
             {
                 obstacles.Add(new Obstacle(1,1,ObstacleType.SMALL_ROCK,GenerateRandomPosiblePosition(ObstacleType.SMALL_ROCK)));
             }

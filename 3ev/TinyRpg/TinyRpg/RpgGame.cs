@@ -653,6 +653,19 @@ namespace TinyRpgApp
                 {
                     bullets.Remove(bullets[i]);
                 }
+
+                if (bullets.Count > 0)
+                {
+                    foreach (Obstacle obstacle in currentWorld.obstacles)
+                    {
+                        if (DoesIntersectPos1WithPos2(bullets[i].position, 1, obstacle.position, 1))
+                        {
+                            bullets.Remove(bullets[i]);
+                            break;
+                        }
+
+                    }
+                }
             }
         }
         #endregion
