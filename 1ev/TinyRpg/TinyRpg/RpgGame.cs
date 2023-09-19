@@ -51,6 +51,7 @@ namespace TinyRpgApp
         int minWorldHeight = 0;
         #endregion
         #region Timers
+        //double transitionTimer = 0;
         double shootMainCharacterDelay = 0;
         double shootEnemieDelay = 0;
         double protaHitDelay = 1;
@@ -72,11 +73,12 @@ namespace TinyRpgApp
             currentWorld.tileWorld.SetupCamera(canvas, new vec2d_f64(mainCharacter.position.X, mainCharacter.position.Y), Constants.radiusViewWorld, 0.0, 0.0, true);
 
             RenderWorld(canvas, currentWorld);
-            //RenderPortal(canvas);
+            RenderPortal(canvas);
+            if (!isTransitionDone)                
+                Transition(canvas);
             RenderHearts(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
-            RenderObstacles(canvas);
             RenderBullets(canvas);
 
 
@@ -86,15 +88,16 @@ namespace TinyRpgApp
 
         public void OnAnimate(GameDelegateEvent gameEvent)
         {
+            //DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
             CreateHearts();
             MoveEnemies();
 
             EnemieShoot();
             KillEnemies(currentWorld.enemies, bullets);
             HitToProta(currentWorld.enemies, bullets, gameEvent);
+            //currentWorld.IsWorldClearFuncion();
             RemoveBullet(bullets);
 
-            
             prota?.Animate(gameEvent.animationEngine);
             currentWorld.tileWorld?.Animate(gameEvent.animationEngine);
             darkWizzard?.Animate(gameEvent.animationEngine);
@@ -124,16 +127,15 @@ namespace TinyRpgApp
         {
             if(File.Exists(path))
                 File.Delete(path);
-            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight,/* 4*/ true);
             FillArrayRepresentative();
             database = new ImageDatabase(gameEvent.canvasContext);
             spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/prota_movetxt/movement_set.json", database, typeof(PersonajeStates));
             hudSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/hud/hud_set.json", database, typeof(HeartStates));
             mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
-            layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground0.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
             prota = new SpriteInstance(spriteSet, (int)PersonajeStates.STAY_FRONT, 0, -1);
             currentWorld.tileWorld.AddLayer(layer, 0, 0);
-            SetSpriteToEnemys();
             CreateHearts();
         }
 
@@ -293,7 +295,6 @@ namespace TinyRpgApp
                     SetSequenceReleased(lastState);
             }
 
-            LimitedObstacle();
             LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
         }
 
@@ -443,19 +444,6 @@ namespace TinyRpgApp
             }
         }
 
-        public void LimitedObstacle()
-        {
-            foreach (Obstacle obstacle in currentWorld.obstacles)
-            {
-                if (DoesIntersectPos1WithPos2(mainCharacter.position, 1, obstacle.position, 1))
-                {
-                    mainCharacter.position.X = (int)mainCharacter.position.X;
-                    mainCharacter.position.Y = (int)mainCharacter.position.Y;
-                }
-
-            }
-        }
-
         public void SetSequenceDarkWizzard(vec2d_f64 final_vec, vec2d_f64 main_pos, vec2d_f64 enemy_pos)
         {
             if (final_vec.x > 0 && final_vec.x > final_vec.y)
@@ -486,27 +474,21 @@ namespace TinyRpgApp
         #endregion
 
         #region Renders
-
-        public void SetSpriteToEnemys()
-        {
-            spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/enemy_movetxt/enemy_movement_set.json", database, typeof(PersonajeStates));
-            darkWizzard = new SpriteInstance(spriteSet, (int)PersonajeStates.MOVE_FRONT, 0, -1);
-        }
         public void RenderWorld(ICanvas canvas, World world)
         {
             currentWorld.tileWorld?.Draw(canvas, 0.0, 0.0);
         }
 
-        //public void RenderPortal(ICanvas canvas)
-        //{
-        //    foreach (Portal p in currentWorld.portals)
-        //    {
-        //        canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
-        //        canvas.Transform.SetTranslation(0, 0);
-        //        canvas.DrawRectangle(p.aabb);
+        public void RenderPortal(ICanvas canvas)
+        {
+            foreach (Portal p in currentWorld.portals)
+            {
+                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
+                canvas.Transform.SetTranslation(0, 0);
+                canvas.DrawRectangle(p.aabb);
 
-        //    }
-        //}
+            }
+        }
 
         public void RenderHearts(ICanvas canvas)
         {
@@ -540,16 +522,6 @@ namespace TinyRpgApp
             }
         }
 
-        public void RenderObstacles(ICanvas canvas)
-        {
-            foreach (Obstacle obstacle in currentWorld.obstacles)
-            {
-                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
-                canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
-            }
-        }
-
         public void RenderBullets(ICanvas canvas)
         {
             foreach (Bala b in bullets)
@@ -570,6 +542,132 @@ namespace TinyRpgApp
             }
         }
 
+        #endregion
+
+        #region WorldChange
+        //public void DetectedChangeWorld(double x, double y)
+        //{
+        //    Position[] positions = new Position[] { new Position(maxWorldWidth - 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, minWorldHeight + 2), new Position(minWorldWidth + 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, maxWorldHeight - 2) };
+
+        //    int portalTouched = WhatPortalMainCharacterIs();
+
+        //    string worldsJson = "";
+
+        //    if (currentWorld.IsWorldClear)
+        //    {
+        //        if (portalTouched != -1)
+        //        {
+        //            if(File.Exists(path))
+        //                worldsJson = File.ReadAllText(path);
+
+        //            if (worldsJson != "")
+        //            {
+        //                Dictionary<int, World> worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(worldsJson);
+
+        //                if (!worlds.ContainsKey(SelectWorld(portalTouched)))
+        //                    GenerateWorld(positions, portalTouched);
+        //                else
+        //                {
+        //                    foreach (var world in worlds)
+        //                    {
+        //                        World newWorld = world.Value;
+
+        //                        if (newWorld.ideidentifier == SelectWorld(portalTouched))
+        //                            ReplaceWorld(positions, portalTouched, newWorld);
+        //                    }
+        //                }  
+        //            }
+        //            else
+        //                GenerateWorld(positions, portalTouched);
+        //        }
+        //    }
+        //}
+
+        public int WhatPortalMainCharacterIs()
+        {
+            foreach (Portal p in currentWorld.portals)
+            {
+                if (mainCharacter.position.X + 0.5 >= p.aabb.x && p.aabb.MaxX >= mainCharacter.position.X + 0.5)
+                {
+                    if (mainCharacter.position.Y + 0.5 >= p.aabb.y && p.aabb.MaxY >= mainCharacter.position.Y + 0.5)
+                    {
+                        return p.id;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        //public int SelectWorld(int id)
+        //{
+        //    Position[] positions;
+
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        for (int j = 0; j < 3; j++)
+        //        {
+        //            positions = new Position[] { new Position(j - 1, i), new Position(j, i - 1), new Position(j + 1, i), new Position(j, i + 1) };
+
+        //            if (representativeWorld[j, i] == currentWorld.ideidentifier)
+        //                return representativeWorld[(int)positions[id].X, (int)positions[id].Y];
+        //        }
+        //    }
+
+        //    return -1;
+        //}
+
+        public void GenerateWorld(Position[] positions, int portalTouched)
+        {
+            //SerializerJsonWorld(currentWorld);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight,/* SelectWorld(portalTouched)*/ false);
+            //SelectMap(currentWorld.ideidentifier);
+            SetSpriteToEnemys();
+            mainCharacter.position = positions[portalTouched];
+            bullets.Clear();
+            isTransitionDone = false;
+        }
+
+        public void ReplaceWorld(Position[] positions, int portalTouched, World newWorld)
+        {
+            //SerializerJsonWorld(currentWorld);
+            currentWorld = newWorld;
+            //currentWorld.GeneratePortals(currentWorld.ideidentifier);
+            //SelectMap(newWorld.ideidentifier);
+            mainCharacter.position = positions[portalTouched];
+            SetSpriteToEnemys();
+            bullets.Clear();
+            isTransitionDone = false;
+        }
+
+        public void SelectMap(int id)
+        {
+            currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
+            var mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
+            var layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground" + id + ".json", mapSet, typeof(TileStates), typeof(SpriteClass));
+            currentWorld.tileWorld.AddLayer(layer, 0, 0);
+        }
+
+        public void SetSpriteToEnemys()
+        {
+            spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/enemy_movetxt/enemy_movement_set.json", database, typeof(PersonajeStates));
+            darkWizzard = new SpriteInstance(spriteSet, (int)PersonajeStates.MOVE_FRONT, 0, -1);
+        }
+
+        public void Transition(ICanvas canvas)
+        {
+            isTransitioning = true;
+            transitionTimer += Time.deltaTime;
+            if (transitionTimer < 0.2)
+                canvas.Clear(new rgba_f64(0, 0, 0, 1));
+            else
+            {
+                isTransitionDone = true;
+                isTransitioning = false;
+                transitionTimer = 0;
+            }
+
+        }
         #endregion
 
         #region ThingsWithBullets
@@ -659,7 +757,7 @@ namespace TinyRpgApp
 
         #region ThingsWithCharacters
 
-        public bool DoesIntersectPos1WithPos2(Position pos1, double enemySize, Position pos2, double bulleSize)
+        public bool DoesIntersectEnemyWithBullet(Position pos1, double enemySize, Position pos2, double bulleSize)
         {
             if (pos1.X > pos2.maxX)
                 return false;
@@ -684,7 +782,7 @@ namespace TinyRpgApp
                 {
                     if (bullets[i].shooter == Shooter.MAIN)
                     {
-                        if (DoesIntersectPos1WithPos2(enemigos[j].position, 1.0, bullets[i].position, 0.25))
+                        if (DoesIntersectEnemyWithBullet(enemigos[j].position, 1.0, bullets[i].position, 0.25))
                         {
                             enemigos[j].vida -= Constants.mainBulletDamage;
                             RemoveBullet = true;
@@ -721,7 +819,7 @@ namespace TinyRpgApp
         {
             for (int j = 0; j < enemigos.Count; j++)
             {
-                if (DoesIntersectPos1WithPos2(mainCharacter.position, 1.0, enemigos[j].position, 1.0))
+                if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, enemigos[j].position, 1.0))
                 {
                     protaHurtsTimer = 0;
                     mainCharacter.vida -= Constants.enemyBulletDamage;
@@ -740,7 +838,7 @@ namespace TinyRpgApp
             {
                 if (balas[i].shooter == Shooter.ENEMIE)
                 {
-                    if (DoesIntersectPos1WithPos2(mainCharacter.position, 1.0, bullets[i].position, 0.25))
+                    if (DoesIntersectEnemyWithBullet(mainCharacter.position, 1.0, bullets[i].position, 0.25))
                     {
                         protaHurtsTimer = 0;
                         mainCharacter.vida -= Constants.enemyBulletDamage;
@@ -779,14 +877,14 @@ namespace TinyRpgApp
             {
                 currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
                 mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set_2.json", database, typeof(TileStates));
-                layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground0.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+                layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
                 currentWorld.tileWorld.AddLayer(layer, 0, 0);
             }
             else
             {
                 currentWorld.tileWorld = new TileWorld(20, 20, new aabb2d_f64(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight));
                 mapSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/map/map_set.json", database, typeof(TileStates));
-                layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground0.json", mapSet, typeof(TileStates), typeof(SpriteClass));
+                layer = SpriteLoaderUtils.LoadLayerFromFile("resources/map/layers/layer_ground4.json", mapSet, typeof(TileStates), typeof(SpriteClass));
                 currentWorld.tileWorld.AddLayer(layer, 0, 0);
             }
         }
@@ -807,6 +905,32 @@ namespace TinyRpgApp
                 hearts.Add(new SpriteInstance(hudSet, (int)HeartStates.MID_HEART, 0, -1));
 
         }
+        #endregion
+
+        #region JsonFunctions
+        //public void SerializerJsonWorld(World world)
+        //{
+        //    Dictionary<int, World>? worlds = null;
+
+        //    if (File.Exists(path))
+        //    {
+        //        string jsonIfNotExistFile = File.ReadAllText(path);
+        //        worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(jsonIfNotExistFile);
+        //    }
+        //    if (worlds == null)
+        //        worlds = new Dictionary<int, World>();
+
+        //    if (worlds.ContainsKey(world.ideidentifier))
+        //    {
+        //        File.Delete(path);
+        //    }
+
+
+        //    worlds[world.ideidentifier] = world;
+
+        //    string json = JsonSerializer.Serialize(worlds);
+        //    File.WriteAllText(path, json);
+        //}
         #endregion
 
         #region ToolsFunctions

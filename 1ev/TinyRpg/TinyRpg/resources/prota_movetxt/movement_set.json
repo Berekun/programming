@@ -1,0 +1,156 @@
+{
+  "sources": {
+    "tiles": {
+      "image": "Prota.png",
+      "hcount": 8,
+      "vcount": 8
+    }
+  },
+
+  "sequences": {
+    "STAY_FRONT": {
+      "source": "tiles",
+      "frame_duration": 0.1,
+      "poses": [
+        {
+          "image": {
+            "x": 0,
+            "y": 0
+          },
+          "duration": 3
+        },
+        {
+          "image": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "image": {
+            "x": 2,
+            "y": 0
+          }
+        },
+        {
+          "image": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    },
+
+    "STAY_BACK": {
+      "source": "tiles",
+      "frame_duration": 0.1,
+      "poses": [
+        {
+          "image": {
+            "x": 0,
+            "y": 2
+          }
+        }
+      ]
+    },
+
+    "STAY_LEFT": {
+      "source": "tiles",
+      "frame_duration": 0.1,
+      "poses": [
+        {
+          "image": {
+            "x": 0,
+            "y": 1
+          },
+          "duration": 3
+        },
+        {
+          "image": {
+            "x": 1,
+            "y": 1
+          }
+        },
+        {
+          "image": {
+            "x": 2,
+            "y": 1
+          }
+        },
+        {
+          "image": {
+            "x": 1,
+            "y": 1
+          }
+        }
+      ]
+    },
+
+    "STAY_RIGHT": {
+      "source": "tiles",
+      "frame_duration": 0.1,
+      "poses": [
+        {
+          "image": {
+            "x": 0,
+            "y": 3
+          },
+          "duration": 3
+        },
+        {
+          "image": {
+            "x": 1,
+            "y": 3
+          }
+        },
+        {
+          "image": {
+            "x": 2,
+            "y": 3
+          }
+        },
+        {
+          "image": {
+            "x": 1,
+            "y": 3
+          }
+        }
+      ]
+    },
+
+    "MOVE_FRONT": {
+      "source": "tiles",
+      "frame_duration": 0.2,
+      "poses_file": {
+        "file": "move_down.txt",
+        "incluse_reverse": false
+      }
+    },
+
+    "MOVE_BACK": {
+      "source": "tiles",
+      "frame_duration": 0.2,
+      "poses_file": {
+        "file": "move_up.txt",
+        "incluse_reverse": false
+      }
+    },
+
+    "MOVE_LEFT": {
+      "source": "tiles",
+      "frame_duration": 0.125,
+      "poses_file": {
+        "file": "move_left.txt",
+        "incluse_reverse": false
+      }
+    },
+
+    "MOVE_RIGHT": {
+      "source": "tiles",
+      "frame_duration": 0.125,
+      "poses_file": {
+        "file": "move_right.txt",
+        "incluse_reverse": false
+      }
+    }
+  }
+}
