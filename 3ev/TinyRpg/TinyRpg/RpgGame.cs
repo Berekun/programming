@@ -74,13 +74,13 @@ namespace TinyRpgApp
 
             RenderWorld(canvas, currentWorld);
             RenderPortal(canvas);
+            if (!isTransitionDone)                
+                Transition(canvas);
             RenderHearts(canvas);
             RenderProta(canvas);
             RenderEnemies(canvas);
             RenderBullets(canvas);
 
-            if (!isTransitionDone)                
-                Transition(canvas);
 
             if (protaHurtsTimer > Constants.hurtsDelay)
                 ChangeColorWorld();
@@ -88,14 +88,14 @@ namespace TinyRpgApp
 
         public void OnAnimate(GameDelegateEvent gameEvent)
         {
-            DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
+            //DetectedChangeWorld(mainCharacter.position.X, mainCharacter.position.Y);
             CreateHearts();
             MoveEnemies();
 
             EnemieShoot();
             KillEnemies(currentWorld.enemies, bullets);
             HitToProta(currentWorld.enemies, bullets, gameEvent);
-            currentWorld.IsWorldClearFuncion();
+            //currentWorld.IsWorldClearFuncion();
             RemoveBullet(bullets);
 
             prota?.Animate(gameEvent.animationEngine);
@@ -127,7 +127,7 @@ namespace TinyRpgApp
         {
             if(File.Exists(path))
                 File.Delete(path);
-            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, 4, true);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight,/* 4*/ true);
             FillArrayRepresentative();
             database = new ImageDatabase(gameEvent.canvasContext);
             spriteSet = SpriteLoaderUtils.LoadSpriteSetFromFile("resources/prota_movetxt/movement_set.json", database, typeof(PersonajeStates));
@@ -545,43 +545,43 @@ namespace TinyRpgApp
         #endregion
 
         #region WorldChange
-        public void DetectedChangeWorld(double x, double y)
-        {
-            Position[] positions = new Position[] { new Position(maxWorldWidth - 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, minWorldHeight + 2), new Position(minWorldWidth + 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, maxWorldHeight - 2) };
+        //public void DetectedChangeWorld(double x, double y)
+        //{
+        //    Position[] positions = new Position[] { new Position(maxWorldWidth - 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, minWorldHeight + 2), new Position(minWorldWidth + 2, mainCharacter.position.Y), new Position(mainCharacter.position.X, maxWorldHeight - 2) };
 
-            int portalTouched = WhatPortalMainCharacterIs();
+        //    int portalTouched = WhatPortalMainCharacterIs();
 
-            string worldsJson = "";
+        //    string worldsJson = "";
 
-            if (currentWorld.IsWorldClear)
-            {
-                if (portalTouched != -1)
-                {
-                    if(File.Exists(path))
-                        worldsJson = File.ReadAllText(path);
+        //    if (currentWorld.IsWorldClear)
+        //    {
+        //        if (portalTouched != -1)
+        //        {
+        //            if(File.Exists(path))
+        //                worldsJson = File.ReadAllText(path);
 
-                    if (worldsJson != "")
-                    {
-                        Dictionary<int, World> worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(worldsJson);
+        //            if (worldsJson != "")
+        //            {
+        //                Dictionary<int, World> worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(worldsJson);
 
-                        if (!worlds.ContainsKey(SelectWorld(portalTouched)))
-                            GenerateWorld(positions, portalTouched);
-                        else
-                        {
-                            foreach (var world in worlds)
-                            {
-                                World newWorld = world.Value;
+        //                if (!worlds.ContainsKey(SelectWorld(portalTouched)))
+        //                    GenerateWorld(positions, portalTouched);
+        //                else
+        //                {
+        //                    foreach (var world in worlds)
+        //                    {
+        //                        World newWorld = world.Value;
 
-                                if (newWorld.ideidentifier == SelectWorld(portalTouched))
-                                    ReplaceWorld(positions, portalTouched, newWorld);
-                            }
-                        }  
-                    }
-                    else
-                        GenerateWorld(positions, portalTouched);
-                }
-            }
-        }
+        //                        if (newWorld.ideidentifier == SelectWorld(portalTouched))
+        //                            ReplaceWorld(positions, portalTouched, newWorld);
+        //                    }
+        //                }  
+        //            }
+        //            else
+        //                GenerateWorld(positions, portalTouched);
+        //        }
+        //    }
+        //}
 
         public int WhatPortalMainCharacterIs()
         {
@@ -599,29 +599,29 @@ namespace TinyRpgApp
             return -1;
         }
 
-        public int SelectWorld(int id)
-        {
-            Position[] positions;
+        //public int SelectWorld(int id)
+        //{
+        //    Position[] positions;
 
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    positions = new Position[] { new Position(j - 1, i), new Position(j, i - 1), new Position(j + 1, i), new Position(j, i + 1) };
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        for (int j = 0; j < 3; j++)
+        //        {
+        //            positions = new Position[] { new Position(j - 1, i), new Position(j, i - 1), new Position(j + 1, i), new Position(j, i + 1) };
 
-                    if (representativeWorld[j, i] == currentWorld.ideidentifier)
-                        return representativeWorld[(int)positions[id].X, (int)positions[id].Y];
-                }
-            }
+        //            if (representativeWorld[j, i] == currentWorld.ideidentifier)
+        //                return representativeWorld[(int)positions[id].X, (int)positions[id].Y];
+        //        }
+        //    }
 
-            return -1;
-        }
+        //    return -1;
+        //}
 
         public void GenerateWorld(Position[] positions, int portalTouched)
         {
-            SerializerJsonWorld(currentWorld);
-            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight, SelectWorld(portalTouched), false);
-            SelectMap(currentWorld.ideidentifier);
+            //SerializerJsonWorld(currentWorld);
+            currentWorld = new World(minWorldWidth, minWorldHeight, maxWorldWidth, maxWorldHeight,/* SelectWorld(portalTouched)*/ false);
+            //SelectMap(currentWorld.ideidentifier);
             SetSpriteToEnemys();
             mainCharacter.position = positions[portalTouched];
             bullets.Clear();
@@ -630,10 +630,10 @@ namespace TinyRpgApp
 
         public void ReplaceWorld(Position[] positions, int portalTouched, World newWorld)
         {
-            SerializerJsonWorld(currentWorld);
+            //SerializerJsonWorld(currentWorld);
             currentWorld = newWorld;
-            currentWorld.GeneratePortals(currentWorld.ideidentifier);
-            SelectMap(newWorld.ideidentifier);
+            //currentWorld.GeneratePortals(currentWorld.ideidentifier);
+            //SelectMap(newWorld.ideidentifier);
             mainCharacter.position = positions[portalTouched];
             SetSpriteToEnemys();
             bullets.Clear();
@@ -908,29 +908,29 @@ namespace TinyRpgApp
         #endregion
 
         #region JsonFunctions
-        public void SerializerJsonWorld(World world)
-        {
-            Dictionary<int, World>? worlds = null;
+        //public void SerializerJsonWorld(World world)
+        //{
+        //    Dictionary<int, World>? worlds = null;
 
-            if (File.Exists(path))
-            {
-                string jsonIfNotExistFile = File.ReadAllText(path);
-                worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(jsonIfNotExistFile);
-            }
-            if (worlds == null)
-                worlds = new Dictionary<int, World>();
+        //    if (File.Exists(path))
+        //    {
+        //        string jsonIfNotExistFile = File.ReadAllText(path);
+        //        worlds = JsonSerializer.Deserialize<Dictionary<int, World>>(jsonIfNotExistFile);
+        //    }
+        //    if (worlds == null)
+        //        worlds = new Dictionary<int, World>();
 
-            if (worlds.ContainsKey(world.ideidentifier))
-            {
-                File.Delete(path);
-            }
+        //    if (worlds.ContainsKey(world.ideidentifier))
+        //    {
+        //        File.Delete(path);
+        //    }
 
 
-            worlds[world.ideidentifier] = world;
+        //    worlds[world.ideidentifier] = world;
 
-            string json = JsonSerializer.Serialize(worlds);
-            File.WriteAllText(path, json);
-        }
+        //    string json = JsonSerializer.Serialize(worlds);
+        //    File.WriteAllText(path, json);
+        //}
         #endregion
 
         #region ToolsFunctions

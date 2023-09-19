@@ -10,7 +10,7 @@ namespace TinyRpgLib
 {
     public class World
     {
-        public int ideidentifier { get; set; }
+        //public int ideidentifier { get; set; }
         public double minX { get; set; }
         public double minY { get; set; }
         public double maxX { get; set; }
@@ -21,16 +21,16 @@ namespace TinyRpgLib
         public bool IsWorldClear { get; set; } = false;
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
 
-        public World(int minX,int minY,int maxX, int maxY, int ideidentifier, bool isWorldClear)
+        public World(int minX,int minY,int maxX, int maxY,/* int ideidentifier*/ bool isWorldClear)
         {
-            tileWorld = new TileWorld(20, 20, new aabb2d_f64(minX, minY, maxX, maxY));
+            tileWorld = new TileWorld(40, 40, new aabb2d_f64(minX, minY, maxX, maxY));
             this.minX = minX;
             this.minY = minY;
             this.maxX = maxX;
             this.maxY = maxY;
-            this.ideidentifier = ideidentifier;
+            //this.ideidentifier = ideidentifier;
             this.IsWorldClear = isWorldClear;
-            GeneratePortals(this.ideidentifier);
+            //GeneratePortals(this.ideidentifier);
             GenerateEnemies();
         }
 
@@ -39,60 +39,60 @@ namespace TinyRpgLib
 
         }
 
-        public void IsWorldClearFuncion()
-        {
-            if(enemies.Count <= 0)
-                IsWorldClear = true;
-        }
+        //public void IsWorldClearFuncion()
+        //{
+        //    if(enemies.Count <= 0)
+        //        IsWorldClear = true;
+        //}
 
-        public void GeneratePortals(int identifier) //Optimizable
-        {
-            switch (identifier)
-            {
-                case 0:
-                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
-                    break;
-                case 1:
-                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
-                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
-                    break;
-                case 2:
-                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
-                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
-                    break;
-                case 3:
-                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
-                    break;
-                case 4:
-                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
-                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
-                    break;
-                case 5:
-                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
-                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
-                    break;
-                case 6:
-                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                    break;
-                case 7:
-                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
-                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
-                        portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
-                    break;
-                case 8:
-                        portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
-                        portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
-                    break;
-            }
-        }
+        //public void GeneratePortals(int identifier) //Optimizable
+        //{
+        //    switch (identifier)
+        //    {
+        //        case 0:
+        //                portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+        //                portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
+        //            break;
+        //        case 1:
+        //                portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+        //                portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+        //                portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
+        //            break;
+        //        case 2:
+        //                portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+        //                portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
+        //            break;
+        //        case 3:
+        //                portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+        //                portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+        //                portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
+        //            break;
+        //        case 4:
+        //                portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+        //                portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+        //                portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+        //                portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
+        //            break;
+        //        case 5:
+        //                portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+        //                portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+        //                portals.Add(new Portal(3, new rect2d_f64(15, minY, 10, 1)));
+        //            break;
+        //        case 6:
+        //                portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+        //                portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+        //            break;
+        //        case 7:
+        //                portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+        //                portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+        //                portals.Add(new Portal(2, new rect2d_f64(maxX - 1, 15, 1, 10)));
+        //            break;
+        //        case 8:
+        //                portals.Add(new Portal(0, new rect2d_f64(minX, 15, 1, 10)));
+        //                portals.Add(new Portal(1, new rect2d_f64(15, maxX - 1, 10, 1)));
+        //            break;
+        //    }
+        //}
 
         public void GenerateEnemies()
         {
