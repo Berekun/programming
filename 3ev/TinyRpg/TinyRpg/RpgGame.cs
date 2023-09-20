@@ -745,7 +745,7 @@ namespace TinyRpgApp
                 {
                     foreach (Obstacle obstacle in currentWorld.obstacles)
                     {
-                        if (DoesIntersectPos1WithPos2(bullets[i].position, 1, obstacle.position, 1))
+                        if (DoesIntersectPos1WithPos2(bullets[i].position, 1, obstacle.position, 1) && obstacle.type is not ObstacleType.WEED)
                         {
                             bullets.Remove(bullets[i]);
                             break;
