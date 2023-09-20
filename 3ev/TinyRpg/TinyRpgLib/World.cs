@@ -21,6 +21,8 @@ namespace TinyRpgLib
         public double maxX { get; set; }
         public double maxY { get; set; }
 
+        public bool isWorldClear { get; set; } = false;
+
         public TileWorld tileWorld;
 
         private Type type { get; set; }
@@ -97,20 +99,20 @@ namespace TinyRpgLib
 
         public void GenerateEnemies()
         {
-            //for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
-            //{
-            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD));
-            //}
+            for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
+            {
+                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD));
+            }
 
-            //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
-            //{
-            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF));
-            //}
+            for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
+            {
+                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF));
+            }
 
-            //for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
-            //{
-            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM));
-            //}
+            for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
+            {
+                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM));
+            }
         }
 
         public void GenerateObstacle()
@@ -128,113 +130,43 @@ namespace TinyRpgLib
 
         public void GenerateObstacleOcean()
         {
-            for (int i = 0; i < Tools.GetRandomInt(2,5); i++)
-            {
+            for (int i = 0; i < Tools.GetRandomInt(2,7); i++)
                 obstacles.Add(new Obstacle(1,1,ObstacleType.SMALL_ROCK,GenerateRandomPosiblePosition(ObstacleType.SMALL_ROCK)));
-            }
+            for (int i = 0; i < Tools.GetRandomInt(5, 15); i++)
+                obstacles.Add(new Obstacle(1, 1, ObstacleType.WEED, GenerateRandomPosiblePosition(ObstacleType.WEED)));
+
         }
 
         public Position GenerateRandomPosiblePosition(ObstacleType type)
         {
-            int aux = ReviewQuadrant(1, obstacles, type);
-            Position pos = new Position();
+            Position pos;
 
-            if (aux == 1)
+            while (true)
             {
-                pos.X = Tools.GetRandomInt(1, 21);
-                pos.Y = Tools.GetRandomInt(1, 21);
-            }
-            else if (aux == 2)
-            {
-                pos.X = Tools.GetRandomInt(20, 39);
-                pos.Y = Tools.GetRandomInt(1, 21);
-            }
-            else if (aux == 3)
-            {
-                pos.X = Tools.GetRandomInt(1, 21);
-                pos.Y = Tools.GetRandomInt(20, 39);
-            }
-            else
-            {
-                pos.X = Tools.GetRandomInt(20, 39);
-                pos.Y = Tools.GetRandomInt(20, 39);
+                pos = new Position(Tools.GetRandomInt(1, 39), Tools.GetRandomInt(1, 39));
+
+                if (PosiblePosition(pos))
+                    break;
             }
 
             return pos;
         }
 
-        public int ReviewQuadrant(int numberoOfObstacles, List<Obstacle> obstacles, ObstacleType type)
+        public bool PosiblePosition(Position pos)
         {
-            int aux = 0;    
-
-            foreach (Obstacle obstacle in obstacles)
+            for (int y = 2; y > -3; y--)
             {
-                for (int x = 0; x <= 20; x++)
+                for (int x = 2; x > -3; x--)
                 {
-                    for (int y = 0; y <= 20; y++)
+                    foreach (Obstacle obstacle in obstacles)
                     {
-                        if (obstacle.position.X == x && obstacle.position.Y == y)
-                            aux++;
+                        if (obstacle.position.X == pos.X + x && obstacle.position.Y == pos.Y + y)
+                            return false;
                     }
                 }
             }
 
-            if (aux == 0)
-                return 1;
-            else 
-                aux = 0;
-
-            foreach (Obstacle obstacle in obstacles)
-            {
-                for (int x = 21; x <= 40; x++)
-                {
-                    for (int y = 0; y <= 20; y++)
-                    {
-                        if (obstacle.position.X == x && obstacle.position.Y == y)
-                            aux++;
-                    }
-                }
-            }
-
-            if (aux == 0)
-                return 2;
-            else
-                aux = 0;
-
-            foreach (Obstacle obstacle in obstacles)
-            {
-                for (int x = 0; x <= 20; x++)
-                {
-                    for (int y = 21; y <= 40; y++)
-                    {
-                        if (obstacle.position.X == x && obstacle.position.Y == y)
-                            aux++;
-                    }
-                }
-            }
-
-            if (aux == 0)
-                return 3;
-            else
-                aux = 0;
-
-            foreach (Obstacle obstacle in obstacles)
-            {
-                for (int x = 21; x <= 40; x++)
-                {
-                    for (int y = 21; y <= 40; y++)
-                    {
-                        if (obstacle.position.X == x && obstacle.position.Y == y)
-                            aux++;
-                    }
-                }
-            }
-
-            if (aux == 0)
-                return 4;
-            
-
-            return -1;
+            return true;
         }
     }
 }

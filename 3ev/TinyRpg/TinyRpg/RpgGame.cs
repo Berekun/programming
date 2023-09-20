@@ -53,6 +53,7 @@ namespace TinyRpgApp
         #region Timers
         double shootMainCharacterDelay = 0;
         double shootEnemieDelay = 0;
+        double waveDelay = 0;
         double protaHitDelay = 1;
         double protaHurtsTimer = 0;
         #endregion
@@ -88,7 +89,7 @@ namespace TinyRpgApp
         {
             CreateHearts();
             MoveEnemies();
-
+            GenerateWave();
             EnemieShoot();
             KillEnemies(currentWorld.enemies, bullets);
             HitToProta(currentWorld.enemies, bullets, gameEvent);
@@ -272,6 +273,7 @@ namespace TinyRpgApp
 
         public void Move(GameDelegateEvent gameEvent, IKeyboard keyboard, IMouse mouse)
         {
+
             if (!isTransitioning)
             {
                 var state = joystickMovement.Update(keyboard);
@@ -293,8 +295,9 @@ namespace TinyRpgApp
                     SetSequenceReleased(lastState);
             }
 
-            LimitedObstacle();
+
             LimitedWorld(mainCharacter.position.X, mainCharacter.position.Y, mainCharacter);
+            LimitedObstacle();
         }
 
         public void MoveBullets()
@@ -321,7 +324,10 @@ namespace TinyRpgApp
                     EndId = (int)PersonajeStates.STAY_RIGHT
                 });
 
-                mainCharacter.position.X += 8 * Time.deltaTime;
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.X += 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.X += 8 * Time.deltaTime;
             }
 
             if (state == KeyboardJoystick8.State.DOWN_RIGHT)
@@ -331,8 +337,15 @@ namespace TinyRpgApp
                     EndId = (int)PersonajeStates.STAY_RIGHT
                 });
 
-                mainCharacter.position.X += 8 * Time.deltaTime;
-                mainCharacter.position.Y -= 8 * Time.deltaTime;
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.X += 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.X += 8 * Time.deltaTime;
+
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.Y -= 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.Y -= 8 * Time.deltaTime;
             }
 
             if (state == KeyboardJoystick8.State.UP_RIGHT)
@@ -342,8 +355,15 @@ namespace TinyRpgApp
                     EndId = (int)PersonajeStates.STAY_RIGHT
                 });
 
-                mainCharacter.position.X += 8 * Time.deltaTime;
-                mainCharacter.position.Y += 8 * Time.deltaTime;
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.X += 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.X += 8 * Time.deltaTime;
+
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.Y += 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.Y += 8 * Time.deltaTime;
             }
         }
 
@@ -356,7 +376,10 @@ namespace TinyRpgApp
                     EndId = (int)PersonajeStates.STAY_LEFT
                 });
 
-                mainCharacter.position.X -= 8 * Time.deltaTime;
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.X -= 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.X -= 8 * Time.deltaTime;
             }
 
             if (state == KeyboardJoystick8.State.DOWN_LEFT)
@@ -366,8 +389,15 @@ namespace TinyRpgApp
                     EndId = (int)PersonajeStates.STAY_LEFT
                 });
 
-                mainCharacter.position.X -= 8 * Time.deltaTime;
-                mainCharacter.position.Y -= 8 * Time.deltaTime;
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.X -= 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.X -= 8 * Time.deltaTime;
+
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.Y -= 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.Y -= 8 * Time.deltaTime;
             }
 
             if (state == KeyboardJoystick8.State.UP_LEFT)
@@ -377,8 +407,15 @@ namespace TinyRpgApp
                     EndId = (int)PersonajeStates.STAY_LEFT
                 });
 
-                mainCharacter.position.X -= 8 * Time.deltaTime;
-                mainCharacter.position.Y += 8 * Time.deltaTime;
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.X -= 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.X -= 8 * Time.deltaTime;
+
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.Y += 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.Y += 8 * Time.deltaTime;
             }
 
         }
@@ -391,7 +428,11 @@ namespace TinyRpgApp
                 {
                     EndId = (int)PersonajeStates.STAY_FRONT
                 });
-                mainCharacter.position.Y -= 8 * Time.deltaTime;
+
+                if(IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.Y -= 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.Y -= 8 * Time.deltaTime;
             }
 
             if (state == KeyboardJoystick8.State.UP)
@@ -400,7 +441,11 @@ namespace TinyRpgApp
                 {
                     EndId = (int)PersonajeStates.STAY_BACK
                 });
-                mainCharacter.position.Y += 8 * Time.deltaTime;
+
+                if (IsThisObstacleTouchingMe(ObstacleType.WEED))
+                    mainCharacter.position.Y += 4 * Time.deltaTime;
+                else
+                    mainCharacter.position.Y += 8 * Time.deltaTime;
             }
             
         }
@@ -449,11 +494,21 @@ namespace TinyRpgApp
             {
                 if (DoesIntersectPos1WithPos2(mainCharacter.position, 1, obstacle.position, 1))
                 {
-                    mainCharacter.position.X = (int)mainCharacter.position.X;
-                    mainCharacter.position.Y = (int)mainCharacter.position.Y;
+
                 }
 
             }
+        }
+
+        public bool IsThisObstacleTouchingMe(ObstacleType type)
+        {
+            foreach (Obstacle obstacle in currentWorld.obstacles)
+            {
+                if (DoesIntersectPos1WithPos2(mainCharacter.position, 1, obstacle.position, 1) && obstacle.type == type)
+                    return true;
+            }
+
+            return false;
         }
 
         public void SetSequenceDarkWizzard(vec2d_f64 final_vec, vec2d_f64 main_pos, vec2d_f64 enemy_pos)
@@ -544,9 +599,19 @@ namespace TinyRpgApp
         {
             foreach (Obstacle obstacle in currentWorld.obstacles)
             {
-                canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 1.0, 1.0));
-                canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
-                canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
+                if(obstacle.type == ObstacleType.SMALL_ROCK)
+                {
+                    canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 1.0, 1.0));
+                    canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
+                    canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
+                }
+                else if (obstacle.type == ObstacleType.WEED)
+                {
+                    canvas.FillShader.SetColor(new rgba_f64(0.0, 1.0, 0.5, 1.0));
+                    canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
+                    canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
+                }
+                
             }
         }
 
@@ -567,6 +632,24 @@ namespace TinyRpgApp
                     canvas.DrawRectangle(new rect2d_f64(0.25, 0.25, 0.5, 0.5));
                 }
 
+            }
+        }
+
+        #endregion
+
+        #region World
+
+        public void GenerateWave()
+        {
+            if (currentWorld.enemies.Count == 0)
+            {
+                waveDelay += Time.deltaTime;
+                if (waveDelay > 5)
+                {
+                    currentWorld.GenerateEnemies();
+                    waveDelay = 0;
+                }
+                    
             }
         }
 
@@ -640,18 +723,22 @@ namespace TinyRpgApp
                 if (bullets[i].position.X < minWorldWidth)
                 {
                     bullets.Remove(bullets[i]);
+                    break;
                 }
                 else if (bullets[i].position.X > maxWorldWidth - 1)
                 {
                     bullets.Remove(bullets[i]);
+                    break;
                 }
                 else if (bullets[i].position.Y < minWorldHeight)
                 {
                     bullets.Remove(bullets[i]);
+                    break;
                 }
                 else if (bullets[i].position.Y > maxWorldHeight - 1)
                 {
                     bullets.Remove(bullets[i]);
+                    break;
                 }
 
                 if (bullets.Count > 0)

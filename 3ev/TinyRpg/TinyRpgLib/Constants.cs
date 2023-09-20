@@ -11,6 +11,7 @@ namespace TinyRpgLib
     {
         public const int mainBulletDamage = 5;
         public const int enemyBulletDamage = 5;
+        public const int distanceMove = 8;
         public const double middleSprite = 0.5;
         public const double numberToCalculateMaxXorY = 1;
         public const double radiusViewWorld = 10;
