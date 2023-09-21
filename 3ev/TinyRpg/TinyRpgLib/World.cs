@@ -164,7 +164,7 @@ namespace TinyRpgLib
             {
                 Position position = new Position(Tools.GetRandomInt(x - 2, x + 2), Tools.GetRandomInt(y - 2, y + 2));
                 if (IsInsideWorld(position))
-                    Obstacle obstacle1 = new Obstacle(1, 1, ObstacleType.WEED, position);
+                    new Obstacle(1, 1, ObstacleType.WEED, position);
             }
         }
 
