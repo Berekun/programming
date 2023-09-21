@@ -25,7 +25,7 @@ namespace TinyRpgLib
 
         public TileWorld tileWorld;
 
-        private Type type { get; set; }
+        private Type type { get; set; } = Type.PLAINS;
 
         //public List<Portal> portals { get; set; } = new List<Portal>();
         public List<Enemigo> enemies { get; set; } = new List<Enemigo>();
@@ -99,27 +99,27 @@ namespace TinyRpgLib
 
         public void GenerateEnemies()
         {
-            for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
-            {
-                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD));
-            }
+            //for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
+            //{
+            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD));
+            //}
 
-            for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
-            {
-                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF));
-            }
+            //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
+            //{
+            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF));
+            //}
 
-            for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
-            {
-                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM));
-            }
+            //for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
+            //{
+            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM));
+            //}
         }
 
         public void GenerateObstacle()
         {
             switch (this.type)
             {
-                case Type.OCEAN:
+                case Type.PLAINS:
                         GenerateObstacleOcean();
                     break;
 
@@ -131,13 +131,14 @@ namespace TinyRpgLib
         public void GenerateObstacleOcean()
         {
             for (int i = 0; i < Tools.GetRandomInt(2,7); i++)
-                obstacles.Add(new Obstacle(1,1,ObstacleType.SMALL_ROCK,GenerateRandomPosiblePosition(ObstacleType.SMALL_ROCK)));
-            for (int i = 0; i < Tools.GetRandomInt(5, 15); i++)
-                obstacles.Add(new Obstacle(1, 1, ObstacleType.WEED, GenerateRandomPosiblePosition(ObstacleType.WEED)));
+                obstacles.Add(new Obstacle(1,1,ObstacleType.SMALL_ROCK,GenerateRandomPosiblePosition()));
+            for (int i = 0; i < Tools.GetRandomInt(1, 4); i++)
+                obstacles.Add(new Obstacle(2, 2, ObstacleType.ROCK, GenerateRandomPosiblePosition()));
+            GeneratePosiblePatch(5, 15);
 
         }
 
-        public Position GenerateRandomPosiblePosition(ObstacleType type)
+        public Position GenerateRandomPosiblePosition()
         {
             Position pos;
 
@@ -150,6 +151,21 @@ namespace TinyRpgLib
             }
 
             return pos;
+        }
+
+        public Position GeneratePosiblePatch(int minWeed, int maxWeed)
+        {
+            Position pos = new Position(Tools.GetRandomInt(1, 39), Tools.GetRandomInt(1, 39));
+            Obstacle obstacle = new Obstacle(1, 1, ObstacleType.WEED, pos);
+            int x = (int)pos.X;
+            int y = (int)pos.Y;
+
+            while (true)
+            {
+                Position position = new Position(Tools.GetRandomInt(x - 2, x + 2), Tools.GetRandomInt(y - 2, y + 2));
+                if (IsInsideWorld(position))
+                    Obstacle obstacle1 = new Obstacle(1, 1, ObstacleType.WEED, position);
+            }
         }
 
         public bool PosiblePosition(Position pos)
@@ -165,6 +181,20 @@ namespace TinyRpgLib
                     }
                 }
             }
+
+            return true;
+        }
+
+        public bool IsInsideWorld(Position pos)
+        {
+            if (pos.X < minX)
+                return false;
+            else if (pos.X > maxX - 1)
+                return false;
+            else if (pos.Y < minY)
+                return false;
+            else if (pos.Y > maxY - 1)
+                return false;
 
             return true;
         }

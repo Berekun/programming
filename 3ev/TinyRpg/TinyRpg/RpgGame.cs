@@ -611,7 +611,13 @@ namespace TinyRpgApp
                     canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
                     canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
                 }
-                
+                else if (obstacle.type == ObstacleType.ROCK)
+                {
+                    canvas.FillShader.SetColor(new rgba_f64(0.3, 0.3, 0.5, 1.0));
+                    canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
+                    canvas.DrawRectangle(new rect2d_f64(0, 0, 2, 2));
+                }
+
             }
         }
 
