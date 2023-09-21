@@ -35,6 +35,7 @@ namespace TinyRpgApp
         SpriteSet? mapSet;
         TileMap? layer;
         SpriteInstance? prota;
+        SpriteInstance? bulletSprite;
         SpriteInstance? darkWizzard;
         Personaje mainCharacter = new Personaje(Constants.spawnMainCharacterX, Constants.spawnMainCharacterX, 20);
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);

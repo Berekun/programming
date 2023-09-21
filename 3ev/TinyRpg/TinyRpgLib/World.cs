@@ -134,7 +134,7 @@ namespace TinyRpgLib
                 obstacles.Add(new Obstacle(1,1,ObstacleType.SMALL_ROCK,GenerateRandomPosiblePosition()));
             for (int i = 0; i < Tools.GetRandomInt(1, 4); i++)
                 obstacles.Add(new Obstacle(2, 2, ObstacleType.ROCK, GenerateRandomPosiblePosition()));
-            GeneratePosiblePatch(5, 15);
+            //GeneratePosiblePatch(5, 15);
 
         }
 
@@ -153,20 +153,28 @@ namespace TinyRpgLib
             return pos;
         }
 
-        public Position GeneratePosiblePatch(int minWeed, int maxWeed)
-        {
-            Position pos = new Position(Tools.GetRandomInt(1, 39), Tools.GetRandomInt(1, 39));
-            Obstacle obstacle = new Obstacle(1, 1, ObstacleType.WEED, pos);
-            int x = (int)pos.X;
-            int y = (int)pos.Y;
+        //public Position GeneratePosiblePatch(int minWeed, int maxWeed)
+        //{
+        //    Position pos = new Position(Tools.GetRandomInt(1, 39), Tools.GetRandomInt(1, 39));
+        //    obstacles.Add(new Obstacle(1, 1, ObstacleType.WEED, pos));
+        //    int x = (int)pos.X;
+        //    int y = (int)pos.Y;
+        //    int aux = 0;
 
-            while (true)
-            {
-                Position position = new Position(Tools.GetRandomInt(x - 2, x + 2), Tools.GetRandomInt(y - 2, y + 2));
-                if (IsInsideWorld(position))
-                    new Obstacle(1, 1, ObstacleType.WEED, position);
-            }
-        }
+        //    while (true)
+        //    {
+        //        Position position = new Position(Tools.GetRandomInt(x - 2, x + 2), Tools.GetRandomInt(y - 2, y + 2));
+        //        if (IsInsideWorld(position))
+        //            obstacles.Add(new Obstacle(1, 1, ObstacleType.WEED, position));
+
+        //        foreach (Obstacle obstacle in obstacles)
+        //            if (obstacle.type is ObstacleType.WEED)
+        //                aux++;
+
+        //        if() break;
+
+        //    }
+        //}
 
         public bool PosiblePosition(Position pos)
         {
