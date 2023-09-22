@@ -37,7 +37,7 @@ namespace TinyRpgApp
         SpriteInstance? prota;
         SpriteInstance? bulletSprite;
         SpriteInstance? darkWizzard;
-        Personaje mainCharacter = new Personaje(Constants.spawnMainCharacterX, Constants.spawnMainCharacterX, 20);
+        Personaje mainCharacter = new Personaje(Constants.spawnMainCharacterX, Constants.spawnMainCharacterX, 20, 1, 1);
         KeyboardJoystick8 joystickMovement = new KeyboardJoystick8(Keys.Up, Keys.Down, Keys.Left, Keys.Right);
         KeyboardJoystick8 joystickShoot = new KeyboardJoystick8(Keys.W, Keys.S, Keys.A, Keys.D);
         List<Bala> bullets = new List<Bala>();
@@ -868,13 +868,13 @@ namespace TinyRpgApp
             {
                 Enemigo e = currentWorld.enemies[j];
 
-                Position[] positions = new Position[] { new Position(e.position.X - 1, e.position.Y + 1), new Position(e.position.X + 1, e.position.Y + 1), new Position(e.position.X - 1, e.position.Y - 1), new Position(e.position.X + 1, e.position.Y - 1) };
+                Position[] positions = new Position[] { new Position(e.position.X - 1, e.position.Y + 1, 1, 1), new Position(e.position.X + 1, e.position.Y + 1, 1, 1), new Position(e.position.X - 1, e.position.Y - 1, 1, 1), new Position(e.position.X + 1, e.position.Y - 1,1,1) };
 
                 if (currentWorld.enemies[j].enemyType == EnemyType.GOLEM && currentWorld.enemies[j].vida <= 0)
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        currentWorld.enemies.Add(new Enemigo(positions[i].X, positions[i].Y, 10, EnemyType.MINI_GOLEM));
+                        currentWorld.enemies.Add(new Enemigo(positions[i].X, positions[i].Y, 10, EnemyType.MINI_GOLEM, 1 , 1));
                     }
                 }
             }

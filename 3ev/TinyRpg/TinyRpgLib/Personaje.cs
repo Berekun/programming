@@ -15,9 +15,9 @@ namespace TinyRpgLib
         {
 
         }
-        public Personaje(double x, double y, int vida)
+        public Personaje(double x, double y, int vida, double maxXValue, double maxYValue)
         {
-            position = new Position(x, y);
+            position = new Position(x, y, maxXValue, maxYValue);
             this.vida = vida;
         }
     }

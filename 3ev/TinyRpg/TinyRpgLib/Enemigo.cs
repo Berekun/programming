@@ -15,9 +15,9 @@ namespace TinyRpgLib
     {
         public EnemyType enemyType { get; set; }  
 
-        public Enemigo(double x, double y, int vida, EnemyType enemyType) : base(x, y, vida)
+        public Enemigo(double x, double y, int vida, EnemyType enemyType, double maxXValue, double maxYValue) : base(x, y, vida, maxXValue, maxYValue)
         {
-            position = new Position(x, y);
+            position = new Position(x, y, maxXValue, maxYValue);
             this.vida = vida;
             this.enemyType = enemyType;
         }

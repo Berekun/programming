@@ -22,7 +22,7 @@ namespace TinyRpgLib
 
         public Bala(double x, double y, vec2d_f64 direction, Shooter shooter)
         {
-            position = new Position(x, y);
+            position = new Position(x, y, 0.25,0.25);
             this.direction = direction;
             this.shooter = shooter;
         }

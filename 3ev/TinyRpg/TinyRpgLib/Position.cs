@@ -14,7 +14,7 @@ namespace TinyRpgLib
             if (pos1 == null || pos2 == null)
                 throw new Exception("Una de las posciones sumadas es nula");
 
-            return new Position(pos1.x + pos2.x, pos1.y + pos2.y);
+            return new Position(pos1.x + pos2.x, pos1.y + pos2.y, pos1.maxX + pos2.maxX, pos1.maxY + pos2.maxY);
         }
         private double x;
         public double X
@@ -47,7 +47,7 @@ namespace TinyRpgLib
 
         }
 
-        public Position(double x, double y)
+        public Position(double x, double y, double maxValue, double minxValue)
         {
             this.x = x;
             this.y = y;
