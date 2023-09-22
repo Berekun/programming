@@ -47,12 +47,12 @@ namespace TinyRpgLib
 
         }
 
-        public Position(double x, double y, double maxValue, double minxValue)
+        public Position(double x, double y, double maxXValue, double maxYValue)
         {
             this.x = x;
             this.y = y;
-            maxX = x + 1;
-            maxY = y + 1;
+            maxX = x + maxXValue;
+            maxY = y + maxYValue;
         }
     }
 }

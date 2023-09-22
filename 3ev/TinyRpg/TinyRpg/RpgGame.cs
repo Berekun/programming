@@ -583,11 +583,15 @@ namespace TinyRpgApp
 
         public void RenderEnemies(ICanvas canvas)
         {
+            ChangeEnemyVisibility(canvas);
+
             foreach (Enemigo e in currentWorld.enemies)
             {
-                if(e.enemyType == EnemyType.DARK_WIZZARD)
+                if (e.enemyType == EnemyType.DARK_WIZZARD && !e.isHidden)
+                {
                     darkWizzard?.Draw(canvas, e.position.X - Constants.middleSprite, e.position.Y - Constants.middleSprite, 2.0, 2.0);
-                else
+                }
+                else if (e.enemyType != EnemyType.DARK_WIZZARD && !e.isHidden)
                 {
                     canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
                     canvas.Transform.SetTranslation(e.position.X, e.position.Y);
@@ -602,7 +606,7 @@ namespace TinyRpgApp
             {
                 if(obstacle.type == ObstacleType.SMALL_ROCK)
                 {
-                    canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 1.0, 1.0));
+                    canvas.FillShader.SetColor(new rgba_f64(0.59, 0.32, 0.16, 1.0));
                     canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
                     canvas.DrawRectangle(new rect2d_f64(0, 0, 1, 1));
                 }
@@ -614,7 +618,7 @@ namespace TinyRpgApp
                 }
                 else if (obstacle.type == ObstacleType.ROCK)
                 {
-                    canvas.FillShader.SetColor(new rgba_f64(0.3, 0.3, 0.5, 1.0));
+                    canvas.FillShader.SetColor(new rgba_f64(0.54, 0.29, 0.16, 1.0));
                     canvas.Transform.SetTranslation(obstacle.position.X, obstacle.position.Y);
                     canvas.DrawRectangle(new rect2d_f64(0, 0, 2, 2));
                 }
@@ -624,21 +628,59 @@ namespace TinyRpgApp
 
         public void RenderBullets(ICanvas canvas)
         {
+            ChangeBulletVisibility(canvas);
+
             foreach (Bala b in bullets)
             {
-                if (b.shooter == Shooter.MAIN)
+                if (b.shooter == Shooter.MAIN && !b.isHidden)
                 {
                     canvas.FillShader.SetColor(new rgba_f64(0.0, 0.0, 0.0, 1.0));
                     canvas.Transform.SetTranslation(b.position.X, b.position.Y);
-                    canvas.DrawRectangle(new rect2d_f64(0.25, 0.25, 0.5, 0.5));
+                    canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 0.5, 0.5));
                 }
-                else
+                else if (b.shooter != Shooter.MAIN && !b.isHidden)
                 {
                     canvas.FillShader.SetColor(new rgba_f64(1.0, 0.0, 0.0, 1.0));
                     canvas.Transform.SetTranslation(b.position.X, b.position.Y);
-                    canvas.DrawRectangle(new rect2d_f64(0.25, 0.25, 0.5, 0.5));
+                    canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 0.5, 0.5));
                 }
 
+            }
+
+            canvas.DrawRectangle(new rect2d_f64(0.0, 0.0, 0.5, 0.5));
+        }
+
+        public void ChangeEnemyVisibility(ICanvas canvas)
+        {
+            foreach (Enemigo enemigo in currentWorld.enemies)
+            {
+                foreach (Obstacle obstacle in currentWorld.obstacles)
+                {
+                    if (DoesIntersectPos1WithPos2(enemigo.position, 1, obstacle.position, 1) && obstacle.type is ObstacleType.WEED)
+                    {
+                        enemigo.isHidden = true;
+                        break;
+                    }
+                    else
+                        enemigo.isHidden = false;
+                }
+            }
+        }
+
+        public void ChangeBulletVisibility(ICanvas canvas)
+        {
+            foreach (Bala bullet in bullets)
+            {
+                foreach (Obstacle obstacle in currentWorld.obstacles)
+                {
+                    if (DoesIntersectPos1WithPos2(bullet.position, 1, obstacle.position, 1) && obstacle.type is ObstacleType.WEED)
+                    {
+                        bullet.isHidden = true;
+                        break;
+                    }
+                    else
+                        bullet.isHidden = false;
+                }
             }
         }
 

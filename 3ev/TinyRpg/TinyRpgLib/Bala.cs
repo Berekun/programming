@@ -20,6 +20,8 @@ namespace TinyRpgLib
 
         public Shooter shooter { get; set; }
 
+        public bool isHidden { get; set; }
+
         public Bala(double x, double y, vec2d_f64 direction, Shooter shooter)
         {
             position = new Position(x, y, 0.25,0.25);

@@ -14,6 +14,8 @@ namespace TinyRpgLib
     public class Enemigo : Personaje
     {
         public EnemyType enemyType { get; set; }  
+        
+        public bool isHidden { get; set; }
 
         public Enemigo(double x, double y, int vida, EnemyType enemyType, double maxXValue, double maxYValue) : base(x, y, vida, maxXValue, maxYValue)
         {
