@@ -99,20 +99,20 @@ namespace TinyRpgLib
 
         public void GenerateEnemies()
         {
-            //for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
-            //{
-            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD, 2 ,2));
-            //}
+            for (int i = 0; i < Tools.GetRandomInt(1, 2); i++)
+            {
+                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX + 10, (int)maxX) - 10, Tools.GetRandomInt((int)minY + 10, (int)maxY) - 10, 20, EnemyType.DARK_WIZZARD, 2, 2));
+            }
 
-            //for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
-            //{
-            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF, 1, 1));
-            //}
+            for (int i = 0; i < Tools.GetRandomInt(1, 3); i++)
+            {
+                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 10, EnemyType.WOLF, 1, 1));
+            }
 
-            //for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
-            //{
-            //    enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM, 1, 1));
-            //}
+            for (int i = 0; i < Tools.GetRandomInt(0, 2); i++)
+            {
+                enemies.Add(new Enemigo(Tools.GetRandomInt((int)minX, (int)maxX), Tools.GetRandomInt((int)minY, (int)maxY), 60, EnemyType.GOLEM, 1, 1));
+            }
         }
 
         public void GenerateObstacle()
