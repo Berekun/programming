@@ -1,0 +1,86 @@
+﻿<Window x:Class="Mikender.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mikender"
+        xmlns:converters="clr-namespace:Mikender"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True">
+
+
+    <Grid Background="PapayaWhip" Margin="0,0,0,-6">
+
+        <Grid.RowDefinitions>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"></ColumnDefinition>
+            <ColumnDefinition Width="50*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <!--<ItemsControl x:Name="ListViewProducts1" Grid.Column="1" Background="LightBlue" Height="225">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+
+        <Frame x:Name="Frame" Grid.Column="1" Background="LightBlue" Height="225" NavigationUIVisibility="Hidden"/>
+
+        <ScrollViewer Background="Blue" Grid.Column="0">
+            <Grid Margin="0,0,0,0">
+                <Grid.Background>
+                    <SolidColorBrush Color="White"/>
+                </Grid.Background>
+                <ItemsControl x:Name="ListViewProducts">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="400" Height="120" OpacityMask="Black" BorderThickness="2,2,2,2" BorderBrush="Gainsboro">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Name="Avatar" Source="{Binding image}" Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <StackPanel Orientation="Vertical" Width="210">
+                                        <TextBlock Text="{Binding name}" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        <Button Content="Mostrar Info" Click="Mostrar_Click" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                        <StackPanel x:Name="Images" Orientation="Horizontal">
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasOneStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasTwoStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasThreeStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasFourStar}"></Image>
+                                            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Estrella_amarilla.png/1024px-Estrella_amarilla.png" Height="15" Width="15" Visibility="{Binding HasFiveStar}"></Image>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Width="50">
+                                        <Button x:Name="RemoveButton" Content="Remove" Click="Remove_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Visible" Height="20" Width="50"/>
+                                        <Button x:Name="UpdateButton" Content="Update" Click="Update_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Visible" Height="20" Width="50"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
+        <Button x:Name="closeButton" Content="X" Click="closeButton_Click" Grid.Column="1" RenderTransformOrigin="0.584,0.519" BorderBrush="Black" FontSize="24" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="2,2,2,2" Margin="365,0,0,416">
+            <Button.Background>
+                <SolidColorBrush Color="White"/>
+            </Button.Background>
+        </Button>
+        <TextBox x:Name="SearchBar" HorizontalAlignment="Left" Grid.Column="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="280" Height="28" BorderBrush="Black" FontSize="24" TextChanged="SearchBar_TextChanged" Margin="65,6,0,0">
+            <TextBox.Background>
+                <SolidColorBrush Color="White"/>
+            </TextBox.Background>
+        </TextBox>
+        <Button x:Name="Add" Content="Add" Click="addButton_Click" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Height="45" Width="72" Margin="20,357,0,0"/>
+        <Button x:Name="Confirm" Content="✓" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Confirm_Click" Height="45" Width="72" Margin="0,357,0,0" BorderBrush="Green" Foreground="Green"/>
+        <Button x:Name="Cancel" Content="X" HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden" Click="Cancel_Click" Height="45" Width="72" Margin="310,357,0,0" BorderBrush="red" Foreground="Red"/>
+    </Grid>
+</Window>
